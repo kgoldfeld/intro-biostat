@@ -1,0 +1,1626 @@
+---
+title: 'Lecture 1: Distributions and Measures of Association'
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+webr:
+  packages: ["data.table", "ggplot2", "patchwork"]
+---
+
+##### Logistics for Biostatistics Module
+
+- Weekly homework is due **Tuesdays at 11am**.
+- TAs will grade **three problems each week**. I will post complete solutions, and you are responsible for checking your answers for the remaining problems.
+- Collaboration with classmates is encouraged.
+
+##### Exam
+
+- Take-home
+- Open-book / open-notes
+
+##### Office Hours
+
+- By appointment
+- Email: [Keith.Goldfeld\@nyulangone.org](mailto:Keith.Goldfeld@nyulangone.org){.email}
+
+##### Acknowledgments
+
+With thanks to Ting-Fang Lee, PhD, Hayley Belli, PhD, and Andrea Troxel, PhD, for notes and materials.
+
+## Initial setup
+
+```{webr-r}
+#| autorun: true
+#| echo: false
+library(data.table)
+library(ggplot2)
+library(patchwork)
+
+theme_set(
+  theme_bw(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold", size = 12),
+    axis.title = element_text(size = 12)
+  )
+)
+```
+
+## A note about `data.table`
+
+Throughout the course, we will use the `data.table` package to work with data in *R*.
+
+A `data.table` is also a data frame, but it provides a concise way to manipulate and summarize data.
+
+Much of the syntax follows the same basic structure:
+
+$$\large
+\texttt{DT[i,\ j,\ by]}$$
+
+where we can think of:
+
+- `i`: **which rows?**
+- `j`: **what do we want to do?**
+- `by`: **within which groups?**
+
+For example:
+
+```{webr-r}
+dt <- data.table(
+  group = c("A", "A", "B", "B"),
+  x = c(10, 14, 20, 24)
+)
+
+dt
+```
+
+```{webr-r}
+dt[, mean(x), by = group]
+```
+
+We will learn additional `data.table` syntax as we need it rather than learning it all at once.
+
+[Data Transformation with `data.table`: Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/master/datatable.pdf)
+
+## From a population to a sample to a population
+
+Suppose we want to answer a question:
+
+> **What is the average systolic blood pressure among adult women living in New York City?**
+
+- We start with a ***population***, the group we want to learn about.
+
+- In this case, the population is **all adult women living in New York City**.
+
+> The population is defined by the question we want to answer.
+
+- In principle, we could measure the systolic blood pressure of everyone in the population.
+
+- In practice, we can't.
+
+Instead, we measure blood pressure in a **sample** of women from the population.
+
+- Suppose we randomly select **100 women** and measure their systolic blood pressure.
+
+- What can those 100 measurements tell us about the larger population?
+
+### Population and sample
+
+The quantity we really want to know is the **population mean**:
+
+$$\large \mu = \text{mean systolic blood pressure in the population}$$
+
+But we don't observe $\mu$.
+
+Instead, we calculate the **sample mean**:
+
+$$\large \bar{x} = \text{mean systolic blood pressure in our sample}$$
+
+We use $\bar{x}$ to learn about $\mu$.
+
+### Imagine we have a population
+
+With real data, we never get to see the entire population.
+
+But with simulation, we can create a population where we **know the truth**.
+
+```{webr-r}
+set.seed(1203)
+
+population <- rnorm(2000000, mean = 125, sd = 18)
+
+mean(population)
+```
+
+### We can take a sample from that population
+
+```{webr-r}
+sample <- sample(population, size = 100)
+
+mean(sample)
+```
+
+<br>
+
+#### What did we see?
+
+Different samples from the **same population** gave us different sample means.
+
+> **Key idea:** A sample is a noisy reflection of the population.
+
+We use what we observe in the **sample** to learn about what we cannot observe in the **population**.
+
+## Describing our sample
+
+We now have systolic blood pressure measurements for **100 women**.
+
+What do our data look like?
+
+::: webr-plot
+```{webr-r}
+ggplot(data.table(sbp = sample), aes(x = sbp)) +
+  geom_histogram(bins = 50, color = "grey85", fill = "grey70") +
+  labs(
+    x = "Systolic blood pressure",
+    y = "Count"
+  )
+```
+:::
+
+#### How can we summarize these data?
+
+A graph shows us the entire distribution.
+
+But we often want a few numbers that summarize important features of the data.
+
+Two things we often want to describe are:
+
+- **Where are the observations centered?**
+
+- **How much do the observations vary?**
+
+### Where are the observations centered?
+
+Two common summaries are the **mean** and the **median**.
+
+The **sample mean** is the arithmetic average of the observations:
+
+$$\large
+\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_i$$
+
+The **median** is the value that divides the ordered observations in half.
+
+```{webr-r}
+mean(sample)
+median(sample)
+```
+
+### Do the mean and median always tell us the same thing?
+
+Let's change one observation in our sample:
+
+```{webr-r}
+sample_outlier <- sample
+sample_outlier[1] <- 500
+
+mean(sample_outlier)
+median(sample_outlier)
+```
+
+The **mean** uses the magnitude of every observation, so an extreme value can have a large effect.
+
+The **median** depends primarily on the ordering of the observations, so it is much less affected by extreme values.
+
+### How much do the observations vary?
+
+Knowing the center does not tell us everything about a distribution.
+
+Consider two sets of observations:
+
+```{webr-r}
+x1 <- c(98, 99, 100, 101, 102)
+x2 <- c(80, 90, 100, 110, 120)
+
+mean(x1)
+mean(x2)
+```
+
+Both have the same mean.
+
+But are these data really similar?
+
+### Measuring variability
+
+One way to describe variability is to look at how far each observation is from the mean:
+
+$$\large x_i - \bar{x}$$
+
+```{webr-r}
+x1
+x1 - mean(x1)
+
+x2
+x2 - mean(x2)
+```
+
+The observations in `x2` are much farther from their mean.
+
+### Variance
+
+If we simply add the deviations from the mean, positive and negative deviations cancel out.
+
+Instead, variance is based on the **squared deviations from the mean**.
+
+For a sample, the **variance** is:
+
+$$\large
+s^2 = \frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}$$
+
+```{webr-r}
+var(x1)
+var(x2)
+```
+
+### Why do we divide by $n-1$?
+
+When we calculate variability in a sample, we first compute the sample mean. But once the sample mean is fixed, the deviations from that mean must add up to zero.
+
+For example, if three observations have deviations:
+
+$$\large -2,\quad -1,\quad ?$$
+
+the final deviation must be:
+
+$$\large3$$
+
+so that the total is zero.
+
+Once we estimate the sample mean, only $n-1$ of the deviations are free to vary.
+
+We say that there are $n-1$ degrees of freedom for estimating the variability.
+
+This is why sample variance uses $n-1$ rather than $n$.
+
+### Standard deviation
+
+Variance is expressed in **squared units**.
+
+The **standard deviation** is the square root of the variance:
+
+$$\large
+s = \sqrt{\frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}}$$
+
+```{webr-r}
+sd(x1)
+sd(x2)
+```
+
+The standard deviation is expressed in the **same units as the original observations**.
+
+### Back to our blood pressure data
+
+```{webr-r}
+mean(sample)
+sd(sample)
+```
+
+The **mean** describes where the observed blood pressures are centered.
+
+The **standard deviation** describes how much the observed blood pressures vary around that center.
+
+### Another way to describe variability
+
+Just as the **median** is less affected by extreme observations than the mean, we can use a measure of variability that is less affected by extreme observations.
+
+The **interquartile range (IQR)** is the distance between the 25th and 75th percentiles:
+
+$$\large
+IQR = Q_{0.75} - Q_{0.25}$$
+
+It describes the spread of the **middle 50%** of the observations.
+
+```{webr-r}
+sd(sample)
+sd(sample_outlier)
+
+IQR(sample)
+IQR(sample_outlier)
+```
+
+The extreme observation has a large effect on the **standard deviation**, but relatively little effect on the **IQR**.
+
+## Probability distributions
+
+A **probability distribution** describes the values a variable could take and how likely those values are.
+
+We can think of a probability distribution as a **model for how data might arise**.
+
+Some variables take **continuous** values:
+
+- systolic blood pressure
+- height
+- cholesterol
+
+Other variables take **discrete** values:
+
+- number of patients who respond to treatment
+- number of hospital admissions
+- number of mutations in a DNA sequence
+
+Different probability distributions provide models for these different kinds of data.
+
+### A distribution we have already used
+
+Earlier, we created a population of systolic blood pressures using the function `rnorm()`:
+
+::: webr-plot
+```{webr-r}
+#| fig-height: 4
+
+set.seed(1203)
+population <- rnorm(2000000, mean = 125, sd = 18)
+
+ggplot(data.frame(sbp = population), aes(x = sbp)) +
+  geom_histogram(bins = 50, color = "grey85", fill = "grey70") +
+  labs(
+    x = "Systolic blood pressure",
+    y = "Count"
+  )
+```
+:::
+
+The values were generated from a **Normal distribution**.
+
+### The Normal distribution
+
+The Normal distribution is a continuous probability distribution described by two parameters:
+
+- $\mu$: the population mean
+
+- $\sigma$: the population standard deviation
+
+We write:
+
+$$\large
+X \sim N(\mu,\sigma^2)$$
+
+For our simulated population:
+
+$$\large
+X \sim N(125,18^2)$$
+
+Changing $\mu$ changes the **center** of the distribution.
+
+Changing $\sigma$ changes its **spread**.
+
+### The Normal density
+
+The histogram shows the values we generated from the Normal distribution.
+
+The **probability density function** describes the smooth curve underlying those values.
+
+::: webr-plot
+```{webr-r}
+#| fig-width: 6
+#| fig-height: 3
+
+x <- seq(0, 250, length.out = 500)
+
+mu <- 125 # 125, 90, 150
+sigma <- 18 # 18, 10, 30
+
+normal_density <- data.frame(
+  x = x,
+  density = dnorm(x, mean = mu, sd = sigma)
+)
+
+ggplot(normal_density, aes(x = x, y = density)) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "Systolic blood pressure",
+    y = "Density"
+  )
+```
+:::
+
+### The probability density function
+
+The smooth curve is described by this **probability density function (PDF)**:
+
+$$\large
+f(x) =
+\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left[-\frac{(x-\mu)^2}{2\sigma^2}\right]$$
+
+The PDF gives the **density** at each possible value of $x$.
+
+> For a continuous variable, the height of the curve is **not** a probability.
+
+Probability corresponds to **area under the curve**.
+
+The total area under the curve is 1.
+
+### Probabilities are areas
+
+Suppose we want to know the probability that systolic blood pressure is between 100 and 140:
+
+$$\large
+P(100 < X < 140)$$
+
+This probability is the **area under the Normal curve between 100 and 140**.
+
+::: webr-plot
+```{webr-r}
+ggplot(normal_density, aes(x = x, y = density)) +
+  geom_segment(
+    x = 100, xend = 100,
+    y = 0, yend = dnorm(100, mean = mu, sd = sigma),
+    linewidth =.2, color = "pink"
+  ) +
+  geom_segment(
+    x = 140, xend = 140,
+    y = 0, yend = dnorm(140, mean = mu, sd = sigma),
+    linewidth =.2, color = "pink"
+  ) +
+  geom_area(
+    data = subset(normal_density, x >= 100 & x <= 140),
+    fill = "grey90"
+  ) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "Systolic blood pressure",
+    y = "Density"
+  )
+```
+:::
+
+### How do we calculate that probability?
+
+To calculate the probability we are interested in, we use the **cumulative distribution function (CDF)**, which gives the probability of observing a value less than or equal to $x$:
+
+$$\large
+F(x) = P(X \le x)$$
+
+$P(X \le 140)$ is the entire area to the left of 140:
+
+::: webr-plot
+```{webr-r}
+ggplot(normal_density, aes(x = x, y = density)) +
+  geom_segment(
+    x = 140, xend = 140,
+    y = 0, yend = dnorm(140, mean = mu, sd = sigma),
+    linewidth = .2, color = "pink"
+  ) +
+  geom_area(
+    data = subset(normal_density, x <= 140),
+    fill = "grey90"
+  ) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "Systolic blood pressure",
+    y = "Density"
+  )
+```
+:::
+
+And $P(X \le 100)$ is the area to the left of 100 (in darker grey):
+
+::: webr-plot
+```{webr-r}
+ggplot(normal_density, aes(x = x, y = density)) +
+  geom_segment(
+    x = 140, xend = 140,
+    y = 0, yend = dnorm(140, mean = mu, sd = sigma),
+    linewidth = .2, color = "pink"
+  ) +
+  geom_area(
+    data = subset(normal_density, x <= 140),
+    fill = "grey90"
+  ) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "Systolic blood pressure",
+    y = "Density"
+  ) +
+    geom_segment(
+    x = 100, xend = 100,
+    y = 0, yend = dnorm(100, mean = mu, sd = sigma),
+    linewidth = .2, color = "pink"
+  ) +
+  geom_area(
+    data = subset(normal_density, x <= 100),
+    fill = "grey70"
+  )
+```
+:::
+
+Subtracting the second area from the first leaves the area between 100 and 140:
+
+$$\large
+P(100 < X < 140)
+=
+P(X \le 140) - P(X \le 100)$$
+
+For the Normal distribution, `pnorm()` gives the cumulative probability to the left of a value:
+
+```{webr-r}
+pnorm(140, mean = mu, sd = sigma)
+pnorm(100, mean = mu, sd = sigma)
+```
+
+Therefore, the difference in the CDFs gives us the probability we are calculating:
+
+```{webr-r}
+pnorm(140, mean = mu, sd = sigma) -
+  pnorm(100, mean = mu, sd = sigma)
+```
+
+> `pnorm()` gives cumulative area to the left, so subtracting two cumulative probabilities gives the probability over an interval.
+
+### Comparing values from different distributions
+
+Suppose a woman has:
+
+- systolic blood pressure = **140 mmHg**
+- diastolic blood pressure = **85 mmHg**
+
+In our population, suppose:
+
+|              | Mean | Standard deviation |
+|--------------|-----:|-------------------:|
+| Systolic BP  |  125 |                 18 |
+| Diastolic BP |   75 |                 10 |
+
+Which blood pressure measurement is **farther from what is typical in the population**?
+
+<br>
+
+We could calculate the distance from each population mean:
+
+$$\large
+140 - 125 = 15$$
+
+$$\large
+85 - 75 = 10$$
+
+But these two distributions have different amounts of variability.
+
+> **How can we compare where the two measurements fall relative to their distributions?**
+
+### Measuring distance in standard deviations
+
+Instead of measuring distance from the mean in mmHg, we can measure it in **standard deviations**.
+
+For systolic blood pressure:
+
+$$\large
+\frac{140-125}{18} = 0.83$$
+
+The systolic blood pressure is **0.83 standard deviations above its population mean**.
+
+For diastolic blood pressure:
+
+$$\large
+\frac{85-75}{10} = 1.00$$
+
+The diastolic blood pressure is **1 standard deviation above its population mean**.
+
+<br>
+
+Although the systolic blood pressure is farther from its mean in **mmHg**, the diastolic blood pressure is farther from its mean in **standard deviation units**.
+
+> Measuring distance in standard deviations puts the two measurements on a common scale.
+
+### The z-score
+
+This standardized distance from the mean is called a **z-score**:
+
+$$\large
+z = \frac{x-\mu}{\sigma}$$
+
+A z-score tells us where an observation lies relative to its distribution:
+
+- $z = 0$: at the mean
+- $z = 1$: one standard deviation above the mean
+- $z = -1$: one standard deviation below the mean
+- $z = 2$: two standard deviations above the mean
+
+### What if we standardize the entire distribution?
+
+We calculated a z-score for a single observation.
+
+But we could transform **every value** in a Normal distribution in the same way:
+
+$$\large
+Z = \frac{X-\mu}{\sigma}$$
+
+After standardizing:
+
+- the mean becomes **0**
+- the standard deviation becomes **1**
+
+So if:
+
+$$\large
+X \sim N(\mu,\sigma^2)$$
+
+then:
+
+$$\large
+Z \sim N(0,1)$$
+
+This is called the **standard Normal distribution**.
+
+*If we standardize our population SBP data, we get*
+
+```{webr-r}
+z_sbp <- (population - 125) / 18
+
+round(mean(z_sbp), 3)
+round(sd(z_sbp), 3)
+```
+
+### Why is the standard Normal useful?
+
+Standardization puts different Normal distributions onto the **same scale**.
+
+On this scale:
+
+- 0 is the population mean
+- 1 is one standard deviation above the mean
+- -1 is one standard deviation below the mean
+
+Our two blood pressure measurements were:
+
+$$\large
+z_{\text{SBP}} = 0.83$$
+
+$$\large
+z_{\text{DBP}} = 1.00$$
+
+So although the systolic blood pressure was farther from its mean in **mmHg**, the diastolic blood pressure was farther from its mean **relative to the variability in its distribution**.
+
+### The standard Normal distribution
+
+Let's look at the density of the standard Normal distribution.
+
+::: webr-plot
+```{webr-r}
+z <- seq(-4, 4, length.out = 500)
+
+standard_normal <- data.frame(
+  z = z,
+  density = dnorm(z)
+)
+
+ggplot(standard_normal, aes(x = z, y = density)) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "z-score",
+    y = "Density"
+  )
+```
+:::
+
+The horizontal axis now measures **distance from the mean in standard deviations**.
+
+- $z = 0$ is the mean
+- $z = 1$ is one standard deviation above the mean
+- $z = -1$ is one standard deviation below the mean
+
+> After standardization, every Normal distribution has the same location and shape: a mean of 0 and a standard deviation of 1.
+
+### How much of a Normal distribution is close to the mean?
+
+Because the standard Normal is measured in standard deviation units, we can ask:
+
+> **What proportion of a Normal distribution lies within one or two standard deviations of its mean?**
+
+Within one standard deviation means:
+
+$$\large
+P(-1 < Z < 1)$$
+
+We can calculate this using `pnorm()`:
+
+```{webr-r}
+pnorm(1) - pnorm(-1)
+```
+
+So about **68%** of a Normal distribution lies within one standard deviation of its mean.
+
+<br>
+
+Within two standard deviations means:
+
+$$\large
+P(-2 < Z < 2)$$
+
+```{webr-r}
+pnorm(2) - pnorm(-2)
+```
+
+So about **95%** of a Normal distribution lies within two standard deviations of its mean.
+
+::: webr-plot
+```{webr-r}
+ggplot(standard_normal, aes(x = z, y = density)) +
+  geom_segment(
+    x = -2, xend = -2,
+    y = 0, yend = dnorm(-2),
+    linewidth = .2, color = "pink"
+  ) +
+  geom_segment(
+    x = 2, xend = 2,
+    y = 0, yend = dnorm(2),
+    linewidth = .2, color = "pink"
+  ) +
+  geom_area(
+    data = subset(standard_normal, z >= -2 & z <= 2),
+    fill = "grey90"
+  ) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "z-score",
+    y = "Density"
+  )
+```
+:::
+
+> About **95% of observations from a Normal distribution fall within two standard deviations of the mean**.
+
+### Working with the Normal distribution in R
+
+We've now used several R functions for working with Normal distributions:
+
+| Function  | What it does                                                  |
+|-------------------|-----------------------------------------------------|
+| `dnorm()` | Gives the **density** at a value                              |
+| `pnorm()` | Gives the **cumulative probability** to the left of a value   |
+| `qnorm()` | Gives the **value** corresponding to a cumulative probability |
+| `rnorm()` | Generates **random observations** from a Normal distribution  |
+
+We've already used `dnorm()`, `pnorm()`, and `rnorm()`.
+
+`qnorm()` answers the reverse of the question answered by `pnorm()`.
+
+For example:
+
+```{webr-r}
+qnorm(0.95)
+```
+
+This gives the value with **95% of the standard Normal distribution below it**.
+
+### Where is the middle 95%?
+
+We just saw that approximately 95% of a Normal distribution lies between -2 and 2 standard deviations.
+
+But what values contain **exactly 95%** of the standard Normal distribution?
+
+If 95% is in the middle, the remaining 5% is divided equally between the two tails:
+
+- 2.5% below the lower boundary
+- 2.5% above the upper boundary
+
+So the boundaries are the 2.5th and 97.5th percentiles:
+
+```{webr-r}
+qnorm(0.025)
+qnorm(0.975)
+```
+
+The middle 95% of the standard Normal distribution therefore lies approximately between:
+
+$$\large
+-1.96 < Z < 1.96$$
+
+> The value **1.96** will appear again when we begin constructing confidence intervals.
+
+### Original scale or standardized scale?
+
+Standardization helps us understand where a value lies relative to its distribution.
+
+For example, a systolic blood pressure of 100 in our population has z-score:
+
+```{webr-r}
+z_100 <- (100 - 125) / 18
+z_100
+```
+
+We can calculate the proportion of the population below this value using the z-score:
+
+```{webr-r}
+pnorm(z_100)
+```
+
+But R can also calculate the probability directly using the original Normal distribution:
+
+```{webr-r}
+pnorm(100, mean = 125, sd = 18)
+```
+
+The answers are the same.
+
+> **Standardization changes the scale, not where an observation lies within the distribution.**
+
+## The Binomial distribution
+
+So far, we have used the Normal distribution to describe a **continuous** variable: systolic blood pressure.
+
+But suppose instead we are studying an intervention designed to improve hypertension control.
+
+For each patient, there are two possible outcomes:
+
+- hypertension is **controlled**
+- hypertension is **not controlled**
+
+Suppose the probability that a patient's hypertension is controlled is 0.60.
+
+If we treat **10 patients**:
+
+> **How many of the 10 patients will have controlled hypertension?**
+
+### From individual outcomes to a count
+
+For each patient, we can represent hypertension control as:
+
+$$\large
+Y_i =
+\begin{cases}
+1 & \text{if hypertension is controlled} \\
+0 & \text{if hypertension is not controlled}
+\end{cases}$$
+
+with:
+
+$$\large
+P(Y_i = 1) = 0.60$$
+
+For 10 patients, the total number with controlled hypertension is:
+
+$$\large
+X = Y_1 + Y_2 + \cdots + Y_{10}$$
+
+The possible values of $X$ are:
+
+$$\large
+0,1,2,\ldots,10$$
+
+Unlike systolic blood pressure, $X$ is a **discrete random variable**.
+
+### What probabilities are possible?
+
+We know the possible values of $X$, but those values are not equally likely.
+
+> **What is the probability of observing each possible number of patients with controlled hypertension?**
+
+In R, `dbinom()` gives the probability of observing a particular number of successes:
+
+```{webr-r}
+x <- 0:10
+
+binomial_prob <- data.frame(
+  x = x,
+  probability = dbinom(x, size = 10, prob = 0.60)
+)
+
+binomial_prob
+```
+
+<br>
+
+We can plot these probabilities:
+
+::: webr-plot
+```{webr-r}
+ggplot(binomial_prob, aes(x = x, y = probability)) +
+  geom_col(width = .8, fill = "grey80") +
+  scale_x_continuous(breaks = 0:10) +
+  labs(
+    x = "Number with controlled hypertension",
+    y = "Probability"
+  )
+```
+:::
+
+This is a **Binomial distribution**.
+
+Unlike the Normal distribution, which describes probabilities using **areas under a continuous density curve**, the Binomial distribution assigns a probability to each possible count.
+
+### Describing a Binomial distribution
+
+The Binomial distribution describes the **number of times an outcome occurs** across a fixed number of observations.
+
+It is determined by two parameters:
+
+- $n$: the number of observations
+- $p$: the probability of the outcome for each observation
+
+We also assume that:
+
+- the probability $p$ is the same for each observation
+- outcomes are independent across observations
+
+In our example:
+
+$$\large
+n=10, \qquad p=0.60$$
+
+so:
+
+$$\large
+X \sim \text{Binomial}(10,0.60)$$
+
+> The parameters $n$ and $p$ determine the probabilities of the possible values of $X$.
+
+### What is the probability that exactly 6 patients have controlled hypertension?
+
+We can see from the distribution that 6 patients is one possible outcome.
+
+What is its probability?
+
+In R:
+
+```{webr-r}
+dbinom(6, size = 10, prob = 0.60)
+```
+
+So:
+
+$$\large
+P(X=6) \approx 0.25$$
+
+There is about a **25% probability that exactly 6 of the 10 patients will have controlled hypertension**.
+
+### Where do these probabilities come from?
+
+We used `dbinom()` to calculate the probability of each possible number of patients with controlled hypertension.
+
+For example:
+
+```{webr-r}
+dbinom(6, size = 10, prob = 0.60)
+```
+
+gives:
+
+$$\large
+P(X=6) \approx 0.25$$
+
+But what is `dbinom()` actually calculating?
+
+### The Binomial probability mass function
+
+For a Binomial random variable, the probability of observing exactly $x$ successes is:
+
+$$\large
+P(X=x)={n \choose x}p^x(1-p)^{n-x}$$
+
+For exactly 6 of our 10 patients with controlled hypertension:
+
+$$\large
+P(X=6)={10 \choose 6}(0.60)^6(0.40)^4$$
+
+If we knew **which 6 patients** had controlled hypertension, the probability of that particular pattern would be:
+
+$$\large
+(0.60)^6(0.40)^4$$
+
+But we don't care **which** 6 patients have controlled hypertension.
+
+The term ${10 \choose 6}$ counts the number of ways to choose 6 patients from 10 — in this case, **210 different ways**.
+
+So the Binomial probability combines:
+
+$$\large
+\underbrace{{n \choose x}}_{\text{number of ways}}
+\;
+\underbrace{p^x(1-p)^{n-x}}_{\text{probability of each way}}$$
+
+### Probabilities across all possible outcomes
+
+- For a continuous distribution, we calculate probabilities over **areas**.
+
+- For a discrete distribution, individual values can have positive **probabilities**.
+
+But in either case, the probabilities across all possible outcomes must account for **everything that could happen**.
+
+- For the Normal distribution, the **total area under the density curve is 1**.
+
+- For the Binomial distribution, the **probabilities of all possible values sum to 1**. In this case:
+
+$$\large
+\sum_{x=0}^{10}
+{10 \choose x}
+p^x(1-p)^{10-x}
+=1$$
+
+In other words, one of the possible outcomes — 0, 1, 2, ..., or 10 patients with controlled hypertension — **has to occur**.
+
+### What happens when we change the probability?
+
+The Binomial distribution depends on $n$ and $p$.
+
+Let's see what happens when we change them.
+
+::: webr-plot
+```{webr-r}
+n <- 10
+p <- 0.6
+
+x <- 0:n
+
+binomial_prob <- data.frame(
+  x = x,
+  probability = dbinom(x, size = n, prob = p)
+)
+
+ggplot(binomial_prob, aes(x = x, y = probability)) +
+  geom_col(width = .8, fill = "grey80") +
+  scale_x_continuous(breaks = 0:n) +
+  labs(
+    title = paste0("Binomial(n = ", n, ", p = ", p, ")"),
+    x = "Number with controlled hypertension",
+    y = "Probability"
+  )
+```
+:::
+
+### Center and variability of a Binomial distribution
+
+Just like any distribution, a Binomial distribution has a **mean** and **standard deviation**.
+
+For $X \sim \text{Binomial}(n,p)$:
+
+$$\large
+\mu = np$$
+
+and
+
+$$\large
+\sigma = \sqrt{np(1-p)}$$
+
+For our example, with $n=10$ and $p=0.60$:
+
+$$\large
+\mu = 10(0.60)=6$$
+
+$$\large
+\sigma = \sqrt{10(0.60)(0.40)} \approx 1.55$$
+
+So the distribution is centered at **6 patients**, with a standard deviation of about **1.55 patients**.
+
+### Probabilities over several possible outcomes
+
+Suppose we want to know the probability that **at least 6 of the 10 patients** have controlled hypertension:
+
+$$\large
+P(X \ge 6)$$
+
+This includes several possible outcomes:
+
+$$\large
+P(X \ge 6)
+=
+P(X=6)+P(X=7)+\cdots+P(X=10)$$
+
+Rather than adding these probabilities individually, we can use the Binomial cumulative distribution function.
+
+Just as `pnorm()` gives $P(X \le x)$ for a Normal distribution, `pbinom()` gives $P(X \le x)$ for a Binomial distribution.
+
+Therefore:
+
+$$\large
+P(X \ge 6)=1-P(X\le5)$$
+
+```{webr-r}
+1 - pbinom(5, size = 10, prob = 0.60)
+```
+
+So there is about a **63% probability that at least 6 of the 10 patients will have controlled hypertension**.
+
+## The Poisson distribution
+
+Suppose patients experience an average of **2 hospital admissions per year**.
+
+If $X$ is the number of admissions during one year, we might model:
+
+$$\large
+X \sim \text{Poisson}(\lambda=2)$$
+
+For a Poisson distribution:
+
+$$\large
+E(X)=\lambda
+\qquad\text{and}\qquad
+Var(X)=\lambda$$
+
+so:
+
+$$\large
+SD(X)=\sqrt{\lambda}$$
+
+Unlike the Binomial distribution, there is no fixed maximum number of events:
+
+$$\large
+X=0,1,2,3,\ldots$$
+
+### What does a Poisson distribution look like?
+
+::: webr-plot
+```{webr-r}
+lambda <- 8 # 2, 5, 8 
+
+x <- 0:20
+
+poisson_prob <- data.frame(
+  x = x,
+  probability = dpois(x, lambda = lambda)
+)
+
+ggplot(poisson_prob, aes(x = x, y = probability)) +
+  geom_col(width = .8, fill = "grey80") +
+  scale_x_continuous(breaks = x, limits = c(-0.5, 20.5)) +
+  labs(
+    title = paste0("Poisson(lambda = ", lambda, ")"),
+    x = "Number of hospital admissions",
+    y = "Probability"
+  ) 
+```
+:::
+
+The single parameter $\lambda$ determines both the **center** and the **variability** of the distribution.
+
+### Counting events over time
+
+In the scenario where patients experience an average of **2 hospital admissions per year** and $\lambda = 2$, the probability of observing exactly $x$ events is:
+
+$$\large
+P(X=x)=\frac{e^{-\lambda}\lambda^x}{x!},
+\qquad x=0,1,2,\ldots$$
+
+As with the Binomial distribution, individual counts have positive probabilities.
+
+```{webr-r}
+dpois(0, lambda = 2)
+dpois(1, lambda = 2)
+dpois(2, lambda = 2)
+dpois(3, lambda = 2)
+dpois(8, lambda = 2)
+```
+
+### Rates and exposure
+
+Often the expected number of events depends on the amount of **time or exposure**.
+
+If the event rate is $r$ and the amount of exposure is $t$, then:
+
+$$\large
+\lambda = rt$$
+
+For example, if hospital admissions occur at an average rate of 2 per year, then over 3 years:
+
+$$\large
+\lambda = 2(3)=6$$
+
+and:
+
+$$\large
+X \sim \text{Poisson}(6)$$
+
+> The expected number of events depends on both the **event rate** and the **amount of exposure**.
+
+### Working with the Poisson distribution in R
+
+The R functions work just as they did for the Normal and Binomial distributions:
+
+| Function  | What it does                                    |
+|-----------|-------------------------------------------------|
+| `dpois()` | Probability of exactly $x$ events               |
+| `ppois()` | Probability of $x$ or fewer events              |
+| `qpois()` | Count corresponding to a cumulative probability |
+| `rpois()` | Generates random counts                         |
+
+For example, if $X \sim \text{Poisson}(2)$:
+
+```{webr-r}
+# Probability of exactly 3 admissions
+dpois(3, lambda = 2)
+
+# Probability of 3 or fewer admissions
+ppois(3, lambda = 2)
+```
+
+## Other distributions
+
+These three distributions are just three of many (albeit three of the most important).
+
+Others include the *uniform*, *t*, *chi-square*, *exponential*, and *beta* distributions.
+
+They all have the same family of functions in *R* (e.g., `dunif()`, `pt()`, etc.).
+
+In the future, if you need to understand or explore a new distribution, these are useful resources:
+
+- [Probability distributions in R — GeeksforGeeks](https://www.geeksforgeeks.org/r-language/probability-distributions-in-r/){target="_blank"}, particularly useful for seeing how distributions are implemented in *R*
+- [NIST Probability Distributions](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366.htm){target="_blank"}, a more detailed statistical reference
+
+## Measures of association
+
+Suppose we measure two variables on the same individuals.
+
+For example:
+
+- age and systolic blood pressure
+- physical activity and resting heart rate
+- height and weight
+
+> **How can we describe the way two variables vary together?**
+
+A natural place to start is simply to look at the data.
+
+::: webr-plot
+```{webr-r}
+set.seed(1203)
+
+x <- rnorm(100)
+y <- 0.7 * x + rnorm(100, sd = .7)
+
+ggplot(data.frame(x, y), aes(x, y)) +
+  geom_point(size = 2) +
+  labs(
+    x = "X",
+    y = "Y"
+  )
+```
+:::
+
+When larger values of $X$ tend to occur with larger values of $Y$, we say the variables have a **positive association**.
+
+### Measuring how two variables vary together
+
+For each observation, we can measure how far each variable is from its mean:
+
+$$\large
+x_i-\bar{x}
+\qquad\text{and}\qquad
+y_i-\bar{y}$$
+
+We want to know whether these deviations tend to go in the **same direction** or in **opposite directions**.
+
+Multiplying the two deviations gives us exactly that:
+
+- both above their means: $(+)(+) = +$
+- both below their means: $(-)(-) = +$
+- one above and one below: $(+)(-) = -$
+
+So the product
+
+$$\large
+(x_i-\bar{x})(y_i-\bar{y})$$
+
+tells us whether an observation makes a **positive or negative contribution to the covariance**.
+
+### Revisiting the plot
+
+Let's plot these deviations from the means.
+
+::: webr-plot
+```{webr-r}
+x_dev <- x - mean(x)
+y_dev <- y - mean(y)
+
+ggplot(data.frame(x_dev, y_dev), aes(x_dev, y_dev)) +
+  geom_hline(yintercept = 0, linewidth = .4) +
+  geom_vline(xintercept = 0, linewidth = .4) +
+  geom_point(size = 2) +
+  labs(
+    x = expression(x - bar(x)),
+    y = expression(y - bar(y))
+  )
+```
+:::
+
+- Observations in the **upper-right and lower-left** quadrants contribute positively to the covariance.
+
+- Observations in the other two quadrants contribute negatively.
+
+- In this case it appears that the positive contributions outweigh the negative ones, so we should expect the covariance to be positive.
+
+### Covariance
+
+To summarize these contributions across all observations, we calculate the **covariance**:
+
+$$\large
+s_{XY}
+=
+\frac{1}{n-1}
+\sum_{i=1}^{n}
+(x_i-\bar{x})(y_i-\bar{y})$$
+
+As with sample variance, the deviations used to calculate covariance have $n-1$ degrees of freedom.
+
+- Positive covariance: the variables tend to vary in the **same direction**.
+- Negative covariance: the variables tend to vary in **opposite directions**.
+- Covariance near zero: little tendency for the variables to vary together **linearly**.
+
+For our data:
+
+```{webr-r}
+cov(x, y)
+```
+
+As we expected, the covariance is positive.
+
+### But what does the magnitude of covariance tell us?
+
+Covariance tells us whether two variables tend to vary in the **same or opposite directions**.
+
+But does its magnitude tell us how **strongly** they are associated?
+
+Let's look at three examples.
+
+```{webr-r}
+x <- 1:10
+
+y1 <- c(
+  2.1, 3.4, 4.7, 5.9, 7.1,
+  9.1, 12.4, 12.8, 13.8, 18.1
+)
+
+y2 <- c(
+  16.4,  7.7, 10.2, 21.9, 34.3,
+  18.1, 13.3,  5.5,  5.5, 56.4
+)
+
+y3 <- c(
+  16.0,  25.8,  35.7,  44.8,  54.0,
+  69.2,  94.2,  97.3, 104.9, 137.6
+)
+```
+
+::: webr-plot
+```{webr-r}
+#| fig-height: 2
+#| fig-width: 6
+plot_association <- function(x, y, label) {
+  
+  data.frame(x, y) |>
+    ggplot(aes(x = x, y = y)) +
+    geom_point(size = 1, color = "darkgreen") +
+    labs(
+      title = label,
+      x = "x",
+      y = "y"
+    ) +
+    theme(
+      plot.title = element_text(size = 8),
+      axis.text = element_text(size = 6),
+      axis.title = element_text(size = 9)
+    )
+}
+
+p1 <- plot_association(x, y1, "y1")
+p2 <- plot_association(x, y2, "y2")
+p3 <- plot_association(x, y3, "y3")
+
+p1 + p2 + p3
+```
+:::
+
+### Comparing the covariances
+
+Now let's calculate the covariance for each relationship:
+
+```{webr-r}
+cov(x, y1)
+cov(x, y2)
+cov(x, y3)
+```
+
+The first two have almost exactly the **same covariance**, despite looking very different.
+
+And the first and third have very different covariances, despite showing similarly strong linear relationships.
+
+> The magnitude of covariance depends on the **scale and variability of the variables**, so it is difficult to use covariance itself to describe the strength of an association.
+
+### How can we remove the effect of scale?
+
+The problem with covariance is that the deviations are measured in the **original units** of $X$ and $Y$.
+
+But earlier we saw how to express a deviation in **standard deviation units**:
+
+$$\large
+z_{Xi}=\frac{x_i-\bar{x}}{s_X}
+\qquad\text{and}\qquad
+z_{Yi}=\frac{y_i-\bar{y}}{s_Y}$$
+
+If we multiply these standardized deviations and combine them across observations, we get the **correlation**:
+
+$$\large
+r
+=
+\frac{1}{n-1}
+\sum_{i=1}^n z_{Xi}z_{Yi}
+=
+\frac{s_{XY}}{s_Xs_Y}$$
+
+> Correlation describes how two variables vary together after expressing both in standard deviation units.
+
+### Revisiting the three data sets: comparing correlation
+
+```{webr-r}
+#| fig-height: 2
+#| fig-width: 6
+p1 + p2 + p3
+```
+
+```{webr-r}
+cor(x, y1)
+cor(x, y2)
+cor(x, y3)
+```
+
+The correlations correspond much more closely to what we saw in the scatterplots.
+
+- $r > 0$: positive linear association
+- $r < 0$: negative linear association
+- $r$ near $0$: little linear association
+- $r$ closer to $-1$ or $1$: stronger linear association
+
+Correlation always lies between $-1$ and $1$.
+
+### What does correlation look like?
+
+::: webr-plot
+```{webr-r}
+
+generate_correlated <- function(n = 150, rho = 0.8) { 
+
+  x <- rnorm(n)
+  y <- rho * x + sqrt(1 - rho^2) * rnorm(n)
+
+  data.table(x, y)
+}
+
+plot_correlation <- function(dat) {
+
+  r <- cor(dat$x, dat$y)
+  lims <- max(abs(c(dat$x, dat$y)))
+
+  ggplot(dat, aes(x, y)) +
+    geom_point(size = 0.3) +
+    labs(
+      title = sprintf("Correlation = %.2f", r)
+    ) +
+    coord_equal(
+      xlim = c(-lims, lims),
+      ylim = c(-lims, lims)
+    ) +
+    theme(
+      plot.title = element_text(hjust = .5, size = 12)
+    )
+}
+plot_correlation( generate_correlated(n = 500, rho = -0.7) ) # -0.7, 0, 0.7
+```
+:::
+
+### Does zero correlation mean no relationship?
+
+Pearson correlation measures **linear association**.
+
+Consider a different relationship between $X$ and $Y$:
+
+::: webr-plot
+```{webr-r}
+
+set.seed(1234)
+
+n <- 200
+
+x_quad <- runif(n, -2, 2)
+y_quad <- x_quad^2 + rnorm(n, sd = 0.15)
+
+ggplot(data.table(x_quad, y_quad), aes(x_quad, y_quad)) +
+  geom_point(size = 2, alpha = 0.7) +
+  labs(
+    x = "x",
+    y = expression(x^2 + epsilon)
+  )
+```
+:::
+
+The relationship between $X$ and $Y$ is clear, but it is not linear.
+
+```{webr-r}
+cor(x_quad, y_quad)
+```
+
+The correlation is close to zero.
+
+> A correlation near zero does not mean there is **no relationship**. It means there is little **linear relationship**.
+
+### Zero correlation and independence are not the same thing
+
+Two variables are **independent** if knowing the value of one provides no information about the other.
+
+If two variables are independent, their covariance and correlation are zero.
+
+But the reverse is not necessarily true:
+
+$$\large
+\text{independence}
+\quad\Longrightarrow\quad
+\text{zero correlation}$$
+
+$$\large
+\text{zero correlation}
+\quad\text{does not imply}\quad
+\text{independence}$$
+
+In our example, $X$ and $Y$ have correlation close to zero, but they are clearly **not independent**: knowing $X$ tells us a great deal about $Y$.
+
+### What if the relationship is not linear?
+
+Pearson correlation describes the strength of a **linear relationship**.
+
+But two variables can move consistently together without having a linear relationship.
+
+For example:
+
+::: webr-plot
+```{webr-r}
+set.seed(1234)
+
+x_mono <- 1:100
+y_mono <- exp(x_mono / 25) + rnorm(100, 0, 1)
+
+ggplot(data.table(x_mono, y_mono), aes(x_mono, y_mono)) +
+  geom_point(size = 1.5) +
+  labs(
+    x = "x",
+    y = expression(e^{x/25} + epsilon)
+  )
+```
+:::
+
+### Spearman correlation
+
+**Pearson correlation** is calculated using the observed values of $X$ and $Y$.
+
+**Spearman correlation** is calculated after replacing the values with their **ranks**.
+
+```{webr-r}
+round(cor(x_mono, y_mono, method = "pearson"), 2)
+round(cor(x_mono, y_mono, method = "spearman"), 2)
+```
+
+Because Spearman correlation is based on ranks, it measures how consistently two variables move in the **same or opposite direction**, rather than how closely they follow a straight line.
+
+- **Pearson:** linear association
+- **Spearman:** monotonic association
+
+Spearman correlation is also useful for variables that are naturally represented by **ranks or ordered categories**.
+
+### Not every nonlinear relationship is monotonic
+
+Recall our earlier quadratic example:
+
+```{webr-r}
+cor(x_quad, y_quad, method = "pearson")
+cor(x_quad, y_quad, method = "spearman")
+```
+
+Both correlations are close to zero.
+
+The variables are strongly related, but the relationship is neither **linear** nor **monotonic**.
+
+> Correlation — whether Pearson or Spearman — does not capture every kind of relationship between two variables.
+
+## Week #5 Homework is on Brightspace
+
+- Due Tuesday, October 13th, at 11am
+- Office hours via email if you have questions: Keith.Goldfeld\@nyulangone.org
