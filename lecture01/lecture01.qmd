@@ -160,7 +160,9 @@ We now have systolic blood pressure measurements for **100 women**.
 What do our data look like?
 
 ::: webr-plot
+
 ```{webr-r}
+#| fig-height: 4
 ggplot(data.table(sbp = sample), aes(x = sbp)) +
   geom_histogram(bins = 50, color = "grey85", fill = "grey70") +
   labs(
