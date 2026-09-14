@@ -17,7 +17,7 @@ webr:
 
 download.file(
   "https://teaching.rdatagen.net/lecture01/data/dd.csv",
-  "dd.csv"
+  "local_dd.csv"
 )
 ```
 
