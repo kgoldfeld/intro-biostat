@@ -12,13 +12,17 @@ webr:
 
 ## TEST
 
+
+
 ```{webr-r}
 #| context: setup
 
 download.file(
   "https://teaching.rdatagen.net/lecture01/data/dd.csv",
-  "local_dd.csv"
+  "dd.csv"
 )
+
+# file.exists("dd.csv")
 ```
 
 ```{webr-r}
