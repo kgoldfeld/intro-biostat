@@ -13,8 +13,7 @@ webr:
 ## TEST
 
 ```{webr-r}
-#| autorun: true
-#| echo: false
+#| context: setup
 
 download.file(
   "https://teaching.rdatagen.net/lecture01/data/dd.csv",
