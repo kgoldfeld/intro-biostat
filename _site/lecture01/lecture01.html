@@ -369,7 +369,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dt <- data.table(\n  group = c(\"A\", \"A\", \"B\", \"B\"),\n  x = c(10, 14, 20, 24)\n)\n\ndt","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dt[, mean(x), by = group]","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\n\npopulation <- rnorm(2000000, mean = 125, sd = 18)\n\nmean(population)","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sample <- sample(population, size = 100)\n\nmean(sample)","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data.table(sbp = sample), aes(x = sbp)) +\n  geom_histogram(bins = 50, color = \"grey85\", fill = \"grey70\") +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Count\"\n  )","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"4","fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sample)\nmedian(sample)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sample_outlier <- sample\nsample_outlier[1] <- 500\n\nmean(sample_outlier)\nmedian(sample_outlier)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x1 <- c(98, 99, 100, 101, 102)\nx2 <- c(80, 90, 100, 110, 120)\n\nmean(x1)\nmean(x2)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x1\nx1 - mean(x1)\n\nx2\nx2 - mean(x2)","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"var(x1)\nvar(x2)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sd(x1)\nsd(x2)","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sample)\nsd(sample)","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sd(sample)\nsd(sample_outlier)\n\nIQR(sample)\nIQR(sample_outlier)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\npopulation <- rnorm(2000000, mean = 125, sd = 18)\n\nggplot(data.frame(sbp = population), aes(x = sbp)) +\n  geom_histogram(bins = 50, color = \"grey85\", fill = \"grey70\") +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Count\"\n  )","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"4","fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- seq(0, 250, length.out = 500)\n\nmu <- 125 # 125, 90, 150\nsigma <- 18 # 18, 10, 30\n\nnormal_density <- data.frame(\n  x = x,\n  density = dnorm(x, mean = mu, sd = sigma)\n)\n\nggplot(normal_density, aes(x = x, y = density)) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"3","fig-width":"6","label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 100, xend = 100,\n    y = 0, yend = dnorm(100, mean = mu, sd = sigma),\n    linewidth =.2, color = \"pink\"\n  ) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth =.2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x >= 100 & x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  ) +\n    geom_segment(\n    x = 100, xend = 100,\n    y = 0, yend = dnorm(100, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 100),\n    fill = \"grey70\"\n  )","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(140, mean = mu, sd = sigma)\npnorm(100, mean = mu, sd = sigma)","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(140, mean = mu, sd = sigma) -\n  pnorm(100, mean = mu, sd = sigma)","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z_sbp <- (population - 125) / 18\n\nround(mean(z_sbp), 3)\nround(sd(z_sbp), 3)","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z <- seq(-4, 4, length.out = 500)\n\nstandard_normal <- data.frame(\n  z = z,\n  density = dnorm(z)\n)\n\nggplot(standard_normal, aes(x = z, y = density)) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"z-score\",\n    y = \"Density\"\n  )","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(1) - pnorm(-1)","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(2) - pnorm(-2)","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(standard_normal, aes(x = z, y = density)) +\n  geom_segment(\n    x = -2, xend = -2,\n    y = 0, yend = dnorm(-2),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_segment(\n    x = 2, xend = 2,\n    y = 0, yend = dnorm(2),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(standard_normal, z >= -2 & z <= 2),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"z-score\",\n    y = \"Density\"\n  )","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"qnorm(0.95)","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"qnorm(0.025)\nqnorm(0.975)","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z_100 <- (100 - 125) / 18\nz_100","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(z_100)","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(100, mean = 125, sd = 18)","id":31,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- 0:10\n\nbinomial_prob <- data.frame(\n  x = x,\n  probability = dbinom(x, size = 10, prob = 0.60)\n)\n\nbinomial_prob","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(binomial_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = 0:10) +\n  labs(\n    x = \"Number with controlled hypertension\",\n    y = \"Probability\"\n  )","id":33,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dbinom(6, size = 10, prob = 0.60)","id":34,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dbinom(6, size = 10, prob = 0.60)","id":35,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"n <- 10\np <- 0.6\n\nx <- 0:n\n\nbinomial_prob <- data.frame(\n  x = x,\n  probability = dbinom(x, size = n, prob = p)\n)\n\nggplot(binomial_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = 0:n) +\n  labs(\n    title = paste0(\"Binomial(n = \", n, \", p = \", p, \")\"),\n    x = \"Number with controlled hypertension\",\n    y = \"Probability\"\n  )","id":36,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-36","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"1 - pbinom(5, size = 10, prob = 0.60)","id":37,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-37","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"lambda <- 8 # 2, 5, 8 \n\nx <- 0:20\n\npoisson_prob <- data.frame(\n  x = x,\n  probability = dpois(x, lambda = lambda)\n)\n\nggplot(poisson_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = x, limits = c(-0.5, 20.5)) +\n  labs(\n    title = paste0(\"Poisson(lambda = \", lambda, \")\"),\n    x = \"Number of hospital admissions\",\n    y = \"Probability\"\n  ) ","id":38,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-38","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dpois(0, lambda = 2)\ndpois(1, lambda = 2)\ndpois(2, lambda = 2)\ndpois(3, lambda = 2)\ndpois(8, lambda = 2)","id":39,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-39","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Probability of exactly 3 admissions\ndpois(3, lambda = 2)\n\n# Probability of 3 or fewer admissions\nppois(3, lambda = 2)","id":40,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-40","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\n\nx <- rnorm(100)\ny <- 0.7 * x + rnorm(100, sd = .7)\n\nggplot(data.frame(x, y), aes(x, y)) +\n  geom_point(size = 2) +\n  labs(\n    x = \"X\",\n    y = \"Y\"\n  )","id":41,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-41","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x_dev <- x - mean(x)\ny_dev <- y - mean(y)\n\nggplot(data.frame(x_dev, y_dev), aes(x_dev, y_dev)) +\n  geom_hline(yintercept = 0, linewidth = .4) +\n  geom_vline(xintercept = 0, linewidth = .4) +\n  geom_point(size = 2) +\n  labs(\n    x = expression(x - bar(x)),\n    y = expression(y - bar(y))\n  )","id":42,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-42","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cov(x, y)","id":43,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-43","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- 1:10\n\ny1 <- c(\n  2.1, 3.4, 4.7, 5.9, 7.1,\n  9.1, 12.4, 12.8, 13.8, 18.1\n)\n\ny2 <- c(\n  16.4,  7.7, 10.2, 21.9, 34.3,\n  18.1, 13.3,  5.5,  5.5, 56.4\n)\n\ny3 <- c(\n  16.0,  25.8,  35.7,  44.8,  54.0,\n  69.2,  94.2,  97.3, 104.9, 137.6\n)","id":44,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-44","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"plot_association <- function(x, y, label) {\n  \n  data.frame(x, y) |>\n    ggplot(aes(x = x, y = y)) +\n    geom_point(size = 1, color = \"darkgreen\") +\n    labs(\n      title = label,\n      x = \"x\",\n      y = \"y\"\n    ) +\n    theme(\n      plot.title = element_text(size = 8),\n      axis.text = element_text(size = 6),\n      axis.title = element_text(size = 9)\n    )\n}\n\np1 <- plot_association(x, y1, \"y1\")\np2 <- plot_association(x, y2, \"y2\")\np3 <- plot_association(x, y3, \"y3\")\n\np1 + p2 + p3","id":45,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"2","fig-width":"6","label":"unnamed-chunk-45","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cov(x, y1)\ncov(x, y2)\ncov(x, y3)","id":46,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-46","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p1 + p2 + p3","id":47,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"2","fig-width":"6","label":"unnamed-chunk-47","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x, y1)\ncor(x, y2)\ncor(x, y3)","id":48,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-48","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"generate_correlated <- function(n = 150, rho = 0.8) { \n\n  x <- rnorm(n)\n  y <- rho * x + sqrt(1 - rho^2) * rnorm(n)\n\n  data.table(x, y)\n}\n\nplot_correlation <- function(dat) {\n\n  r <- cor(dat$x, dat$y)\n  lims <- max(abs(c(dat$x, dat$y)))\n\n  ggplot(dat, aes(x, y)) +\n    geom_point(size = 0.3) +\n    labs(\n      title = sprintf(\"Correlation = %.2f\", r)\n    ) +\n    coord_equal(\n      xlim = c(-lims, lims),\n      ylim = c(-lims, lims)\n    ) +\n    theme(\n      plot.title = element_text(hjust = .5, size = 12)\n    )\n}\nplot_correlation( generate_correlated(n = 500, rho = -0.7) ) # -0.7, 0, 0.7","id":49,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-49","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 200\n\nx_quad <- runif(n, -2, 2)\ny_quad <- x_quad^2 + rnorm(n, sd = 0.15)\n\nggplot(data.table(x_quad, y_quad), aes(x_quad, y_quad)) +\n  geom_point(size = 2, alpha = 0.7) +\n  labs(\n    x = \"x\",\n    y = expression(x^2 + epsilon)\n  )","id":50,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-50","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x_quad, y_quad)","id":51,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-51","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nx_mono <- 1:100\ny_mono <- exp(x_mono / 25) + rnorm(100, 0, 1)\n\nggplot(data.table(x_mono, y_mono), aes(x_mono, y_mono)) +\n  geom_point(size = 1.5) +\n  labs(\n    x = \"x\",\n    y = expression(e^{x/25} + epsilon)\n  )","id":52,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-52","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"round(cor(x_mono, y_mono, method = \"pearson\"), 2)\nround(cor(x_mono, y_mono, method = \"spearman\"), 2)","id":53,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-53","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x_quad, y_quad, method = \"pearson\")\ncor(x_quad, y_quad, method = \"spearman\")","id":54,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-54","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"download.file(\n  \"https://teaching.rdatagen.net/lecture01/data/dd.csv\",\n  \"dd.csv\"\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dtest <- fread(\"dd.csv\")\ndtest","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dt <- data.table(\n  group = c(\"A\", \"A\", \"B\", \"B\"),\n  x = c(10, 14, 20, 24)\n)\n\ndt","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dt[, mean(x), by = group]","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\n\npopulation <- rnorm(2000000, mean = 125, sd = 18)\n\nmean(population)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sample <- sample(population, size = 100)\n\nmean(sample)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data.table(sbp = sample), aes(x = sbp)) +\n  geom_histogram(bins = 50, color = \"grey85\", fill = \"grey70\") +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Count\"\n  )","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"4","fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sample)\nmedian(sample)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sample_outlier <- sample\nsample_outlier[1] <- 500\n\nmean(sample_outlier)\nmedian(sample_outlier)","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x1 <- c(98, 99, 100, 101, 102)\nx2 <- c(80, 90, 100, 110, 120)\n\nmean(x1)\nmean(x2)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x1\nx1 - mean(x1)\n\nx2\nx2 - mean(x2)","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"var(x1)\nvar(x2)","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sd(x1)\nsd(x2)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sample)\nsd(sample)","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sd(sample)\nsd(sample_outlier)\n\nIQR(sample)\nIQR(sample_outlier)","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\npopulation <- rnorm(2000000, mean = 125, sd = 18)\n\nggplot(data.frame(sbp = population), aes(x = sbp)) +\n  geom_histogram(bins = 50, color = \"grey85\", fill = \"grey70\") +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Count\"\n  )","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"4","fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- seq(0, 250, length.out = 500)\n\nmu <- 125 # 125, 90, 150\nsigma <- 18 # 18, 10, 30\n\nnormal_density <- data.frame(\n  x = x,\n  density = dnorm(x, mean = mu, sd = sigma)\n)\n\nggplot(normal_density, aes(x = x, y = density)) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"3","fig-width":"6","label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 100, xend = 100,\n    y = 0, yend = dnorm(100, mean = mu, sd = sigma),\n    linewidth =.2, color = \"pink\"\n  ) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth =.2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x >= 100 & x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  ) +\n    geom_segment(\n    x = 100, xend = 100,\n    y = 0, yend = dnorm(100, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 100),\n    fill = \"grey70\"\n  )","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(140, mean = mu, sd = sigma)\npnorm(100, mean = mu, sd = sigma)","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(140, mean = mu, sd = sigma) -\n  pnorm(100, mean = mu, sd = sigma)","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z_sbp <- (population - 125) / 18\n\nround(mean(z_sbp), 3)\nround(sd(z_sbp), 3)","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z <- seq(-4, 4, length.out = 500)\n\nstandard_normal <- data.frame(\n  z = z,\n  density = dnorm(z)\n)\n\nggplot(standard_normal, aes(x = z, y = density)) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"z-score\",\n    y = \"Density\"\n  )","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(1) - pnorm(-1)","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(2) - pnorm(-2)","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(standard_normal, aes(x = z, y = density)) +\n  geom_segment(\n    x = -2, xend = -2,\n    y = 0, yend = dnorm(-2),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_segment(\n    x = 2, xend = 2,\n    y = 0, yend = dnorm(2),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(standard_normal, z >= -2 & z <= 2),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"z-score\",\n    y = \"Density\"\n  )","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"qnorm(0.95)","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"qnorm(0.025)\nqnorm(0.975)","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z_100 <- (100 - 125) / 18\nz_100","id":31,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(z_100)","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(100, mean = 125, sd = 18)","id":33,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- 0:10\n\nbinomial_prob <- data.frame(\n  x = x,\n  probability = dbinom(x, size = 10, prob = 0.60)\n)\n\nbinomial_prob","id":34,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(binomial_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = 0:10) +\n  labs(\n    x = \"Number with controlled hypertension\",\n    y = \"Probability\"\n  )","id":35,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dbinom(6, size = 10, prob = 0.60)","id":36,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-36","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dbinom(6, size = 10, prob = 0.60)","id":37,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-37","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"n <- 10\np <- 0.6\n\nx <- 0:n\n\nbinomial_prob <- data.frame(\n  x = x,\n  probability = dbinom(x, size = n, prob = p)\n)\n\nggplot(binomial_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = 0:n) +\n  labs(\n    title = paste0(\"Binomial(n = \", n, \", p = \", p, \")\"),\n    x = \"Number with controlled hypertension\",\n    y = \"Probability\"\n  )","id":38,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-38","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"1 - pbinom(5, size = 10, prob = 0.60)","id":39,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-39","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"lambda <- 8 # 2, 5, 8 \n\nx <- 0:20\n\npoisson_prob <- data.frame(\n  x = x,\n  probability = dpois(x, lambda = lambda)\n)\n\nggplot(poisson_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = x, limits = c(-0.5, 20.5)) +\n  labs(\n    title = paste0(\"Poisson(lambda = \", lambda, \")\"),\n    x = \"Number of hospital admissions\",\n    y = \"Probability\"\n  ) ","id":40,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-40","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dpois(0, lambda = 2)\ndpois(1, lambda = 2)\ndpois(2, lambda = 2)\ndpois(3, lambda = 2)\ndpois(8, lambda = 2)","id":41,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-41","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Probability of exactly 3 admissions\ndpois(3, lambda = 2)\n\n# Probability of 3 or fewer admissions\nppois(3, lambda = 2)","id":42,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-42","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\n\nx <- rnorm(100)\ny <- 0.7 * x + rnorm(100, sd = .7)\n\nggplot(data.frame(x, y), aes(x, y)) +\n  geom_point(size = 2) +\n  labs(\n    x = \"X\",\n    y = \"Y\"\n  )","id":43,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-43","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x_dev <- x - mean(x)\ny_dev <- y - mean(y)\n\nggplot(data.frame(x_dev, y_dev), aes(x_dev, y_dev)) +\n  geom_hline(yintercept = 0, linewidth = .4) +\n  geom_vline(xintercept = 0, linewidth = .4) +\n  geom_point(size = 2) +\n  labs(\n    x = expression(x - bar(x)),\n    y = expression(y - bar(y))\n  )","id":44,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-44","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cov(x, y)","id":45,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-45","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- 1:10\n\ny1 <- c(\n  2.1, 3.4, 4.7, 5.9, 7.1,\n  9.1, 12.4, 12.8, 13.8, 18.1\n)\n\ny2 <- c(\n  16.4,  7.7, 10.2, 21.9, 34.3,\n  18.1, 13.3,  5.5,  5.5, 56.4\n)\n\ny3 <- c(\n  16.0,  25.8,  35.7,  44.8,  54.0,\n  69.2,  94.2,  97.3, 104.9, 137.6\n)","id":46,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-46","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"plot_association <- function(x, y, label) {\n  \n  data.frame(x, y) |>\n    ggplot(aes(x = x, y = y)) +\n    geom_point(size = 1, color = \"darkgreen\") +\n    labs(\n      title = label,\n      x = \"x\",\n      y = \"y\"\n    ) +\n    theme(\n      plot.title = element_text(size = 8),\n      axis.text = element_text(size = 6),\n      axis.title = element_text(size = 9)\n    )\n}\n\np1 <- plot_association(x, y1, \"y1\")\np2 <- plot_association(x, y2, \"y2\")\np3 <- plot_association(x, y3, \"y3\")\n\np1 + p2 + p3","id":47,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"2","fig-width":"6","label":"unnamed-chunk-47","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cov(x, y1)\ncov(x, y2)\ncov(x, y3)","id":48,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-48","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p1 + p2 + p3","id":49,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"2","fig-width":"6","label":"unnamed-chunk-49","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x, y1)\ncor(x, y2)\ncor(x, y3)","id":50,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-50","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"generate_correlated <- function(n = 150, rho = 0.8) { \n\n  x <- rnorm(n)\n  y <- rho * x + sqrt(1 - rho^2) * rnorm(n)\n\n  data.table(x, y)\n}\n\nplot_correlation <- function(dat) {\n\n  r <- cor(dat$x, dat$y)\n  lims <- max(abs(c(dat$x, dat$y)))\n\n  ggplot(dat, aes(x, y)) +\n    geom_point(size = 0.3) +\n    labs(\n      title = sprintf(\"Correlation = %.2f\", r)\n    ) +\n    coord_equal(\n      xlim = c(-lims, lims),\n      ylim = c(-lims, lims)\n    ) +\n    theme(\n      plot.title = element_text(hjust = .5, size = 12)\n    )\n}\nplot_correlation( generate_correlated(n = 500, rho = -0.7) ) # -0.7, 0, 0.7","id":51,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-51","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 200\n\nx_quad <- runif(n, -2, 2)\ny_quad <- x_quad^2 + rnorm(n, sd = 0.15)\n\nggplot(data.table(x_quad, y_quad), aes(x_quad, y_quad)) +\n  geom_point(size = 2, alpha = 0.7) +\n  labs(\n    x = \"x\",\n    y = expression(x^2 + epsilon)\n  )","id":52,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-52","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x_quad, y_quad)","id":53,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-53","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nx_mono <- 1:100\ny_mono <- exp(x_mono / 25) + rnorm(100, 0, 1)\n\nggplot(data.table(x_mono, y_mono), aes(x_mono, y_mono)) +\n  geom_point(size = 1.5) +\n  labs(\n    x = \"x\",\n    y = expression(e^{x/25} + epsilon)\n  )","id":54,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-54","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"round(cor(x_mono, y_mono, method = \"pearson\"), 2)\nround(cor(x_mono, y_mono, method = \"spearman\"), 2)","id":55,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-55","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x_quad, y_quad, method = \"pearson\")\ncor(x_quad, y_quad, method = \"spearman\")","id":56,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-56","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1970,6 +1970,12 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </header>
 
 
+<section id="test" class="level2">
+<h2 class="anchored" data-anchor-id="test">TEST</h2>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <section id="logistics-for-biostatistics-module" class="level5">
 <h5 class="anchored" data-anchor-id="logistics-for-biostatistics-module">Logistics for Biostatistics Module</h5>
 <ul>
@@ -1996,9 +2002,10 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <h5 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h5>
 <p>With thanks to Ting-Fang Lee, PhD, Hayley Belli, PhD, and Andrea Troxel, PhD, for notes and materials.</p>
 </section>
+</section>
 <section id="initial-setup" class="level2">
 <h2 class="anchored" data-anchor-id="initial-setup">Initial setup</h2>
-<div id="qwebr-insertion-location-1"></div>
+<div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="a-note-about-data.table" class="level2">
@@ -2015,9 +2022,9 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <li><code>by</code>: <strong>within which groups?</strong></li>
 </ul>
 <p>For example:</p>
-<div id="qwebr-insertion-location-2"></div>
+<div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-3"></div>
+<div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>We will learn additional <code>data.table</code> syntax as we need it rather than learning it all at once.</p>
 <p><a href="https://raw.githubusercontent.com/rstudio/cheatsheets/master/datatable.pdf">Data Transformation with <code>data.table</code>: Cheat Sheet</a></p>
@@ -2057,12 +2064,12 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <h3 class="anchored" data-anchor-id="imagine-we-have-a-population">Imagine we have a population</h3>
 <p>With real data, we never get to see the entire population.</p>
 <p>But with simulation, we can create a population where we <strong>know the truth</strong>.</p>
-<div id="qwebr-insertion-location-4"></div>
+<div id="qwebr-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="we-can-take-a-sample-from-that-population" class="level3">
 <h3 class="anchored" data-anchor-id="we-can-take-a-sample-from-that-population">We can take a sample from that population</h3>
-<div id="qwebr-insertion-location-5"></div>
+<div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p><br></p>
 <section id="what-did-we-see" class="level4">
@@ -2080,7 +2087,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <p>We now have systolic blood pressure measurements for <strong>100 women</strong>.</p>
 <p>What do our data look like?</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-6"></div>
+<div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <section id="how-can-we-summarize-these-data" class="level4">
@@ -2100,13 +2107,13 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <p><span class="math display">\[\large
 \bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_i\]</span></p>
 <p>The <strong>median</strong> is the value that divides the ordered observations in half.</p>
-<div id="qwebr-insertion-location-7"></div>
+<div id="qwebr-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="do-the-mean-and-median-always-tell-us-the-same-thing" class="level3">
 <h3 class="anchored" data-anchor-id="do-the-mean-and-median-always-tell-us-the-same-thing">Do the mean and median always tell us the same thing?</h3>
 <p>Let’s change one observation in our sample:</p>
-<div id="qwebr-insertion-location-8"></div>
+<div id="qwebr-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The <strong>mean</strong> uses the magnitude of every observation, so an extreme value can have a large effect.</p>
 <p>The <strong>median</strong> depends primarily on the ordering of the observations, so it is much less affected by extreme values.</p>
@@ -2115,7 +2122,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <h3 class="anchored" data-anchor-id="how-much-do-the-observations-vary">How much do the observations vary?</h3>
 <p>Knowing the center does not tell us everything about a distribution.</p>
 <p>Consider two sets of observations:</p>
-<div id="qwebr-insertion-location-9"></div>
+<div id="qwebr-insertion-location-11"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Both have the same mean.</p>
 <p>But are these data really similar?</p>
@@ -2124,7 +2131,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <h3 class="anchored" data-anchor-id="measuring-variability">Measuring variability</h3>
 <p>One way to describe variability is to look at how far each observation is from the mean:</p>
 <p><span class="math display">\[\large x_i - \bar{x}\]</span></p>
-<div id="qwebr-insertion-location-10"></div>
+<div id="qwebr-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The observations in <code>x2</code> are much farther from their mean.</p>
 </section>
@@ -2135,7 +2142,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <p>For a sample, the <strong>variance</strong> is:</p>
 <p><span class="math display">\[\large
 s^2 = \frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}\]</span></p>
-<div id="qwebr-insertion-location-11"></div>
+<div id="qwebr-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="why-do-we-divide-by-n-1" class="level3">
@@ -2156,13 +2163,13 @@ s^2 = \frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}\]</span></p>
 <p>The <strong>standard deviation</strong> is the square root of the variance:</p>
 <p><span class="math display">\[\large
 s = \sqrt{\frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}}\]</span></p>
-<div id="qwebr-insertion-location-12"></div>
+<div id="qwebr-insertion-location-14"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The standard deviation is expressed in the <strong>same units as the original observations</strong>.</p>
 </section>
 <section id="back-to-our-blood-pressure-data" class="level3">
 <h3 class="anchored" data-anchor-id="back-to-our-blood-pressure-data">Back to our blood pressure data</h3>
-<div id="qwebr-insertion-location-13"></div>
+<div id="qwebr-insertion-location-15"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The <strong>mean</strong> describes where the observed blood pressures are centered.</p>
 <p>The <strong>standard deviation</strong> describes how much the observed blood pressures vary around that center.</p>
@@ -2174,7 +2181,7 @@ s = \sqrt{\frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}}\]</span></p>
 <p><span class="math display">\[\large
 IQR = Q_{0.75} - Q_{0.25}\]</span></p>
 <p>It describes the spread of the <strong>middle 50%</strong> of the observations.</p>
-<div id="qwebr-insertion-location-14"></div>
+<div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The extreme observation has a large effect on the <strong>standard deviation</strong>, but relatively little effect on the <strong>IQR</strong>.</p>
 </section>
@@ -2200,7 +2207,7 @@ IQR = Q_{0.75} - Q_{0.25}\]</span></p>
 <h3 class="anchored" data-anchor-id="a-distribution-we-have-already-used">A distribution we have already used</h3>
 <p>Earlier, we created a population of systolic blood pressures using the function <code>rnorm()</code>:</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-15"></div>
+<div id="qwebr-insertion-location-17"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <p>The values were generated from a <strong>Normal distribution</strong>.</p>
@@ -2226,7 +2233,7 @@ X \sim N(125,18^2)\]</span></p>
 <p>The histogram shows the values we generated from the Normal distribution.</p>
 <p>The <strong>probability density function</strong> describes the smooth curve underlying those values.</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-16"></div>
+<div id="qwebr-insertion-location-18"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 </section>
@@ -2251,7 +2258,7 @@ f(x) =
 P(100 &lt; X &lt; 140)\]</span></p>
 <p>This probability is the <strong>area under the Normal curve between 100 and 140</strong>.</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-17"></div>
+<div id="qwebr-insertion-location-19"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 </section>
@@ -2262,12 +2269,12 @@ P(100 &lt; X &lt; 140)\]</span></p>
 F(x) = P(X \le x)\]</span></p>
 <p><span class="math inline">\(P(X \le 140)\)</span> is the entire area to the left of 140:</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-18"></div>
+<div id="qwebr-insertion-location-20"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <p>And <span class="math inline">\(P(X \le 100)\)</span> is the area to the left of 100 (in darker grey):</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-19"></div>
+<div id="qwebr-insertion-location-21"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <p>Subtracting the second area from the first leaves the area between 100 and 140:</p>
@@ -2276,10 +2283,10 @@ P(100 &lt; X &lt; 140)
 =
 P(X \le 140) - P(X \le 100)\]</span></p>
 <p>For the Normal distribution, <code>pnorm()</code> gives the cumulative probability to the left of a value:</p>
-<div id="qwebr-insertion-location-20"></div>
+<div id="qwebr-insertion-location-22"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Therefore, the difference in the CDFs gives us the probability we are calculating:</p>
-<div id="qwebr-insertion-location-21"></div>
+<div id="qwebr-insertion-location-23"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><code>pnorm()</code> gives cumulative area to the left, so subtracting two cumulative probabilities gives the probability over an interval.</p>
@@ -2375,7 +2382,7 @@ X \sim N(\mu,\sigma^2)\]</span></p>
 Z \sim N(0,1)\]</span></p>
 <p>This is called the <strong>standard Normal distribution</strong>.</p>
 <p><em>If we standardize our population SBP data, we get</em></p>
-<div id="qwebr-insertion-location-22"></div>
+<div id="qwebr-insertion-location-24"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="why-is-the-standard-normal-useful" class="level3">
@@ -2398,7 +2405,7 @@ z_{\text{DBP}} = 1.00\]</span></p>
 <h3 class="anchored" data-anchor-id="the-standard-normal-distribution">The standard Normal distribution</h3>
 <p>Let’s look at the density of the standard Normal distribution.</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-23"></div>
+<div id="qwebr-insertion-location-25"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <p>The horizontal axis now measures <strong>distance from the mean in standard deviations</strong>.</p>
@@ -2421,18 +2428,18 @@ z_{\text{DBP}} = 1.00\]</span></p>
 <p><span class="math display">\[\large
 P(-1 &lt; Z &lt; 1)\]</span></p>
 <p>We can calculate this using <code>pnorm()</code>:</p>
-<div id="qwebr-insertion-location-24"></div>
+<div id="qwebr-insertion-location-26"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>So about <strong>68%</strong> of a Normal distribution lies within one standard deviation of its mean.</p>
 <p><br></p>
 <p>Within two standard deviations means:</p>
 <p><span class="math display">\[\large
 P(-2 &lt; Z &lt; 2)\]</span></p>
-<div id="qwebr-insertion-location-25"></div>
+<div id="qwebr-insertion-location-27"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>So about <strong>95%</strong> of a Normal distribution lies within two standard deviations of its mean.</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-26"></div>
+<div id="qwebr-insertion-location-28"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <blockquote class="blockquote">
@@ -2475,7 +2482,7 @@ P(-2 &lt; Z &lt; 2)\]</span></p>
 <p>We’ve already used <code>dnorm()</code>, <code>pnorm()</code>, and <code>rnorm()</code>.</p>
 <p><code>qnorm()</code> answers the reverse of the question answered by <code>pnorm()</code>.</p>
 <p>For example:</p>
-<div id="qwebr-insertion-location-27"></div>
+<div id="qwebr-insertion-location-29"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>This gives the value with <strong>95% of the standard Normal distribution below it</strong>.</p>
 </section>
@@ -2489,7 +2496,7 @@ P(-2 &lt; Z &lt; 2)\]</span></p>
 <li>2.5% above the upper boundary</li>
 </ul>
 <p>So the boundaries are the 2.5th and 97.5th percentiles:</p>
-<div id="qwebr-insertion-location-28"></div>
+<div id="qwebr-insertion-location-30"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The middle 95% of the standard Normal distribution therefore lies approximately between:</p>
 <p><span class="math display">\[\large
@@ -2502,13 +2509,13 @@ P(-2 &lt; Z &lt; 2)\]</span></p>
 <h3 class="anchored" data-anchor-id="original-scale-or-standardized-scale">Original scale or standardized scale?</h3>
 <p>Standardization helps us understand where a value lies relative to its distribution.</p>
 <p>For example, a systolic blood pressure of 100 in our population has z-score:</p>
-<div id="qwebr-insertion-location-29"></div>
+<div id="qwebr-insertion-location-31"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>We can calculate the proportion of the population below this value using the z-score:</p>
-<div id="qwebr-insertion-location-30"></div>
+<div id="qwebr-insertion-location-32"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>But R can also calculate the probability directly using the original Normal distribution:</p>
-<div id="qwebr-insertion-location-31"></div>
+<div id="qwebr-insertion-location-33"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The answers are the same.</p>
 <blockquote class="blockquote">
@@ -2557,12 +2564,12 @@ X = Y_1 + Y_2 + \cdots + Y_{10}\]</span></p>
 <p><strong>What is the probability of observing each possible number of patients with controlled hypertension?</strong></p>
 </blockquote>
 <p>In R, <code>dbinom()</code> gives the probability of observing a particular number of successes:</p>
-<div id="qwebr-insertion-location-32"></div>
+<div id="qwebr-insertion-location-34"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p><br></p>
 <p>We can plot these probabilities:</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-33"></div>
+<div id="qwebr-insertion-location-35"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <p>This is a <strong>Binomial distribution</strong>.</p>
@@ -2596,7 +2603,7 @@ X \sim \text{Binomial}(10,0.60)\]</span></p>
 <p>We can see from the distribution that 6 patients is one possible outcome.</p>
 <p>What is its probability?</p>
 <p>In R:</p>
-<div id="qwebr-insertion-location-34"></div>
+<div id="qwebr-insertion-location-36"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>So:</p>
 <p><span class="math display">\[\large
@@ -2607,7 +2614,7 @@ P(X=6) \approx 0.25\]</span></p>
 <h3 class="anchored" data-anchor-id="where-do-these-probabilities-come-from">Where do these probabilities come from?</h3>
 <p>We used <code>dbinom()</code> to calculate the probability of each possible number of patients with controlled hypertension.</p>
 <p>For example:</p>
-<div id="qwebr-insertion-location-35"></div>
+<div id="qwebr-insertion-location-37"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>gives:</p>
 <p><span class="math display">\[\large
@@ -2656,7 +2663,7 @@ p^x(1-p)^{10-x}
 <p>The Binomial distribution depends on <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span>.</p>
 <p>Let’s see what happens when we change them.</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-36"></div>
+<div id="qwebr-insertion-location-38"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 </section>
@@ -2691,7 +2698,7 @@ P(X=6)+P(X=7)+\cdots+P(X=10)\]</span></p>
 <p>Therefore:</p>
 <p><span class="math display">\[\large
 P(X \ge 6)=1-P(X\le5)\]</span></p>
-<div id="qwebr-insertion-location-37"></div>
+<div id="qwebr-insertion-location-39"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>So there is about a <strong>63% probability that at least 6 of the 10 patients will have controlled hypertension</strong>.</p>
 </section>
@@ -2716,7 +2723,7 @@ X=0,1,2,3,\ldots\]</span></p>
 <section id="what-does-a-poisson-distribution-look-like" class="level3">
 <h3 class="anchored" data-anchor-id="what-does-a-poisson-distribution-look-like">What does a Poisson distribution look like?</h3>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-38"></div>
+<div id="qwebr-insertion-location-40"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <p>The single parameter <span class="math inline">\(\lambda\)</span> determines both the <strong>center</strong> and the <strong>variability</strong> of the distribution.</p>
@@ -2728,7 +2735,7 @@ X=0,1,2,3,\ldots\]</span></p>
 P(X=x)=\frac{e^{-\lambda}\lambda^x}{x!},
 \qquad x=0,1,2,\ldots\]</span></p>
 <p>As with the Binomial distribution, individual counts have positive probabilities.</p>
-<div id="qwebr-insertion-location-39"></div>
+<div id="qwebr-insertion-location-41"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="rates-and-exposure" class="level3">
@@ -2777,7 +2784,7 @@ X \sim \text{Poisson}(6)\]</span></p>
 </tbody>
 </table>
 <p>For example, if <span class="math inline">\(X \sim \text{Poisson}(2)\)</span>:</p>
-<div id="qwebr-insertion-location-40"></div>
+<div id="qwebr-insertion-location-42"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 </section>
@@ -2806,7 +2813,7 @@ X \sim \text{Poisson}(6)\]</span></p>
 </blockquote>
 <p>A natural place to start is simply to look at the data.</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-41"></div>
+<div id="qwebr-insertion-location-43"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <p>When larger values of <span class="math inline">\(X\)</span> tend to occur with larger values of <span class="math inline">\(Y\)</span>, we say the variables have a <strong>positive association</strong>.</p>
@@ -2833,7 +2840,7 @@ y_i-\bar{y}\]</span></p>
 <h3 class="anchored" data-anchor-id="revisiting-the-plot">Revisiting the plot</h3>
 <p>Let’s plot these deviations from the means.</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-42"></div>
+<div id="qwebr-insertion-location-44"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <ul>
@@ -2858,7 +2865,7 @@ s_{XY}
 <li>Covariance near zero: little tendency for the variables to vary together <strong>linearly</strong>.</li>
 </ul>
 <p>For our data:</p>
-<div id="qwebr-insertion-location-43"></div>
+<div id="qwebr-insertion-location-45"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>As we expected, the covariance is positive.</p>
 </section>
@@ -2867,17 +2874,17 @@ s_{XY}
 <p>Covariance tells us whether two variables tend to vary in the <strong>same or opposite directions</strong>.</p>
 <p>But does its magnitude tell us how <strong>strongly</strong> they are associated?</p>
 <p>Let’s look at three examples.</p>
-<div id="qwebr-insertion-location-44"></div>
+<div id="qwebr-insertion-location-46"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-45"></div>
+<div id="qwebr-insertion-location-47"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 </section>
 <section id="comparing-the-covariances" class="level3">
 <h3 class="anchored" data-anchor-id="comparing-the-covariances">Comparing the covariances</h3>
 <p>Now let’s calculate the covariance for each relationship:</p>
-<div id="qwebr-insertion-location-46"></div>
+<div id="qwebr-insertion-location-48"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The first two have almost exactly the <strong>same covariance</strong>, despite looking very different.</p>
 <p>And the first and third have very different covariances, despite showing similarly strong linear relationships.</p>
@@ -2907,9 +2914,9 @@ r
 </section>
 <section id="revisiting-the-three-data-sets-comparing-correlation" class="level3">
 <h3 class="anchored" data-anchor-id="revisiting-the-three-data-sets-comparing-correlation">Revisiting the three data sets: comparing correlation</h3>
-<div id="qwebr-insertion-location-47"></div>
+<div id="qwebr-insertion-location-49"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-48"></div>
+<div id="qwebr-insertion-location-50"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The correlations correspond much more closely to what we saw in the scatterplots.</p>
 <ul>
@@ -2923,7 +2930,7 @@ r
 <section id="what-does-correlation-look-like" class="level3">
 <h3 class="anchored" data-anchor-id="what-does-correlation-look-like">What does correlation look like?</h3>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-49"></div>
+<div id="qwebr-insertion-location-51"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 </section>
@@ -2932,11 +2939,11 @@ r
 <p>Pearson correlation measures <strong>linear association</strong>.</p>
 <p>Consider a different relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>:</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-50"></div>
+<div id="qwebr-insertion-location-52"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <p>The relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is clear, but it is not linear.</p>
-<div id="qwebr-insertion-location-51"></div>
+<div id="qwebr-insertion-location-53"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The correlation is close to zero.</p>
 <blockquote class="blockquote">
@@ -2964,7 +2971,7 @@ r
 <p>But two variables can move consistently together without having a linear relationship.</p>
 <p>For example:</p>
 <div class="webr-plot">
-<div id="qwebr-insertion-location-52"></div>
+<div id="qwebr-insertion-location-54"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 </section>
@@ -2972,7 +2979,7 @@ r
 <h3 class="anchored" data-anchor-id="spearman-correlation">Spearman correlation</h3>
 <p><strong>Pearson correlation</strong> is calculated using the observed values of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.</p>
 <p><strong>Spearman correlation</strong> is calculated after replacing the values with their <strong>ranks</strong>.</p>
-<div id="qwebr-insertion-location-53"></div>
+<div id="qwebr-insertion-location-55"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Because Spearman correlation is based on ranks, it measures how consistently two variables move in the <strong>same or opposite direction</strong>, rather than how closely they follow a straight line.</p>
 <ul>
@@ -2984,7 +2991,7 @@ r
 <section id="not-every-nonlinear-relationship-is-monotonic" class="level3">
 <h3 class="anchored" data-anchor-id="not-every-nonlinear-relationship-is-monotonic">Not every nonlinear relationship is monotonic</h3>
 <p>Recall our earlier quadratic example:</p>
-<div id="qwebr-insertion-location-54"></div>
+<div id="qwebr-insertion-location-56"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Both correlations are close to zero.</p>
 <p>The variables are strongly related, but the relationship is neither <strong>linear</strong> nor <strong>monotonic</strong>.</p>

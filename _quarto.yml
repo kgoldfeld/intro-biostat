@@ -1,5 +1,7 @@
 project:
   type: website
+  resources:
+    - lecture01/data/*
 
 website:
   title: "Biostatistics Lectures"

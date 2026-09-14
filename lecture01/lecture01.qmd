@@ -10,6 +10,23 @@ webr:
   packages: ["data.table", "ggplot2", "patchwork"]
 ---
 
+## TEST
+
+```{webr-r}
+#| autorun: true
+#| echo: false
+
+download.file(
+  "https://teaching.rdatagen.net/lecture01/data/dd.csv",
+  "dd.csv"
+)
+```
+
+```{webr-r}
+dtest <- fread("dd.csv")
+dtest
+```
+
 ##### Logistics for Biostatistics Module
 
 - Weekly homework is due **Tuesdays at 11am**.
