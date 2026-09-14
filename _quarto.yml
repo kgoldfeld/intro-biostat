@@ -1,2 +1,9 @@
 project:
-  type: default
+  type: website
+
+website:
+  title: "Biostatistics Lectures"
+
+format:
+  html:
+    toc: false
