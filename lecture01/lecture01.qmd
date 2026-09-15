@@ -184,6 +184,7 @@ What do our data look like?
 ```{webr-r}
 #| classes: webr-plot
 #| fig-height: 4
+
 ggplot(data.table(sbp = sample), aes(x = sbp)) +
   geom_histogram(bins = 50, color = "grey85", fill = "grey70") +
   labs(
@@ -424,8 +425,9 @@ The histogram shows the values we generated from the Normal distribution.
 
 The **probability density function** describes the smooth curve underlying those values.
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
 #| fig-width: 6
 #| fig-height: 3
 
@@ -446,7 +448,6 @@ ggplot(normal_density, aes(x = x, y = density)) +
     y = "Density"
   )
 ```
-:::
 
 ### The probability density function
 
@@ -474,8 +475,9 @@ P(100 < X < 140)$$
 
 This probability is the **area under the Normal curve between 100 and 140**.
 
-::: webr-plot
 ```{webr-r}
+#| classes: webr-plot
+#| 
 ggplot(normal_density, aes(x = x, y = density)) +
   geom_segment(
     x = 100, xend = 100,
@@ -497,7 +499,6 @@ ggplot(normal_density, aes(x = x, y = density)) +
     y = "Density"
   )
 ```
-:::
 
 ### How do we calculate that probability?
 
@@ -508,8 +509,10 @@ F(x) = P(X \le x)$$
 
 $P(X \le 140)$ is the entire area to the left of 140:
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 ggplot(normal_density, aes(x = x, y = density)) +
   geom_segment(
     x = 140, xend = 140,
@@ -526,12 +529,13 @@ ggplot(normal_density, aes(x = x, y = density)) +
     y = "Density"
   )
 ```
-:::
 
 And $P(X \le 100)$ is the area to the left of 100 (in darker grey):
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 ggplot(normal_density, aes(x = x, y = density)) +
   geom_segment(
     x = 140, xend = 140,
@@ -557,7 +561,7 @@ ggplot(normal_density, aes(x = x, y = density)) +
     fill = "grey70"
   )
 ```
-:::
+
 
 Subtracting the second area from the first leaves the area between 100 and 140:
 
@@ -709,8 +713,10 @@ So although the systolic blood pressure was farther from its mean in **mmHg**, t
 
 Let's look at the density of the standard Normal distribution.
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 z <- seq(-4, 4, length.out = 500)
 
 standard_normal <- data.frame(
@@ -725,7 +731,7 @@ ggplot(standard_normal, aes(x = z, y = density)) +
     y = "Density"
   )
 ```
-:::
+
 
 The horizontal axis now measures **distance from the mean in standard deviations**.
 
@@ -767,8 +773,10 @@ pnorm(2) - pnorm(-2)
 
 So about **95%** of a Normal distribution lies within two standard deviations of its mean.
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 ggplot(standard_normal, aes(x = z, y = density)) +
   geom_segment(
     x = -2, xend = -2,
@@ -790,7 +798,7 @@ ggplot(standard_normal, aes(x = z, y = density)) +
     y = "Density"
   )
 ```
-:::
+
 
 > About **95% of observations from a Normal distribution fall within two standard deviations of the mean**.
 
@@ -937,8 +945,10 @@ binomial_prob
 
 We can plot these probabilities:
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 ggplot(binomial_prob, aes(x = x, y = probability)) +
   geom_col(width = .8, fill = "grey80") +
   scale_x_continuous(breaks = 0:10) +
@@ -947,7 +957,7 @@ ggplot(binomial_prob, aes(x = x, y = probability)) +
     y = "Probability"
   )
 ```
-:::
+
 
 This is a **Binomial distribution**.
 
@@ -1069,8 +1079,10 @@ The Binomial distribution depends on $n$ and $p$.
 
 Let's see what happens when we change them.
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 n <- 10
 p <- 0.6
 
@@ -1090,7 +1102,7 @@ ggplot(binomial_prob, aes(x = x, y = probability)) +
     y = "Probability"
   )
 ```
-:::
+
 
 ### Center and variability of a Binomial distribution
 
@@ -1173,8 +1185,10 @@ X=0,1,2,3,\ldots$$
 
 ### What does a Poisson distribution look like?
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 lambda <- 8 # 2, 5, 8 
 
 x <- 0:20
@@ -1193,7 +1207,7 @@ ggplot(poisson_prob, aes(x = x, y = probability)) +
     y = "Probability"
   ) 
 ```
-:::
+
 
 The single parameter $\lambda$ determines both the **center** and the **variability** of the distribution.
 
@@ -1284,8 +1298,10 @@ For example:
 
 A natural place to start is simply to look at the data.
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 set.seed(1203)
 
 x <- rnorm(100)
@@ -1298,7 +1314,7 @@ ggplot(data.frame(x, y), aes(x, y)) +
     y = "Y"
   )
 ```
-:::
+
 
 When larger values of $X$ tend to occur with larger values of $Y$, we say the variables have a **positive association**.
 
@@ -1330,8 +1346,10 @@ tells us whether an observation makes a **positive or negative contribution to t
 
 Let's plot these deviations from the means.
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 x_dev <- x - mean(x)
 y_dev <- y - mean(y)
 
@@ -1344,7 +1362,7 @@ ggplot(data.frame(x_dev, y_dev), aes(x_dev, y_dev)) +
     y = expression(y - bar(y))
   )
 ```
-:::
+
 
 - Observations in the **upper-right and lower-left** quadrants contribute positively to the covariance.
 
@@ -1404,10 +1422,12 @@ y3 <- c(
 )
 ```
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
 #| fig-height: 2
 #| fig-width: 6
+
 plot_association <- function(x, y, label) {
   
   data.frame(x, y) |>
@@ -1431,7 +1451,7 @@ p3 <- plot_association(x, y3, "y3")
 
 p1 + p2 + p3
 ```
-:::
+
 
 ### Comparing the covariances
 
@@ -1497,8 +1517,9 @@ Correlation always lies between $-1$ and $1$.
 
 ### What does correlation look like?
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
 
 generate_correlated <- function(n = 150, rho = 0.8) { 
 
@@ -1528,7 +1549,7 @@ plot_correlation <- function(dat) {
 }
 plot_correlation( generate_correlated(n = 500, rho = -0.7) ) # -0.7, 0, 0.7
 ```
-:::
+
 
 ### Does zero correlation mean no relationship?
 
@@ -1536,8 +1557,9 @@ Pearson correlation measures **linear association**.
 
 Consider a different relationship between $X$ and $Y$:
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
 
 set.seed(1234)
 
@@ -1553,7 +1575,7 @@ ggplot(data.table(x_quad, y_quad), aes(x_quad, y_quad)) +
     y = expression(x^2 + epsilon)
   )
 ```
-:::
+
 
 The relationship between $X$ and $Y$ is clear, but it is not linear.
 
@@ -1593,8 +1615,10 @@ But two variables can move consistently together without having a linear relatio
 
 For example:
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
+
 set.seed(1234)
 
 x_mono <- 1:100
@@ -1607,7 +1631,7 @@ ggplot(data.table(x_mono, y_mono), aes(x_mono, y_mono)) +
     y = expression(e^{x/25} + epsilon)
   )
 ```
-:::
+
 
 ### Spearman correlation
 
