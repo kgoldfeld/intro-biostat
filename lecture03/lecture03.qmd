@@ -271,18 +271,21 @@ bw_CI_dd[, mean(covers)]
 
 The general formulation of the 95% confidence interval is
 
-$$\text{estimate}
+$$
+\large 
+\text{estimate}
 \ \pm\
 \text{critical value}
 \times
 \widehat{\mathrm{SE}}
 $$
-- The population mean $\mu$is fixed.
-- The interval changes from sample to sample.
-- About 95% of intervals constructed this way contain$\mu$.
-- A particular interval either contains$\mu$ or it does not.
 
-> 95% confidence describes the long-run performance of the procedure, **not** a 95% probability that$\large \mu$lies in this particular interval.
+- The population mean $\mu$ is fixed.
+- The interval changes from sample to sample.
+- About 95% of intervals constructed this way contain $\mu$.
+- A particular interval either contains $\mu$ or it does not.
+
+> 95% confidence describes the long-run performance of the procedure, **not** a 95% probability that $\mu$ lies in this particular interval.
 
 **The confidence interval quantifies the uncertainty around our estimate and gives a range of parameter values that are reasonably consistent with the observed data.**
 
@@ -494,7 +497,9 @@ Because the two samples come from the same population, the null hypothesis is tr
 > If the test is performing as expected, it should incorrectly reject the null hypothesis about 5% of the time
 
 ```{webr-r}
-gen_data <- function(sample_size, mu, sigma = NULL, shape = NULL, distribution = "Normal") {
+gen_data <- function(
+    sample_size, mu, sigma = NULL, 
+    shape = NULL, distribution = "Normal") {
 
   if (distribution == "Normal") {
     x <- rnorm(sample_size, mean = mu, sd = sigma)
@@ -505,9 +510,10 @@ gen_data <- function(sample_size, mu, sigma = NULL, shape = NULL, distribution =
   return(x)
 }
 
-gen_stats <- function(sample_size, mu,
-                      sigma = NULL, shape = NULL,
-                      distribution = "Normal") {
+gen_stats <- function(
+    sample_size, mu,
+    sigma = NULL, shape = NULL,
+    distribution = "Normal") {
 
   x1 <- gen_data(
     sample_size = sample_size,
@@ -532,7 +538,7 @@ gen_stats <- function(sample_size, mu,
     mean_2 = mean(x2),
     estimate = mean(x1) - mean(x2),
     p_value = test$p.value,
- reject = test$p.value < 0.05
+    reject = test$p.value < 0.05
   )
 }
 ```
