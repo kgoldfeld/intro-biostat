@@ -15,7 +15,8 @@ webr:
 
 download.file(
   "https://teaching.rdatagen.net/lecture05/data/hanes_subset.RData",
-  "hanes_subset.RData"
+  "hanes_subset.RData",
+   mode = "wb"
 )
 ```
 
