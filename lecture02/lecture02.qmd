@@ -1,0 +1,978 @@
+---
+title: 'Lecture 2: Statistical Inference'
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+webr:
+  packages: ["data.table", "ggplot2", "patchwork"]
+---
+
+## Initial setup
+
+```{webr-r}
+#| autorun: true
+#| echo: false
+library(data.table)
+library(ggplot2)
+library(patchwork)
+  
+theme_set(
+  theme_bw(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold", size = 12),
+    plot.subtitle = element_text(face = "italic", size = 10),
+    axis.title = element_text(size = 12)
+  )
+)
+```
+
+
+## From samples to inference
+
+
+In the last lecture, we distinguished between a **population** and a **sample**.
+
+In practice, we usually observe a sample but want to learn something about the population from which it came.
+
+That creates a fundamental statistical problem:
+
+> **How much can we learn about a population from a single sample?**
+
+
+## Motivating example
+
+
+The national average birth weight is 120 oz.
+
+You collect a sample of 100 babies from one community.
+
+The average birth weight in the sample is 115 oz., with a standard deviation of 24 oz.
+
+**Does this mean that babies in this community have a lower average birth weight compared to the rest of the country?**
+
+
+## Drawing a single sample from a population
+
+
+Let's draw from the national population distribution, which is $N(\mu = 120, \sigma = 24)$
+
+We'll collect a **single** sample from the population:
+
+```{webr-r}
+set.seed(123)
+
+sample_size <- 100 # repeated and different n's
+mu <- 120
+sigma <- 24
+
+birth_weight <- rnorm(sample_size, mean = mu, sd = sigma) # compare with larger sample size
+```
+
+We can visualize the data:
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(data.table(birth_weight), aes(x = birth_weight)) +
+  geom_histogram(binwidth = 5, color = "white", fill = "grey85") +
+  geom_vline(xintercept = 120, linewidth = 1.2, color = "red") +
+  labs(
+    title = "Distribution of birth weights",
+    x = "Birth weight (oz.)",
+    y = "Count"
+  )
+```
+
+We can get an estimate of the mean:
+
+```{webr-r}
+mean(birth_weight)
+```
+
+Our sample mean is not exactly 120 oz.
+
+> **How much variation in the sample mean should we expect simply from taking a sample?**
+
+
+## Repeated-sampling behavior
+
+
+If we could repeat the experiment many times under identical conditions, we would obtain different estimates each time.
+
+```{webr-r}
+set.seed(1234)
+
+sample_size <- 100 # 10, 30, 100 <--- for examples below
+mu <- 120
+sigma <-24
+
+replications <- 50000
+
+bw_means <- replicate(
+  replications,
+  mean(rnorm(sample_size, mean = mu, sd = sigma))
+)
+```
+
+Simulation lets us approximate what would happen if we could repeat the experiment thousands of times.
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(data.table(bw_means), aes(x = bw_means)) +
+  geom_histogram(binwidth = 0.25, color = "white", fill = "grey75") +
+  geom_vline(xintercept = 120, linewidth = 1.2, color = "red") +
+  labs(
+    title = "Sampling Distribution of the Mean Birth Weight",
+    x = "Estimated Mean",
+    y = "Count"
+  )
+```
+
+The observed mean of the sampling distribution:
+
+```{webr-r}
+mean(bw_means)
+```
+
+How much do the estimated means vary from sample to sample?
+
+```{webr-r}
+sd(bw_means)
+```
+
+The standard deviation of a sampling distribution is called the **standard error**.
+
+
+#### Big takeaways
+
+- Different samples from the same population produce different sample means.
+
+- The distribution of those sample means over repeated samples is called the **sampling distribution of the sample mean**.
+
+- The standard deviation of that sampling distribution is the **standard error**.
+
+- **Sample means vary less than individual observations.**
+
+
+## Central Limit Theorem
+
+
+In a real study, we only observe **one sample**.
+
+The **Central Limit Theorem (CLT)** tells us what to expect from the sampling distribution of the sample mean.
+
+Under fairly general conditions,
+
+$$\large
+\bar{X}
+\;\overset{\cdot}{\sim}\;
+N\left(\mu,\frac{\sigma^2}{n}\right)$$
+
+This tells us that the sampling distribution:
+
+- is approximately **Normal**
+- is centered at $\mu$
+- has standard error
+
+$$\large
+SE(\bar{X}) = \frac{\sigma}{\sqrt{n}}$$
+
+
+### How good is the Normal approximation?
+
+The approximation improves as the sample size increases.
+
+How quickly it improves depends on the **population distribution**:
+
+- Approximately Normal populations → works well even with small samples
+- Strongly skewed or heavy-tailed populations → may require much larger samples
+
+
+### Example: a non-Normal population
+
+The population itself does **not** need to be Normally distributed.
+
+Let's generate observations from a Poisson distribution:
+
+```{webr-r}
+set.seed(101)
+
+sample_size <- 30
+lambda <- 4 # Poisson mean and variance
+
+x <- rpois(sample_size, lambda = lambda)
+```
+
+Here is one sample from that population:
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(data.table(x), aes(x = x)) +
+  geom_histogram(binwidth = 1, color = "white", fill = "grey85") +
+  coord_cartesian(xlim = c(-0.5, 15)) +
+  scale_x_continuous(breaks = seq(0, 14, 2)) +
+  ggtitle("Single sample from the Poisson distribution")
+```
+
+The individual observations are clearly not Normally distributed.
+
+Now look at the distribution of the **sample mean** over repeated samples:
+
+```{webr-r}
+#| classes: webr-plot
+
+set.seed(123)
+
+sample_size <- 30  # 30, 5, 10
+lambda <- 4 # 4 then 1
+replications <- 50000
+
+means <- replicate(
+  replications,
+  mean(rpois(sample_size, lambda = lambda))
+)
+
+ggplot(data.table(means), aes(x = means)) +
+  geom_histogram(
+    aes(y = after_stat(density)),
+    binwidth = 1 / sample_size, color = "white", fill = "grey85"
+  ) +
+  stat_function(
+    fun = dnorm,
+    args = list(
+      mean = lambda,
+      sd = sqrt(lambda / sample_size)
+    ),
+    linewidth = 0.5
+  ) +
+  geom_vline(xintercept = lambda, linetype = 3, color = "darkred") +
+  labs(
+    title = "Sampling Distribution of the Sample Mean",
+    subtitle = "Curve shows the Normal approximation predicted by the CLT",
+    x = "Sample mean",
+    y = "Density"
+  )
+```
+
+The sampling distribution is approximately Normal, centered at $\lambda = 4$.
+
+And its observed standard error is close to what the CLT predicts:
+
+```{webr-r}
+empirical_se <- sd(means)
+theoretical_se <- sqrt(lambda / sample_size)
+
+empirical_se
+theoretical_se
+```
+
+
+## From sampling distributions to inference
+
+
+In our commmunity study, we had an observed mean birth weight of **115 oz.**, compared with a national mean of **120 oz.**
+
+We know that sample means vary from sample to sample.
+
+> **Is 115 unusually low if the true population mean is 120?**
+
+
+### Formalizing the question
+
+Suppose we begin by assuming the community mean is the same as the national mean:
+
+$$\large
+\begin{aligned}
+H_0: \mu &= 120 \\
+H_A: \mu &< 120
+\end{aligned}$$
+
+$H_0$ is the **null hypothesis**.
+
+$H_A$ is the **alternative hypothesis** and reflects the scientific question we want to answer.
+
+If the null hypothesis is true, repeated samples should produce sample means like those we simulated earlier.
+
+
+### Putting the observed mean value in the context of the null distribution
+
+```{webr-r}
+#| classes: webr-plot
+
+obs_mean <- 115
+
+ggplot(data.table(means = bw_means), aes(x = means)) +
+  geom_histogram(binwidth = 0.25, color = "white", fill = "grey85") +
+  geom_vline(xintercept = 120, linewidth = 1.2, color = "red") +
+  geom_vline(xintercept = obs_mean, linewidth = 1.2, color = "darkblue") +
+  labs(
+    title = "Observed Mean in the Null Distribution",
+    x = "Sample mean",
+    y = "Count"
+  )
+```
+
+How often would we observe a sample mean of **115 or lower** if the null hypothesis were true?
+
+```{webr-r}
+p_value <- mean(bw_means <= obs_mean)
+p_value
+```
+
+This probability is the **p-value**.
+
+> The **p-value** measures how unusual our observed result would be **if the null hypothesis were true.**
+
+
+### Interpreting the p-value
+
+- Under the null hypothesis $\left( H_0: \mu = 120 \right)$, sample means as small as 115 ounces occur only rarely.
+- The p-value is the probability of observing data **this extreme, or more extreme**, given that the null hypothesis is true.
+- It is **not** the probability that the null hypothesis is true.
+
+
+### Using the p-value to draw conclusions
+
+How do we use the p-value to make a decision about the null hypothesis?
+
+A common choice is a significance level of $\alpha = 5\%$.
+
+We reject the null hypothesis whenever $p < \alpha$; here, whenever the p-value is less than 0.05.
+
+> In our example, rejecting the null hypothesis means concluding that the community average birth weight is lower than the national average birth weight.
+
+The 5th percentile of the simulated sampling distribution is
+
+```{webr-r}
+one_sided <- quantile(bw_means, probs = 0.05)
+one_sided
+```
+
+This threshold defines the lowest 5% of the null distribution.
+
+
+### Visualizing the rejection region
+
+We can see this rejection region in our simulated null distribution:
+
+```{webr-r}
+#| classes: webr-plot
+
+dd <- data.table(
+  means = bw_means,
+  tail = bw_means <= one_sided
+)
+
+p <- ggplot(dd, aes(x = means)) +
+  geom_histogram(
+    aes(fill = after_stat(x <= one_sided)),
+    binwidth = 0.25,
+    color = "white"
+  )
+
+ymax <- max(ggplot_build(p)$data[[1]]$count)
+
+p + geom_vline(xintercept = one_sided, linewidth = 0.5, linetype = 2, color = "steelblue", alpha = 0.4) +
+  labs(
+    title = "Extreme values for one-sided hypothesis test",
+    x = "Sample Mean",
+    y = "Count"
+  ) +
+  scale_fill_manual(
+    values = c("TRUE" = "steelblue", "FALSE" = "grey85"),
+    guide = "none"
+  ) +
+  annotate(
+    "text",
+    x = one_sided - 3.5,
+    y = ymax * 0.6,
+    label = "5% most extreme\noutcomes under the\nnull hypothesis",
+    color = "steelblue",
+    fontface = "bold",
+    hjust = 0.5,
+    size = 4
+)
+```
+
+Our observed mean of 115 ounces falls in this extreme region. Its p-value was approximately 0.02, which is less than 0.05, so we reject the null hypothesis.
+
+Our observed result is inconsistent with the null hypothesis and suggests that the community average birth weight is lower than the national average.
+
+
+### Could this decision be wrong?
+
+Yes. Even if the null hypothesis is true, random sampling will occasionally produce a sample mean in this extreme region.
+
+If we reject the null hypothesis when it is actually true, we have made a **Type I error**.
+
+By choosing a significance level of 5%, we are accepting that, if the null hypothesis is true, this type of mistake will occur about 5% of the time over many repeated studies.
+
+
+### Two-sided test
+
+Throughout this example, our scientific question has been whether birth weights are **lower** than the national average, leading to a one-sided alternative.
+
+In some studies, however, we are interested in detecting **any** difference, regardless of direction. In this case, the alternative hypothesis changes:
+
+$$\large
+\begin{aligned}
+H_0: \mu &= 120 \\
+H_A: \mu &\ne 120
+\end{aligned}$$
+
+We use the 2.5% and 97.5% quantiles to define the extreme areas:
+
+```{webr-r}
+two_sided <- quantile(bw_means, probs = c(0.025, 0.975))
+two_sided
+```
+
+The rejection region now contains the most extreme 5% of the null distribution: **2.5% in each tail**
+
+```{webr-r}
+#| classes: webr-plot
+
+p2 <- ggplot(dd, aes(x = means)) +
+  geom_histogram(
+    aes(fill = after_stat(x <= two_sided[1] | x >= two_sided[2])),
+    binwidth = 0.25,
+    color = "white"
+  )
+
+ymax2 <- max(ggplot_build(p2)$data[[1]]$count)
+
+p2 +
+  geom_vline(
+    xintercept = two_sided,
+    linewidth = 0.5,
+    linetype = 2,
+    color = "steelblue",
+    alpha = 0.4
+  ) +
+  annotate(
+    "text",
+    x = two_sided[1] - 3,
+    y = ymax2 * 0.4,
+    label = "Lowest 2.5% of\noutcomes under\nthe null hypothesis",
+    color = "steelblue",
+    fontface = "bold",
+    hjust = 0.5,
+    size = 3.5
+  ) +
+  annotate(
+    "text",
+    x = two_sided[2] + 3,
+    y = ymax2 * 0.7,
+    label = "Highest 2.5% of\noutcomes under\nthe null hypothesis",
+    color = "steelblue",
+    fontface = "bold",
+    hjust = 0.5,
+    size = 3.5
+  ) +
+  labs(
+    title = "Extreme values for two-sided hypothesis test",
+    x = "Sample Mean",
+    y = "Count"
+  ) +
+  scale_fill_manual(
+    values = c("TRUE" = "steelblue", "FALSE" = "grey85"),
+    guide = "none"
+  )
+```
+
+Each tail now contains 2.5% of the most extreme outcomes under the null hypothesis. The two-sided p-value is the probability of observing a sample mean at least this far from 120 in either direction.
+
+Because the null distribution is symmetric, the two-sided p-value is obtained by doubling the one-sided p-value. We still reject the null hypothesis whenever the two-sided p-value is less than 0.05.
+
+```{webr-r}
+two_sided_p_value <- 2 * p_value
+two_sided_p_value
+```
+
+> The two-sided p-value is still less than 0.05, so we reject the null hypothesis.
+
+> Our observed result is inconsistent with the null hypothesis and suggests that the community average birth weight differs from the national average.
+
+
+### Two final points
+
+#### Point 1
+
+> One-sided and two-sided tests can lead to different conclusions.
+>
+> The appropriate alternative is determined by the scientific question, not by the observed data.
+
+#### Point 2
+
+> Failing to reject the null hypothesis does not imply that the community and national populations are the same.
+>
+> It only means that this study did not detect a difference.
+
+
+## In practice, we don't know $\sigma$
+
+Up until this point, we have assumed that we know the population variance (and standard deviation). In reality, we usually don't. Instead, we estimate it from the sample.
+
+This raises a new question.
+
+> How should we measure how far our observed sample mean is from the null hypothesis?
+
+Well...
+
+- the difference between the observed mean and the hypothesized mean is $$\large \bar{x} - \mu$$
+
+but...
+
+- a difference of 5 ounces means something very different when there is little variability than when there is a great deal of variability.
+
+So we measure the difference relative to its standard error:
+
+$$\large
+\frac{\bar{x} - \mu}{\sigma / \sqrt{n}}$$
+
+In practice, we replace the unknown population standard deviation with its sample estimate:
+
+$$\large
+\frac{\bar{x} - \mu}{\sigma / \sqrt{n}} \;\longrightarrow\; \frac{\bar{x} - \mu}{s / \sqrt{n}}$$
+
+where $s$ is the estimated sample standard deviation.
+
+> This standardized difference will be the quantity we use to compare the observed sample with the null hypothesis.
+
+
+### Comparing the two standardized statistics
+
+Let's go back to the original simulation for a single sample. This time we will use a function:
+
+```{webr-r}
+gen_data <- function(sample_size, mu, sigma) {
+  rnorm(sample_size, mean = mu, sd = sigma)
+}
+
+gen_stats <- function(sample_size, mu, sigma) {
+
+  birth_weight <- gen_data(sample_size, mu, sigma)
+
+  x_bar <- mean(birth_weight)
+  s <- sd(birth_weight)
+
+  z_stat <- (x_bar - mu) / (sigma / sqrt(sample_size))
+  t_stat <- (x_bar - mu) / (s / sqrt(sample_size))
+
+  return(data.table(z_stat = z_stat, t_stat = t_stat))
+}
+```
+
+Here is a single data set:
+
+```{webr-r}
+set.seed(3)
+
+gen_stats(sample_size = 5, mu = 120, sigma = 24)
+```
+
+Now, let's look at the distribution of *z_stat* and *t_stat* if we generate 100,000 data sets:
+
+```{webr-r}
+set.seed(123)
+
+sample_size <- 30 # 5, 10, 30, 100, 250
+mu <- 120
+sigma <- 24
+
+replications <- 25000
+
+bw_stats <- lapply(
+  1:replications,
+  function(x) gen_stats(sample_size, mu, sigma)
+)
+
+bw_stats_dd <- rbindlist(bw_stats, idcol = "rep")
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+p_full <- ggplot(data = bw_stats_dd) +
+  geom_density(aes(x = z_stat), color = "#b47846", linewidth = .5, linetype = 2) +
+  geom_density(aes(x = t_stat), color = "steelblue", linewidth = .8) +
+  labs(x = "Standardized statistics", y = "Density")
+
+p_zoom <- 
+  p_full + 
+  labs(y = NULL) +
+  coord_cartesian(xlim = c(1.5, 4.0), ylim = c(0, 0.2))
+
+(p_full | p_zoom) +
+  plot_annotation(title = "Simulated sampling distributions of the standardized statistics") +
+  plot_layout(axes = "collect", axis_titles = "collect") +
+  plot_layout(widths = c(1.5, 1))
+```
+
+It turns out that the variable *t_stat* has a name - the **t-statistic**. And it follows a distribution called the ***Student's t*** distribution. As we've seen, the *Student's t* depends on the sample size. The shape of the Student’s t distribution depends on its degrees of freedom (df). For a one-sample analysis, $$\large df = n - 1$$
+
+As the sample size increases, the Student’s *t* distribution becomes increasingly similar to the standard normal distribution.
+
+We can quantify the heavier tails by asking how often each standardized statistic falls more than 1.96 standard-error units from zero.
+
+```{webr-r}
+sample_size
+```
+
+Simulated distribution of z-statistic (assuming sigma is known):
+
+```{webr-r}
+bw_stats_dd[, mean(abs(z_stat) > 1.96)]
+```
+
+Simulated distribution of t-statistic (assuming sigma is unknown):
+
+```{webr-r}
+bw_stats_dd[, mean(abs(t_stat) > 1.96)]
+```
+
+$P(X \lt -1.96 \text{ or } X > 1.96)$ in the heoretical standard normal and t-distributions: 
+
+```{webr-r}
+2 * pnorm(-1.96)
+2 * pt(-1.96, df = sample_size - 1)
+```
+
+
+## Performing a one-sample t-test
+
+
+So far we've used simulation to understand how the procedure works. In practice, statistical software performs these calculations for us.
+
+Let's continue with the simple birth weight example. First generate the sample (which happens to have a mean of 115):
+
+```{webr-r}
+set.seed(16986)
+
+sample_size = 30
+mu <- 120
+sigma <- 24
+
+birth_weight <- gen_data(sample_size, mu, sigma)
+```
+
+We specify the null and alternative hypotheses:
+
+$$\large
+\begin{aligned}
+H_0&: \mu \ge 120 \\
+H_A&: \mu \lt 120
+\end{aligned}$$
+
+Let's manually calculate the p-value for this one-sided test:
+
+```{webr-r}
+xbar <- mean(birth_weight)
+t_stat <- ( xbar - mu ) / ( sd(birth_weight) / sqrt(length(birth_weight)) )
+df <- length(birth_weight) - 1
+p_one <- pt(t_stat, df)
+
+c(xbar = xbar, t_stat = t_stat, df = df, p_value = p_one)
+```
+
+We have now calculated everything needed for the hypothesis test. The **R** function `t.test` performs the same calculations automatically:
+
+```{webr-r}
+t.test(
+  birth_weight,
+  mu = 120,
+  alternative = "less"
+)
+```
+
+Suppose instead that our scientific question is whether the community birth weight differs from the national average in either direction:
+
+$$\large
+\begin{aligned}
+H_0&: \mu = 120 \\
+H_A&: \mu \ne 120
+\end{aligned}$$
+
+The t-statistic and degrees of freedom are unchanged. Only the calculation of the p-value changes:
+
+```{webr-r}
+p_two <- 2 * pt(-abs(t_stat), df)
+
+c(xbar = xbar, t_stat = t_stat, df = df, p_value = p_two)
+```
+
+Using the **R** function `t.test`:
+
+```{webr-r}
+t.test(
+  birth_weight,
+  mu = 120,
+  alternative = "two.sided"
+)
+```
+
+
+## Two-sample comparison - paired measurements
+
+
+A rehabilitation program enrolls 30 adults recovering from a wrist injury. Grip strength is measured at the beginning of the program and again after 8 weeks.
+
+**Key features of this analysis**:
+
+- There is one sample of individuals measured twice
+- The measurements are **paired** because they come from the same individuals
+- We are interested in the average **within-person change** in grip strength is different from 0
+
+For each individual, define the change in grip strength as
+
+$$\large
+D_i = X_{\text{after},i} - X_{\text{before},i}.$$
+
+Our hypotheses can then be written as
+
+$$\large
+\begin{aligned}
+H_0: \mu_D &= 0 \\
+H_A: \mu_D &\ne 0
+\end{aligned}$$
+
+> In a paired t-test, we convert the two measurements into a single sample of within-person differences. We then conduct a one-sample t-test on those differences.
+
+
+### Simulate a data set
+
+We will simulate the data using these definitions:
+
+$$\large
+X_{\text{before},i} \sim N(25, 6^2)$$
+
+$$\large
+X_{\text{after},i}
+=
+X_{\text{before},i} + 4 + \epsilon_i,
+\qquad
+\epsilon_i \sim N(0, 3^2)$$
+
+```{webr-r}
+set.seed(123)
+
+sample_size <- 30
+mu_before <- 25
+sd_before <- 6
+sd_change <- 3
+
+effect_size = 4
+
+grip_before <- rnorm(sample_size, mean = mu_before, sd = sd_before)
+grip_after <- grip_before + effect_size + rnorm(sample_size, 0, sd_change)
+
+dd <- data.table(grip_before, grip_after)
+dd[, id := .I]
+```
+
+Visualizing the data:
+
+```{webr-r}
+#| classes: webr-plot
+
+dd_long <- melt(
+  dd,
+  id.vars = "id",
+  measure.vars = c("grip_before", "grip_after"),
+  variable.name = "time",
+  value.name = "x"
+)
+
+dd_long[, time := factor(
+  time,
+  levels = c("grip_before", "grip_after"),
+  labels = c("Before", "After")
+)]
+
+ggplot(dd_long, aes(x = time, y = x, group = id)) +
+  geom_line(color = "grey70", linewidth = 0.5) +
+  geom_point(size = 1.5, color = "darkgreen") +
+  labs(
+    x = NULL,
+    y = "Grip strength"
+  )
+```
+
+
+### Assessing if the average change is different from 0
+
+We calculate each individual's change in grip strength, and then conduct a *t* test. By default `t.test()` conducts a two-sided test:
+
+```{webr-r}
+dd[, grip_change := grip_after - grip_before]
+
+t.test(x = dd$grip_change)
+```
+
+Alternatively, we can skip the extra step of creating a change score, and tell **R** to take care of doing that:
+
+```{webr-r}
+t.test(dd$grip_after, dd$grip_before, paired = TRUE)
+```
+
+These two analyses produce the same t-statistic, degrees of freedom, and p-value.
+
+
+## Two-sample comparison - independent samples
+
+
+A cardiologist conducts a randomized controlled trial comparing LDL cholesterol levels between individuals receiving **statin therapy** and individuals following a **healthy diet alone**. 46 individuals are randomized to the statin group and 31 individuals to the diet-only group.
+
+**Key features of this analysis**:
+
+- There are two samples (statin and diet)
+- The samples are **independent** (different individuals are in each group)
+- We are interested in the difference in mean LDL cholesterol between the groups
+
+This leads to the following hypotheses:
+
+$$\large
+\begin{aligned}
+H_0 &: \mu_{\text{statin}} - \mu_{\text{diet}} = 0 \\
+H_A &: \mu_{\text{statin}} - \mu_{\text{diet}} \ne 0
+\end{aligned}$$
+
+
+### Comparing the two means
+
+In the paired analysis, we reduced the two measurements to a single difference for each individual.
+
+> With independent samples, there is no natural pairing between observations. Instead, we compare the **two sample means** directly.
+
+The observed difference between the sample means is
+
+$$\large
+\bar{x}_{\text{statin}} - \bar{x}_{\text{diet}}$$
+
+As before, the size of the observed difference needs to be considered relative to its **standard error**.
+
+
+### Two sample means means two sources of variability
+
+With independent samples, both sample means vary from sample to sample.
+
+If the two samples are independent, the standard error of their difference is
+
+$$\large
+SE(\bar{X}_1-\bar{X}_2)
+=
+\sqrt{
+\frac{\sigma_1^2}{n_1}
++
+\frac{\sigma_2^2}{n_2}
+}.$$
+
+As with the one-sample t-test, we generally don't know the population variances, so we estimate them from the data:
+
+$$\large
+\widehat{SE}(\bar{X}_1-\bar{X}_2)
+=
+\sqrt{
+\frac{s_1^2}{n_1}
++
+\frac{s_2^2}{n_2}
+}.$$
+
+We can now standardize the observed difference just as we did before:
+
+$$\large
+t
+=
+\frac{
+(\bar{x}_1-\bar{x}_2)-0
+}{
+\sqrt{
+\frac{s_1^2}{n_1}
++
+\frac{s_2^2}{n_2}
+}
+}.$$
+
+
+### What about unequal variances?
+
+The traditional two-sample t-test assumes that the two populations have the **same variance**.
+
+**Welch's t-test** does not make this assumption — each group can have its own variance.
+
+> Welch's t-test works well even when the variances are equal, so there is generally little reason to assume equal variances.
+
+Welch's test uses an approximation to determine the **degrees of freedom**, which is why **R** may report a non-integer value.
+
+We will use Welch's t-test for two independent samples. It is the default in **R**.
+
+
+### Simulate a data set
+
+We will simulate the data using these definitions:
+
+$$\large
+X_{\text{statin},i} \sim N(117, 22^2),
+\qquad i = 1,\ldots,46$$
+
+$$\large
+X_{\text{diet},i} \sim N(130, 22^2),
+\qquad i = 1,\ldots,31$$
+
+> The observations in the two groups are generated independently.
+
+```{webr-r}
+set.seed(5211) # 5211 or 12112
+
+n_statin <- 46
+n_diet <- 31
+
+mu_diet <- 130
+mu_statin <- 117
+
+sd_diet <- 22
+sd_statin <- 22
+
+dd_statin <- data.table(group = "Statin", ldl = rnorm(n_statin, mu_statin, sd_statin))
+dd_diet <- data.table(group = "Diet", ldl = rnorm(n_diet, mu_diet, sd_diet))
+
+dd <- rbind(dd_statin, dd_diet)
+```
+
+Visualizing the data:
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(dd, aes(x = group, y = ldl)) +
+  geom_jitter(
+    width = 0.1,
+    height = 0,
+    size = 1.5,
+    color = "grey70"
+  ) +
+  stat_summary(
+    fun = mean,
+    geom = "crossbar",
+    width = 0.2,
+    linewidth = 0.8,
+    color = "darkred"
+  ) +
+  labs(
+    x = NULL,
+    y = "LDL cholesterol (mg/dL)"
+  )
+```
+
+
+### Assessing whether the group means are different:
+
+```{webr-r}
+t.test(ldl ~ group, data = dd)
+```
