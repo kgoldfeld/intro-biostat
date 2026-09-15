@@ -1,3 +1,14 @@
+@media (min-width: 1200px) {
+  main.content {
+    position: relative;
+    left: -12rem;
+  }
+
+  html, body {
+    overflow-x: hidden;
+  }
+}
+
 #quarto-margin-sidebar,
 .quarto-code-links {
   display: none !important;
@@ -33,12 +44,7 @@ h5 {
   font-size: 0.8em !important;
 }
 
-@media (min-width: 992px) {
-  main.content {
-    position: relative;
-    left: -6rem;
-  }
-}
+
 
 /* Ordinary WebR chunks */
 .qwebr-interactive-area {
