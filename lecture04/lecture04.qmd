@@ -14,7 +14,7 @@ webr:
 #| context: setup
 
 download.file(
-  "https://teaching.rdatagen.net/lecture01/data/dietData.csv",
+  "https://teaching.rdatagen.net/lecture04/data/dietData.csv",
   "dietData.csv"
 )
 ```
