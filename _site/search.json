@@ -348,5 +348,19 @@
     "title": "Lecture 5: Modeling Continuous Outcomes",
     "section": "Back to NHANES: multiple regression",
     "text": "Back to NHANES: multiple regression\nEarlier, we examined the relationship between age and total cholesterol.\nWe can now ask:\n\nHow is age associated with total cholesterol after accounting for gender?\n\nThe model can be written as\n\\[\\large\nE(\\text{cholesterol}\\mid\\text{age},\\text{gender})\n=\n\\beta_0\n+\\beta_1 I(\\text{female})\n+\\beta_2(\\text{age}-50)\\]\nwhere \\(I(\\text{female})=1\\) for females and \\(0\\) for males.\nThe coefficients describe:\n\n\\(\\beta_0\\): mean cholesterol at age 50 for males\n\\(\\beta_1\\): difference in mean cholesterol between females and males of the same age\n\\(\\beta_2\\): difference in mean cholesterol associated with a one-year difference in age, for individuals of the same gender\n\n\nEach coefficient in a multiple regression model is interpreted conditional on the other variables in the model.\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nIn this sample, mean total cholesterol was estimated to be about 1.0 mg/dL higher for each additional year of age, comparing individuals of the same gender.\nMean cholesterol was estimated to be about 1.0 mg/dL lower among females than males of the same age, although the confidence interval is wide and includes no difference.\nThe fitted lines are parallel because the model assumes that the association between age and cholesterol is the same for males and females.\n\nInspecting the model\nAs a first check of the model, we look at the residiuals:\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nThen we evaluate leverage to identify observations with unusual predictor values.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nFinally, we look to see if any observations of particularly influence:\n\nPlease enable JavaScript to experience the dynamic code cell content on this page."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Introduction to Biostatistics",
+    "section": "",
+    "text": "Understanding variability\nStatistical inference\nEstimation and uncertainty\nDesigning and analyzing studies\nModeling continuous outcomes\nModeling categorical outcomes\nPractical issues in data analysis\nPrediction and classification"
+  },
+  {
+    "objectID": "index.html#lectures",
+    "href": "index.html#lectures",
+    "title": "Introduction to Biostatistics",
+    "section": "",
+    "text": "Understanding variability\nStatistical inference\nEstimation and uncertainty\nDesigning and analyzing studies\nModeling continuous outcomes\nModeling categorical outcomes\nPractical issues in data analysis\nPrediction and classification"
   }
 ]
