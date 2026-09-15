@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Lecture 1: Understanding Variability – Biostatistics Lectures</title>
+<title>Untitled – Biostatistics Lectures</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -369,7 +369,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dt <- data.table(\n  group = c(\"A\", \"A\", \"B\", \"B\"),\n  x = c(10, 14, 20, 24)\n)\n\ndt","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dt[, mean(x), by = group]","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\n\npopulation <- rnorm(2000000, mean = 125, sd = 18)\n\nmean(population)","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sample <- sample(population, size = 100)\n\nmean(sample)","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data.table(sbp = sample), aes(x = sbp)) +\n  geom_histogram(bins = 50, color = \"grey85\", fill = \"grey70\") +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Count\"\n  )","id":6,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"4","fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sample)\nmedian(sample)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sample_outlier <- sample\nsample_outlier[1] <- 500\n\nmean(sample_outlier)\nmedian(sample_outlier)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x1 <- c(98, 99, 100, 101, 102)\nx2 <- c(80, 90, 100, 110, 120)\n\nmean(x1)\nmean(x2)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x1\nx1 - mean(x1)\n\nx2\nx2 - mean(x2)","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"var(x1)\nvar(x2)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sd(x1)\nsd(x2)","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sample)\nsd(sample)","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sd(sample)\nsd(sample_outlier)\n\nIQR(sample)\nIQR(sample_outlier)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\npopulation <- rnorm(2000000, mean = 125, sd = 18)\n\nggplot(data.frame(sbp = population), aes(x = sbp)) +\n  geom_histogram(bins = 50, color = \"grey85\", fill = \"grey70\") +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Count\"\n  )","id":15,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"4","fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- seq(0, 250, length.out = 500)\n\nmu <- 125 # 125, 90, 150\nsigma <- 18 # 18, 10, 30\n\nnormal_density <- data.frame(\n  x = x,\n  density = dnorm(x, mean = mu, sd = sigma)\n)\n\nggplot(normal_density, aes(x = x, y = density)) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":16,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"3","fig-width":"6","label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 100, xend = 100,\n    y = 0, yend = dnorm(100, mean = mu, sd = sigma),\n    linewidth =.2, color = \"pink\"\n  ) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth =.2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x >= 100 & x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":17,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  )","id":18,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(normal_density, aes(x = x, y = density)) +\n  geom_segment(\n    x = 140, xend = 140,\n    y = 0, yend = dnorm(140, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 140),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Systolic blood pressure\",\n    y = \"Density\"\n  ) +\n    geom_segment(\n    x = 100, xend = 100,\n    y = 0, yend = dnorm(100, mean = mu, sd = sigma),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(normal_density, x <= 100),\n    fill = \"grey70\"\n  )","id":19,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(140, mean = mu, sd = sigma)\npnorm(100, mean = mu, sd = sigma)","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(140, mean = mu, sd = sigma) -\n  pnorm(100, mean = mu, sd = sigma)","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z_sbp <- (population - 125) / 18\n\nround(mean(z_sbp), 3)\nround(sd(z_sbp), 3)","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z <- seq(-4, 4, length.out = 500)\n\nstandard_normal <- data.frame(\n  z = z,\n  density = dnorm(z)\n)\n\nggplot(standard_normal, aes(x = z, y = density)) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"z-score\",\n    y = \"Density\"\n  )","id":23,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(1) - pnorm(-1)","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(2) - pnorm(-2)","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(standard_normal, aes(x = z, y = density)) +\n  geom_segment(\n    x = -2, xend = -2,\n    y = 0, yend = dnorm(-2),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_segment(\n    x = 2, xend = 2,\n    y = 0, yend = dnorm(2),\n    linewidth = .2, color = \"pink\"\n  ) +\n  geom_area(\n    data = subset(standard_normal, z >= -2 & z <= 2),\n    fill = \"grey90\"\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"z-score\",\n    y = \"Density\"\n  )","id":26,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"qnorm(0.95)","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"qnorm(0.025)\nqnorm(0.975)","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z_100 <- (100 - 125) / 18\nz_100","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(z_100)","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pnorm(100, mean = 125, sd = 18)","id":31,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- 0:10\n\nbinomial_prob <- data.frame(\n  x = x,\n  probability = dbinom(x, size = 10, prob = 0.60)\n)\n\nbinomial_prob","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(binomial_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = 0:10) +\n  labs(\n    x = \"Number with controlled hypertension\",\n    y = \"Probability\"\n  )","id":33,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dbinom(6, size = 10, prob = 0.60)","id":34,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dbinom(6, size = 10, prob = 0.60)","id":35,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"n <- 10\np <- 0.6\n\nx <- 0:n\n\nbinomial_prob <- data.frame(\n  x = x,\n  probability = dbinom(x, size = n, prob = p)\n)\n\nggplot(binomial_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = 0:n) +\n  labs(\n    title = paste0(\"Binomial(n = \", n, \", p = \", p, \")\"),\n    x = \"Number with controlled hypertension\",\n    y = \"Probability\"\n  )","id":36,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-36","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"1 - pbinom(5, size = 10, prob = 0.60)","id":37,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-37","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"lambda <- 8 # 2, 5, 8 \n\nx <- 0:20\n\npoisson_prob <- data.frame(\n  x = x,\n  probability = dpois(x, lambda = lambda)\n)\n\nggplot(poisson_prob, aes(x = x, y = probability)) +\n  geom_col(width = .8, fill = \"grey80\") +\n  scale_x_continuous(breaks = x, limits = c(-0.5, 20.5)) +\n  labs(\n    title = paste0(\"Poisson(lambda = \", lambda, \")\"),\n    x = \"Number of hospital admissions\",\n    y = \"Probability\"\n  ) ","id":38,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-38","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dpois(0, lambda = 2)\ndpois(1, lambda = 2)\ndpois(2, lambda = 2)\ndpois(3, lambda = 2)\ndpois(8, lambda = 2)","id":39,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-39","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Probability of exactly 3 admissions\ndpois(3, lambda = 2)\n\n# Probability of 3 or fewer admissions\nppois(3, lambda = 2)","id":40,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-40","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1203)\n\nx <- rnorm(100)\ny <- 0.7 * x + rnorm(100, sd = .7)\n\nggplot(data.frame(x, y), aes(x, y)) +\n  geom_point(size = 2) +\n  labs(\n    x = \"X\",\n    y = \"Y\"\n  )","id":41,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-41","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x_dev <- x - mean(x)\ny_dev <- y - mean(y)\n\nggplot(data.frame(x_dev, y_dev), aes(x_dev, y_dev)) +\n  geom_hline(yintercept = 0, linewidth = .4) +\n  geom_vline(xintercept = 0, linewidth = .4) +\n  geom_point(size = 2) +\n  labs(\n    x = expression(x - bar(x)),\n    y = expression(y - bar(y))\n  )","id":42,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-42","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cov(x, y)","id":43,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-43","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- 1:10\n\ny1 <- c(\n  2.1, 3.4, 4.7, 5.9, 7.1,\n  9.1, 12.4, 12.8, 13.8, 18.1\n)\n\ny2 <- c(\n  16.4,  7.7, 10.2, 21.9, 34.3,\n  18.1, 13.3,  5.5,  5.5, 56.4\n)\n\ny3 <- c(\n  16.0,  25.8,  35.7,  44.8,  54.0,\n  69.2,  94.2,  97.3, 104.9, 137.6\n)","id":44,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-44","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"plot_association <- function(x, y, label) {\n  \n  data.frame(x, y) |>\n    ggplot(aes(x = x, y = y)) +\n    geom_point(size = 1, color = \"darkgreen\") +\n    labs(\n      title = label,\n      x = \"x\",\n      y = \"y\"\n    ) +\n    theme(\n      plot.title = element_text(size = 8),\n      axis.text = element_text(size = 6),\n      axis.title = element_text(size = 9)\n    )\n}\n\np1 <- plot_association(x, y1, \"y1\")\np2 <- plot_association(x, y2, \"y2\")\np3 <- plot_association(x, y3, \"y3\")\n\np1 + p2 + p3","id":45,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"2","fig-width":"6","label":"unnamed-chunk-45","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cov(x, y1)\ncov(x, y2)\ncov(x, y3)","id":46,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-46","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p1 + p2 + p3","id":47,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":"2","fig-width":"6","label":"unnamed-chunk-47","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x, y1)\ncor(x, y2)\ncor(x, y3)","id":48,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-48","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"generate_correlated <- function(n = 150, rho = 0.8) { \n\n  x <- rnorm(n)\n  y <- rho * x + sqrt(1 - rho^2) * rnorm(n)\n\n  data.table(x, y)\n}\n\nplot_correlation <- function(dat) {\n\n  r <- cor(dat$x, dat$y)\n  lims <- max(abs(c(dat$x, dat$y)))\n\n  ggplot(dat, aes(x, y)) +\n    geom_point(size = 0.3) +\n    labs(\n      title = sprintf(\"Correlation = %.2f\", r)\n    ) +\n    coord_equal(\n      xlim = c(-lims, lims),\n      ylim = c(-lims, lims)\n    ) +\n    theme(\n      plot.title = element_text(hjust = .5, size = 12)\n    )\n}\nplot_correlation( generate_correlated(n = 500, rho = -0.7) ) # -0.7, 0, 0.7","id":49,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-49","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 200\n\nx_quad <- runif(n, -2, 2)\ny_quad <- x_quad^2 + rnorm(n, sd = 0.15)\n\nggplot(data.table(x_quad, y_quad), aes(x_quad, y_quad)) +\n  geom_point(size = 2, alpha = 0.7) +\n  labs(\n    x = \"x\",\n    y = expression(x^2 + epsilon)\n  )","id":50,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-50","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x_quad, y_quad)","id":51,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-51","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nx_mono <- 1:100\ny_mono <- exp(x_mono / 25) + rnorm(100, 0, 1)\n\nggplot(data.table(x_mono, y_mono), aes(x_mono, y_mono)) +\n  geom_point(size = 1.5) +\n  labs(\n    x = \"x\",\n    y = expression(e^{x/25} + epsilon)\n  )","id":52,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-52","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"round(cor(x_mono, y_mono, method = \"pearson\"), 2)\nround(cor(x_mono, y_mono, method = \"spearman\"), 2)","id":53,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-53","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"cor(x_quad, y_quad, method = \"pearson\")\ncor(x_quad, y_quad, method = \"spearman\")","id":54,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-54","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\n  \ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(panel.grid = element_blank(),\n  plot.title = element_text(face = \"bold\", size = 12))\n)","id":1,"options":{"autorun":"true","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1987)\nn <- 30         # sample size for each group\n\nmu_a <- 10\nmu_b <- 10 \nmu_c <- 10 # 10 or 13\n\nsd <- 3 # 3 or 8\n\ndd <- data.table(\n  group = rep(c(\"A\", \"B\", \"C\"), each = n),\n  y = c(\n    rnorm(n, mean = mu_a, sd = sd),\n    rnorm(n, mean = mu_b, sd = sd),\n    rnorm(n, mean = mu_c, sd = sd)\n  )\n)","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = dd, aes(x = group, y = y)) +\n  geom_jitter(width = .05, height = 0, color = \"grey60\", size = 1) +\n  stat_summary(fun = mean, geom = \"crossbar\",width = 0.30, color = \"red\", linewidth = 0.7) +\n  ylim(-15, 40)","id":3,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"overall_mean <- mean(dd$y)\n\nggplot(data = dd, aes(x = group, y = y)) +\n geom_hline(yintercept = overall_mean, linetype = 2, color = \"grey40\") +\n geom_jitter(width = .05, height = 0,color = \"grey60\", size = 1) +\n stat_summary(fun = mean,geom = \"crossbar\", width = 0.30, color = \"red\", linewidth = 0.7) +\n ylim(-15, 40)","id":4,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- aov(y ~ group, data = dd)\nsummary(fit)","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_obs <- summary(fit)[[1]][[\"F value\"]][1]\n\nplot_F(df1 = 2, df2 = 87, print_p = TRUE, F_obs = F_obs)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"data <- fread(\"data/dietData.csv\")\ndata[, Group := as.factor(Group)]\nhead(data, 10)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"table(data$Group)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = data, aes(x = Group, y = WeightChange)) +\n  geom_jitter(width = .05, height = 0, color = \"grey60\") +\n  stat_summary(fun = mean, geom = \"crossbar\", width = 0.30, color = \"red\", linewidth = 0.7)","id":9,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"data[, .(\n  n = .N,\n  mean = mean(WeightChange),\n  sd = sd(WeightChange)\n), by = Group]","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"res_aov <- aov(WeightChange ~ Group, data = data)\nsummary(res_aov)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_obs <- summary(res_aov)[[1]][[\"F value\"]][1]\nplot_F(df1 = 3, df2 = 28, print_p = TRUE, F_obs = F_obs)","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"TukeyHSD(res_aov)","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"oneway.test(WeightChange ~ Group, data = data, var.equal = FALSE)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"kruskal.test(WeightChange ~ Group, data = data)","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(3817) \n\nn <- 20 # 20 or 35 per group\nmu_a <- 10\nmu_b <- 12\nsd <- 3\n\ndd <- data.table(\n  group = rep(c(\"A\", \"B\"), each = n),\n  y = c(\n    rnorm(n, mean = mu_a, sd = sd),\n    rnorm(n, mean = mu_b, sd = sd)\n  )\n)","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = group, y = y)) +\n  geom_jitter(width = .05, height = 0, color = \"grey60\") +\n  stat_summary(\n    fun = mean,\n    geom = \"crossbar\",\n    width = 0.30,\n    color = \"red\",\n    linewidth = 0.7\n  )","id":17,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"t.test(y ~ group, data = dd)","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(3817)\n\nn_sim <- 5000\n\nresults <- data.table(\n  sim = 1:n_sim,\n  diff = NA_real_,\n  t = NA_real_,\n  p_value = NA_real_\n)\n\nfor (s in 1:n_sim) {\n\n  y_a <- rnorm(n, mean = mu_a, sd = sd)\n  y_b <- rnorm(n, mean = mu_b, sd = sd)\n\n  tt <- t.test(y_b, y_a)\n\n  results[s, `:=`(\n    diff = mean(y_b) - mean(y_a),\n    t = unname(tt$statistic),\n p_value = tt$p.value\n  )]\n}\n\nresults[, significant := p_value < 0.05]","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(results, aes(x = t)) +\n  geom_histogram(\n    aes(fill = significant),\n    bins = 40,\n    color = \"white\"\n  ) +\n  scale_fill_manual(\n    values = c(\n      \"FALSE\" = \"grey80\",\n      \"TRUE\" = \"steelblue\"\n    ),\n    guide = \"none\"\n  ) +\n  annotate(\n    \"text\",\n    x = -0.1,\n    y = 500,\n    label = \"bold(beta == P(fail~to~reject~H[0]~'|'~mu[B] - mu[A] == 2))\",\n    parse = TRUE,\n    size = 3.5\n  ) +\n  annotate(\n    \"text\",\n    x = 5.3,\n    y = 420,\n    label = \"bold(Power == P(reject~H[0]~'|'~mu[B] - mu[A] == 2))\",\n    parse = TRUE,\n    size = 3.5\n  ) + \n  labs(\n    title = bquote(\n      bold(\"Distribution of t-statistics when\" ~\n         mu[B] - mu[A] == 2 ~\n         \"(n =\" ~ .(n) ~ \"per group)\")\n    ),\n    x = \"t-statistic\",\n    y = \"Count\"\n  ) +\n  ylim(0, 600)","id":20,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"results[, .(\n  power = mean(significant),\n  beta = mean(!significant)\n)]","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power <- function(n, mu_a = 10, mu_b = 12, sd = 3, n_sim = 5000) {\n\n  p_values <- numeric(n_sim)\n\n  for (s in 1:n_sim) {\n\n    y_a <- rnorm(n, mean = mu_a, sd = sd)\n    y_b <- rnorm(n, mean = mu_b, sd = sd)\n\n    p_values[s] <- t.test(y_b, y_a)$p.value\n }\n\n mean(p_values < 0.05)\n}","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power(n = 35, sd = 5)\nestimate_power(n = 35, sd = 4)\nestimate_power(n = 35, sd = 3)\nestimate_power(n = 35, sd = 2)","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power(n = 35, mu_b = 11, sd = 3)\nestimate_power(n = 35, mu_b = 12, sd = 3)\nestimate_power(n = 35, mu_b = 13, sd = 3)\nestimate_power(n = 35, mu_b = 14, sd = 3)","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"power.t.test(\n delta = 2,\n sd = 3,\n power = 0.80,\n sig.level = 0.05,\n type = \"two.sample\"\n)","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pwr::pwr.t.test(\n  d = 2/3,\n  power = 0.80,\n  sig.level = 0.05,\n  type = \"two.sample\",\n  alternative = \"two.sided\"\n)","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1953,7 +1953,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lecture 1: Understanding Variability</h1>
+<h1 class="title">Untitled</h1>
 </div>
 
 
@@ -1970,1003 +1970,327 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </header>
 
 
-<section id="logistics-for-biostatistics-module" class="level5">
-<h5 class="anchored" data-anchor-id="logistics-for-biostatistics-module">Logistics for Biostatistics Module</h5>
-<ul>
-<li>Weekly homework is due <strong>Tuesdays at 11am</strong>.</li>
-<li>TAs will grade <strong>three problems each week</strong>. I will post complete solutions, and you are responsible for checking your answers for the remaining problems.</li>
-<li>Collaboration with classmates is encouraged.</li>
-</ul>
-</section>
-<section id="exam" class="level5">
-<h5 class="anchored" data-anchor-id="exam">Exam</h5>
-<ul>
-<li>Take-home</li>
-<li>Open-book / open-notes</li>
-</ul>
-</section>
-<section id="office-hours" class="level5">
-<h5 class="anchored" data-anchor-id="office-hours">Office Hours</h5>
-<ul>
-<li>By appointment</li>
-<li>Email: <a href="mailto:Keith.Goldfeld@nyulangone.org" class="email">Keith.Goldfeld@nyulangone.org</a></li>
-</ul>
-</section>
-<section id="acknowledgments" class="level5">
-<h5 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h5>
-<p>With thanks to Ting-Fang Lee, PhD, Hayley Belli, PhD, and Andrea Troxel, PhD, for notes and materials.</p>
-</section>
 <section id="initial-setup" class="level2">
 <h2 class="anchored" data-anchor-id="initial-setup">Initial setup</h2>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
-<section id="a-note-about-data.table" class="level2">
-<h2 class="anchored" data-anchor-id="a-note-about-data.table">A note about <code>data.table</code></h2>
-<p>Throughout the course, we will use the <code>data.table</code> package to work with data in <em>R</em>.</p>
-<p>A <code>data.table</code> is also a data frame, but it provides a concise way to manipulate and summarize data.</p>
-<p>Much of the syntax follows the same basic structure:</p>
+<section id="comparing-more-than-two-groups" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-more-than-two-groups">Comparing more than two groups</h2>
+<p>So far, we have considered comparisons between <strong>two population means</strong>.</p>
+<p>For example, we might ask whether mean blood pressure differs between two treatment groups:</p>
 <p><span class="math display">\[\large
-\texttt{DT[i,\ j,\ by]}\]</span></p>
-<p>where we can think of:</p>
-<ul>
-<li><code>i</code>: <strong>which rows?</strong></li>
-<li><code>j</code>: <strong>what do we want to do?</strong></li>
-<li><code>by</code>: <strong>within which groups?</strong></li>
-</ul>
-<p>For example:</p>
+H_0: \mu_A = \mu_B\]</span></p>
+<p>But many studies involve more than two groups. Suppose instead that we have three treatment groups, and we want to compare their population means:</p>
+<p><span class="math display">\[\large \mu_A,\quad \mu_B,\quad \mu_C\]</span></p>
+<p><strong>How should we make this comparison?</strong></p>
+<p>Let’s start by considering what we might observe when the three population means are actually the same.</p>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>We will learn additional <code>data.table</code> syntax as we need it rather than learning it all at once.</p>
-<p><a href="https://raw.githubusercontent.com/rstudio/cheatsheets/master/datatable.pdf">Data Transformation with <code>data.table</code>: Cheat Sheet</a></p>
-</section>
-<section id="from-a-population-to-a-sample-to-a-population" class="level2">
-<h2 class="anchored" data-anchor-id="from-a-population-to-a-sample-to-a-population">From a population to a sample to a population</h2>
-<p>Suppose we want to answer a question:</p>
-<blockquote class="blockquote">
-<p><strong>What is the average systolic blood pressure among adult women living in New York City?</strong></p>
-</blockquote>
+<p><strong>Two things to note:</strong></p>
 <ul>
-<li><p>We start with a <strong><em>population</em></strong>, the group we want to learn about.</p></li>
-<li><p>In this case, the population is <strong>all adult women living in New York City</strong>.</p></li>
+<li><p>Even when the population means are equal, the sample means will differ because of sampling variability.</p></li>
+<li><p>When the population means differ, the observed differences among the sample means reflect both the population differences and sampling variability.</p></li>
 </ul>
 <blockquote class="blockquote">
-<p>The population is defined by the question we want to answer.</p>
+<p><em>The question we need to answer is: are the observed differences among the sample means larger than we would expect from sampling variability alone?</em></p>
 </blockquote>
-<ul>
-<li><p>In principle, we could measure the systolic blood pressure of everyone in the population.</p></li>
-<li><p>In practice, we can’t.</p></li>
-</ul>
-<p>Instead, we measure blood pressure in a <strong>sample</strong> of women from the population.</p>
-<ul>
-<li><p>Suppose we randomly select <strong>100 women</strong> and measure their systolic blood pressure.</p></li>
-<li><p>What can those 100 measurements tell us about the larger population?</p></li>
-</ul>
-<section id="population-and-sample" class="level3">
-<h3 class="anchored" data-anchor-id="population-and-sample">Population and sample</h3>
-<p>The quantity we really want to know is the <strong>population mean</strong>:</p>
-<p><span class="math display">\[\large \mu = \text{mean systolic blood pressure in the population}\]</span></p>
-<p>But we don’t observe <span class="math inline">\(\mu\)</span>.</p>
-<p>Instead, we calculate the <strong>sample mean</strong>:</p>
-<p><span class="math display">\[\large \bar{x} = \text{mean systolic blood pressure in our sample}\]</span></p>
-<p>We use <span class="math inline">\(\bar{x}\)</span> to learn about <span class="math inline">\(\mu\)</span>.</p>
 </section>
-<section id="imagine-we-have-a-population" class="level3">
-<h3 class="anchored" data-anchor-id="imagine-we-have-a-population">Imagine we have a population</h3>
-<p>With real data, we never get to see the entire population.</p>
-<p>But with simulation, we can create a population where we <strong>know the truth</strong>.</p>
+<section id="analysis-of-variance" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-of-variance">Analysis of variance</h2>
+<p><strong>Analysis of variance (ANOVA)</strong> provides a way to compare the means of more than two populations.</p>
+<p>For three groups, we can express the question as:</p>
+<p><span class="math display">\[\large
+H_0:\mu_A=\mu_B=\mu_C\]</span></p>
+<p><span class="math display">\[\large
+H_A:\text{the population means are not all equal}\]</span></p>
+<p>ANOVA compares two types of variability:</p>
+<ul>
+<li><strong>Within-group variability:</strong> How much do <u>individual observations</u> vary <em>within each group</em>?</li>
+<li><strong>Between-group variability:</strong> How much do the <u>group means</u> vary <em>from one another</em>?</li>
+</ul>
+<p>If the population means are equal, we still expect some variation among the sample means because of sampling variability.</p>
+<blockquote class="blockquote">
+<p>But if the sample means vary substantially <strong>relative to the variability within the groups</strong>, that suggests that the population means may not all be equal.</p>
+</blockquote>
+<p>This leads to the <strong>F-statistic</strong>:</p>
+<p><span class="math display">\[\large
+F \approx
+\frac{\text{between-group variability}}
+{\text{within-group variability}}\]</span></p>
+<section id="measuring-variability-within-and-between-groups" class="level3">
+<h3 class="anchored" data-anchor-id="measuring-variability-within-and-between-groups">Measuring variability within and between groups</h3>
 <div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The dashed line represents the <strong>overall mean</strong>, and the red lines represent the <strong>group means</strong>.</p>
+<p>The two sources of variability, <strong>within-group variability</strong> and <strong>between-group variability</strong> can be measured using the same basic idea we use to calculate a variance:</p>
+<p><strong>squared distances from a mean</strong>.</p>
 </section>
-<section id="we-can-take-a-sample-from-that-population" class="level3">
-<h3 class="anchored" data-anchor-id="we-can-take-a-sample-from-that-population">We can take a sample from that population</h3>
+<section id="within-group-variability" class="level3">
+<h3 class="anchored" data-anchor-id="within-group-variability">Within-group variability</h3>
+<p>For <strong>within-group variability</strong>, we measure the <strong>squared distance</strong> between each observation and the mean of its own group:<span class="math display">\[SS_{\text{within}}
+=
+\sum_{j=1}^{k}
+\sum_{i=1}^{n_j}
+(x_{ij}-\bar{x}_j)^2\]</span>where<span class="math inline">\(\Large k\)</span>is the number of groups and<span class="math inline">\(\Large n_j\)</span>is the number of observations in group<span class="math inline">\(\Large j\)</span>.</p>
+</section>
+<section id="between-group-variability" class="level3">
+<h3 class="anchored" data-anchor-id="between-group-variability">Between-group variability</h3>
+<p>For <strong>between-group variability</strong>, we measure the squared distance between each group mean and the overall mean, accounting for the number of observations in each group:<span class="math display">\[SS_{\text{between}}
+=
+\sum_{j=1}^{k}
+n_j(\bar{x}_j-\bar{x})^2\]</span>The factor<span class="math inline">\(\large n_j\)</span>accounts for sample size, putting the variability among the sample means back on the scale of the individual observations.</p>
+</section>
+<section id="sums-of-squareslarge-ss_textwithinandlarge-ss_textbetweenare-called-the-sums-of-squares." class="level3">
+<h3 class="anchored" data-anchor-id="sums-of-squareslarge-ss_textwithinandlarge-ss_textbetweenare-called-the-sums-of-squares.">Sums of squares<span class="math inline">\(\large SS_{\text{within}}\)</span>and<span class="math inline">\(\large SS_{\text{between}}\)</span>are called the <strong>sums of squares</strong>.</h3>
+<p>As with a sample variance, we divide by the appropriate degrees of freedom to obtain measures of variability:<span class="math display">\[MS_{\text{within}}
+=
+\frac{SS_{\text{within}}}{N-k}\]</span><span class="math display">\[MS_{\text{between}}
+=
+\frac{SS_{\text{between}}}{k-1}\]</span>These quantities are called <strong>mean squares</strong>.</p>
+<blockquote class="blockquote">
+<p>Under the null hypothesis, both<span class="math inline">\(\large MS_{\text{within}}\)</span>and<span class="math inline">\(\large MS_{\text{between}}\)</span>estimate the same population variance<span class="math inline">\(\large \sigma^2\)</span>.</p>
+</blockquote>
+<p>ANOVA compares them using the <strong>F-statistic</strong>:<span class="math display">\[F
+=
+\frac{MS_{\text{between}}}
+{MS_{\text{within}}}\]</span>### Why does variability among the group means estimate<span class="math inline">\(\large \sigma^2\)</span>?</p>
+<p>Suppose each group has<span class="math inline">\(\large n\)</span>observations.</p>
+<ul>
+<li><p>Individual observations vary with variance:<span class="math display">\[\operatorname{Var}(X)=\sigma^2\]</span>- Sample means vary less:<span class="math display">\[\operatorname{Var}(\bar X_j)=\frac{\sigma^2}{n}\]</span>- Under<span class="math inline">\(\large H_0\)</span>, differences among the sample means arise entirely from sampling variability.</p></li>
+<li><p>The between-group sum of squares multiplies the squared differences among the means by<span class="math inline">\(\large n\)</span>:<span class="math display">\[SS_{\text{between}}
+=
+n\sum_j(\bar X_j-\bar X)^2\]</span>&gt; Multiplying by<span class="math inline">\(\large n\)</span>puts the variability among the sample means back on the<span class="math inline">\(\large \sigma^2\)</span>scale.</p></li>
+</ul>
+</section>
+<section id="what-happens-when-the-population-means-are-equal" class="level3">
+<h3 class="anchored" data-anchor-id="what-happens-when-the-population-means-are-equal">What happens when the population means are equal?</h3>
+<p>Under the null hypothesis:</p>
+<p>-<span class="math inline">\(\large MS_{\text{within}}\)</span>estimates variability among individual observations within the populations. -<span class="math inline">\(\large MS_{\text{between}}\)</span>uses variability among the sample means to estimate that <strong>same underlying population variance</strong>.<span class="math display">\[MS_{\text{within}} \approx \sigma^2
+\qquad\text{and}\qquad
+MS_{\text{between}} \approx \sigma^2\]</span>Therefore:<span class="math display">\[F=\frac{MS_{\text{between}}}{MS_{\text{within}}}
+\approx 1\]</span>&gt; If the population means differ,<span class="math inline">\(\large MS_{\text{between}}\)</span>also reflects those differences and tends to become larger.</p>
+<p>###<span class="math inline">\(\Large F\)</span>distribution</p>
+<p>The shape of the<span class="math inline">\(\Large F\)</span>distribution is determined by two degrees of freedom - one associated with<span class="math inline">\(\large MS_{\text{between}}\)</span>and one with<span class="math inline">\(\large MS_{\text{within}}\)</span>:<span class="math display">\[df_1 = k - 1,\qquad df_2 = N-k\]</span>The F-distribution for our example has<span class="math inline">\(\large df_1 = 3 - 1\)</span>, and<span class="math inline">\(\large df_2 = 90 - 3\)</span>```{webr-r} #| classes: webr-plot</p>
+<p>plot_F &lt;- function(df1, df2, print_p = FALSE, F_obs = NULL) {</p>
+<p>x &lt;- seq(0, 16, length.out = 1000)</p>
+<p>dd_f &lt;- data.table( f = x, density = df(x, df1 = df1, df2 = df2) )</p>
+<p>p_f &lt;- ggplot(dd_f, aes(x = f, y = density)) + labs( x = “F”, y = “Density”, title = sprintf(“F-distribution (df1 = %d, df2 = %d)”, df1, df2) ) + scale_y_continuous(expand = expansion(mult = c(0, 0.05)))</p>
+<p>if (print_p == TRUE) { p_f &lt;- p_f + geom_area(data = dd_f[f &gt;= F_obs], aes(x = f, y = density), fill = “grey90”) + geom_segment( x = F_obs, xend = F_obs, y = 0, yend = df(F_obs, df1 = df1, df2 = df2), linewidth = 0.2, color = “pink” ) + annotate(“text”, x = F_obs - 2.5, y = 0.15, label = sprintf(“F = %.2f”, F_obs),hjust = -0.1, size = 4) }</p>
+<p>p_f + geom_line(linewidth = 0.8)</p>
+<p>}</p>
+<p>plot_F(df1 = 2, df2 = 87)</p>
+<pre><code>
+
+### Fitting the ANOVA model
+
+Let's return to our simulated data and test:$$H_0:\mu_A=\mu_B=\mu_C$$$$H_A:\text{the population means are not all equal}$$Here are the group averages and within-group standard deviations:
+
+```{webr-r}
+dd[, .(
+ n = .N,
+ mean = mean(y),
+ sd = sd(y)
+), by = group]</code></pre>
+<p>The model can be estimated in <strong>R</strong> using the function <code>aov()</code>:</p>
 <div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p><br></p>
-<section id="what-did-we-see" class="level4">
-<h4 class="anchored" data-anchor-id="what-did-we-see">What did we see?</h4>
-<p>Different samples from the <strong>same population</strong> gave us different sample means.</p>
-<blockquote class="blockquote">
-<p><strong>Key idea:</strong> A sample is a noisy reflection of the population.</p>
-</blockquote>
-<p>We use what we observe in the <strong>sample</strong> to learn about what we cannot observe in the <strong>population</strong>.</p>
-</section>
-</section>
-</section>
-<section id="describing-our-sample" class="level2">
-<h2 class="anchored" data-anchor-id="describing-our-sample">Describing our sample</h2>
-<p>We now have systolic blood pressure measurements for <strong>100 women</strong>.</p>
-<p>What do our data look like?</p>
+<p>The shaded area to the right of the observed<span class="math inline">\(\large F\)</span>-statistic is the p-value:</p>
 <div id="qwebr-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<section id="how-can-we-summarize-these-data" class="level4">
-<h4 class="anchored" data-anchor-id="how-can-we-summarize-these-data">How can we summarize these data?</h4>
-<p>A graph shows us the entire distribution.</p>
-<p>But we often want a few numbers that summarize important features of the data.</p>
-<p>Two things we often want to describe are:</p>
-<ul>
-<li><p><strong>Where are the observations centered?</strong></p></li>
-<li><p><strong>How much do the observations vary?</strong></p></li>
-</ul>
 </section>
-<section id="where-are-the-observations-centered" class="level3">
-<h3 class="anchored" data-anchor-id="where-are-the-observations-centered">Where are the observations centered?</h3>
-<p>Two common summaries are the <strong>mean</strong> and the <strong>median</strong>.</p>
-<p>The <strong>sample mean</strong> is the arithmetic average of the observations:</p>
-<p><span class="math display">\[\large
-\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_i\]</span></p>
-<p>The <strong>median</strong> is the value that divides the ordered observations in half.</p>
+<section id="example---weight-loss-programs" class="level3">
+<h3 class="anchored" data-anchor-id="example---weight-loss-programs">Example - weight loss programs</h3>
+<p>In this example, participants are in one of four weight-loss groups (three active programs and a control). The outcome is weight loss over 8 weeks, defined as the difference between baseline and 8-week weight.</p>
 <div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="do-the-mean-and-median-always-tell-us-the-same-thing" class="level3">
-<h3 class="anchored" data-anchor-id="do-the-mean-and-median-always-tell-us-the-same-thing">Do the mean and median always tell us the same thing?</h3>
-<p>Let’s change one observation in our sample:</p>
 <div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The <strong>mean</strong> uses the magnitude of every observation, so an extreme value can have a large effect.</p>
-<p>The <strong>median</strong> depends primarily on the ordering of the observations, so it is much less affected by extreme values.</p>
-</section>
-<section id="how-much-do-the-observations-vary" class="level3">
-<h3 class="anchored" data-anchor-id="how-much-do-the-observations-vary">How much do the observations vary?</h3>
-<p>Knowing the center does not tell us everything about a distribution.</p>
-<p>Consider two sets of observations:</p>
 <div id="qwebr-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Both have the same mean.</p>
-<p>But are these data really similar?</p>
-</section>
-<section id="measuring-variability" class="level3">
-<h3 class="anchored" data-anchor-id="measuring-variability">Measuring variability</h3>
-<p>One way to describe variability is to look at how far each observation is from the mean:</p>
-<p><span class="math display">\[\large x_i - \bar{x}\]</span></p>
 <div id="qwebr-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The observations in <code>x2</code> are much farther from their mean.</p>
-</section>
-<section id="variance" class="level3">
-<h3 class="anchored" data-anchor-id="variance">Variance</h3>
-<p>If we simply add the deviations from the mean, positive and negative deviations cancel out.</p>
-<p>Instead, variance is based on the <strong>squared deviations from the mean</strong>.</p>
-<p>For a sample, the <strong>variance</strong> is:</p>
-<p><span class="math display">\[\large
-s^2 = \frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}\]</span></p>
 <div id="qwebr-insertion-location-11"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="why-do-we-divide-by-n-1" class="level3">
-<h3 class="anchored" data-anchor-id="why-do-we-divide-by-n-1">Why do we divide by <span class="math inline">\(n-1\)</span>?</h3>
-<p>When we calculate variability in a sample, we first compute the sample mean. But once the sample mean is fixed, the deviations from that mean must add up to zero.</p>
-<p>For example, if three observations have deviations:</p>
-<p><span class="math display">\[\large -2,\quad -1,\quad ?\]</span></p>
-<p>the final deviation must be:</p>
-<p><span class="math display">\[\large3\]</span></p>
-<p>so that the total is zero.</p>
-<p>Once we estimate the sample mean, only <span class="math inline">\(n-1\)</span> of the deviations are free to vary.</p>
-<p>We say that there are <span class="math inline">\(n-1\)</span> degrees of freedom for estimating the variability.</p>
-<p>This is why sample variance uses <span class="math inline">\(n-1\)</span> rather than <span class="math inline">\(n\)</span>.</p>
-</section>
-<section id="standard-deviation" class="level3">
-<h3 class="anchored" data-anchor-id="standard-deviation">Standard deviation</h3>
-<p>Variance is expressed in <strong>squared units</strong>.</p>
-<p>The <strong>standard deviation</strong> is the square root of the variance:</p>
-<p><span class="math display">\[\large
-s = \sqrt{\frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}}\]</span></p>
 <div id="qwebr-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The standard deviation is expressed in the <strong>same units as the original observations</strong>.</p>
+<p>The ANOVA p-value is small, suggesting that the population means are <strong>not all equal</strong>.</p>
+<p>However, the ANOVA does not tell us <strong>which groups differ from one another</strong>.</p>
 </section>
-<section id="back-to-our-blood-pressure-data" class="level3">
-<h3 class="anchored" data-anchor-id="back-to-our-blood-pressure-data">Back to our blood pressure data</h3>
+<section id="which-groups-differ" class="level3">
+<h3 class="anchored" data-anchor-id="which-groups-differ">Which groups differ?</h3>
+<p>The overall ANOVA suggests that the population means are not all equal, but it does not tell us which groups differ.</p>
+<p>We could compare each pair of groups separately. With four groups, there are</p>
+<p><span class="math display">\[\large
+{4 \choose 2}=6\]</span></p>
+<p>possible pairwise comparisons (0/1, 0/2, 0/3, 1/2, 1/3, 2/3).</p>
+<p>However, making multiple comparisons creates a problem: the more comparisons we make, the greater the chance that <strong>at least one comparison</strong> will appear statistically significant, even if none of the population means differ.</p>
+</section>
+<section id="tukeys-method" class="level3">
+<h3 class="anchored" data-anchor-id="tukeys-method">Tukey’s method …</h3>
+<p>allows us to estimate all pairwise differences while accounting for the fact that we are making multiple comparisons.</p>
 <div id="qwebr-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The <strong>mean</strong> describes where the observed blood pressures are centered.</p>
-<p>The <strong>standard deviation</strong> describes how much the observed blood pressures vary around that center.</p>
+<p>For each pair of groups, Tukey’s method provides:</p>
+<ul>
+<li><code>diff</code>: the estimated difference between the two group means</li>
+<li><code>lwr</code> and <code>upr</code>: a 95% confidence interval for the difference</li>
+<li><code>p adj</code>: a p-value adjusted for the fact that we are making multiple comparisons</li>
+</ul>
+<p>The 95% confidence intervals are <strong>simultaneous confidence intervals</strong>: they are constructed so that, over repeated samples, all of the true pairwise differences would be contained within their respective intervals 95% of the time.</p>
+<p>As a result, the intervals are wider than the confidence intervals we would calculate if each comparison were considered separately.</p>
+<blockquote class="blockquote">
+<p>We will return to the problem of multiple comparisons later in the course. For now, the important point is that once we start asking several questions of the same data, we need to account for the fact that we are making several comparisons.</p>
+</blockquote>
 </section>
-<section id="another-way-to-describe-variability" class="level3">
-<h3 class="anchored" data-anchor-id="another-way-to-describe-variability">Another way to describe variability</h3>
-<p>Just as the <strong>median</strong> is less affected by extreme observations than the mean, we can use a measure of variability that is less affected by extreme observations.</p>
-<p>The <strong>interquartile range (IQR)</strong> is the distance between the 25th and 75th percentiles:</p>
-<p><span class="math display">\[\large
-IQR = Q_{0.75} - Q_{0.25}\]</span></p>
-<p>It describes the spread of the <strong>middle 50%</strong> of the observations.</p>
+<section id="assumptions-and-robustness" class="level3">
+<h3 class="anchored" data-anchor-id="assumptions-and-robustness">Assumptions and robustness</h3>
+<p>The classical one-way ANOVA has several assumptions, with some important caveats:</p>
+<ul>
+<li><p><strong>Independent observations:</strong> <em>independence</em> comes from the study design and data structure. Paired, repeated, or clustered observations require a different approach.</p></li>
+<li><p><strong>Normality:</strong> as with the <span class="math inline">\(t\)</span>-test, the <span class="math inline">\(F\)</span>-test used in ANOVA is generally <strong>robust to moderate departures from normality</strong>. The normality assumption concerns the distributions <em>within the groups</em> (or equivalently, the model residuals), not the overall distribution after combining all groups.</p></li>
+<li><p><strong>Equal population variances:</strong> The classical ANOVA <span class="math inline">\(F\)</span>-test is reasonably robust to moderate differences in variance, particularly when group sizes are similar.</p></li>
+<li><p>Equal sample sizes are <strong>not required</strong>, but when variances differ substantially, especially with unequal group sizes, we can use <strong>Welch’s ANOVA</strong> in <strong>R</strong> with function <code>oneway.test()</code>:</p></li>
+</ul>
 <div id="qwebr-insertion-location-14"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The extreme observation has a large effect on the <strong>standard deviation</strong>, but relatively little effect on the <strong>IQR</strong>.</p>
 </section>
-</section>
-<section id="probability-distributions" class="level2">
-<h2 class="anchored" data-anchor-id="probability-distributions">Probability distributions</h2>
-<p>A <strong>probability distribution</strong> describes the values a variable could take and how likely those values are.</p>
-<p>We can think of a probability distribution as a <strong>model for how data might arise</strong>.</p>
-<p>Some variables take <strong>continuous</strong> values:</p>
-<ul>
-<li>systolic blood pressure</li>
-<li>height</li>
-<li>cholesterol</li>
-</ul>
-<p>Other variables take <strong>discrete</strong> values:</p>
-<ul>
-<li>number of patients who respond to treatment</li>
-<li>number of hospital admissions</li>
-<li>number of mutations in a DNA sequence</li>
-</ul>
-<p>Different probability distributions provide models for these different kinds of data.</p>
-<section id="a-distribution-we-have-already-used" class="level3">
-<h3 class="anchored" data-anchor-id="a-distribution-we-have-already-used">A distribution we have already used</h3>
-<p>Earlier, we created a population of systolic blood pressures using the function <code>rnorm()</code>:</p>
+<section id="a-rank-based-comparison-of-more-than-two-groups" class="level3">
+<h3 class="anchored" data-anchor-id="a-rank-based-comparison-of-more-than-two-groups">A rank-based comparison of more than two groups</h3>
+<p>Earlier, we used the <strong>Wilcoxon rank-sum test</strong> to compare two independent groups using the <strong>ranks</strong> of the observations rather than their numerical values.</p>
+<p>The <strong>Kruskal–Wallis test</strong> extends this same rank-based idea to more than two independent groups.</p>
+<blockquote class="blockquote">
+<p>The observations are pooled and ranked from smallest to largest, and <strong>we ask whether the groups tend to occupy different positions in the ranking</strong>.</p>
+</blockquote>
+<p>The Kruskal–Wallis statistic does this by comparing the <strong>average ranks</strong> across groups.</p>
+<p>This is done with the <strong>R</strong> function <code>kruskal.test()</code>:</p>
 <div id="qwebr-insertion-location-15"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The values were generated from a <strong>Normal distribution</strong>.</p>
-</section>
-<section id="the-normal-distribution" class="level3">
-<h3 class="anchored" data-anchor-id="the-normal-distribution">The Normal distribution</h3>
-<p>The Normal distribution is a continuous probability distribution described by two parameters:</p>
 <ul>
-<li><p><span class="math inline">\(\mu\)</span>: the population mean</p></li>
-<li><p><span class="math inline">\(\sigma\)</span>: the population standard deviation</p></li>
+<li><p>The small p-value suggests that the groups differ in where their observations tend to fall in the overall ranking.</p></li>
+<li><p>As with the Wilcoxon rank-sum test, Kruskal–Wallis is <strong>not simply a test of population medians</strong>, nor should it be viewed simply as “ANOVA for non-normal data.”</p></li>
+<li><p>If the group distributions have similar shapes, the test can be interpreted as a comparison of their locations.</p></li>
 </ul>
-<p>We write:</p>
-<p><span class="math display">\[\large
-X \sim N(\mu,\sigma^2)\]</span></p>
-<p>For our simulated population:</p>
-<p><span class="math display">\[\large
-X \sim N(125,18^2)\]</span></p>
-<p>Changing <span class="math inline">\(\mu\)</span> changes the <strong>center</strong> of the distribution.</p>
-<p>Changing <span class="math inline">\(\sigma\)</span> changes its <strong>spread</strong>.</p>
 </section>
-<section id="the-normal-density" class="level3">
-<h3 class="anchored" data-anchor-id="the-normal-density">The Normal density</h3>
-<p>The histogram shows the values we generated from the Normal distribution.</p>
-<p>The <strong>probability density function</strong> describes the smooth curve underlying those values.</p>
+</section>
+<section id="power" class="level2">
+<h2 class="anchored" data-anchor-id="power">Power</h2>
+<p>Suppose we are comparing two populations and there really <strong>is</strong> a difference between their means:</p>
+<p><span class="math display">\[\large
+\mu_A = 10
+\qquad\text{and}\qquad
+\mu_B = 12\]</span></p>
+<p>so that the true population difference is</p>
+<p><span class="math display">\[\large
+\mu_B-\mu_A=2.\]</span></p>
+<p>If we conduct a study comparing these two groups, will we necessarily detect the difference?</p>
+<p>Let’s simulate a study with <span class="math inline">\(n\)</span> observations in each group.</p>
 <div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="the-probability-density-function" class="level3">
-<h3 class="anchored" data-anchor-id="the-probability-density-function">The probability density function</h3>
-<p>The smooth curve is described by this <strong>probability density function (PDF)</strong>:</p>
-<p><span class="math display">\[\large
-f(x) =
-\frac{1}{\sqrt{2\pi\sigma^2}}
-\exp\left[-\frac{(x-\mu)^2}{2\sigma^2}\right]\]</span></p>
-<p>The PDF gives the <strong>density</strong> at each possible value of <span class="math inline">\(x\)</span>.</p>
-<blockquote class="blockquote">
-<p>For a continuous variable, the height of the curve is <strong>not</strong> a probability.</p>
-</blockquote>
-<p>Probability corresponds to <strong>area under the curve</strong>.</p>
-<p>The total area under the curve is 1.</p>
-</section>
-<section id="probabilities-are-areas" class="level3">
-<h3 class="anchored" data-anchor-id="probabilities-are-areas">Probabilities are areas</h3>
-<p>Suppose we want to know the probability that systolic blood pressure is between 100 and 140:</p>
-<p><span class="math display">\[\large
-P(100 &lt; X &lt; 140)\]</span></p>
-<p>This probability is the <strong>area under the Normal curve between 100 and 140</strong>.</p>
 <div id="qwebr-insertion-location-17"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="how-do-we-calculate-that-probability" class="level3">
-<h3 class="anchored" data-anchor-id="how-do-we-calculate-that-probability">How do we calculate that probability?</h3>
-<p>To calculate the probability we are interested in, we use the <strong>cumulative distribution function (CDF)</strong>, which gives the probability of observing a value less than or equal to <span class="math inline">\(x\)</span>:</p>
-<p><span class="math display">\[\large
-F(x) = P(X \le x)\]</span></p>
-<p><span class="math inline">\(P(X \le 140)\)</span> is the entire area to the left of 140:</p>
 <div id="qwebr-insertion-location-18"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>And <span class="math inline">\(P(X \le 100)\)</span> is the area to the left of 100 (in darker grey):</p>
+<p>We know that the population means differ by 2. But because of <strong>sampling variability</strong>, the estimated difference will vary from study to study.</p>
+<p>If we repeated the study with new samples, sometimes the observed difference would be large enough to produce a small p-value, and sometimes it would not.</p>
+<blockquote class="blockquote">
+<p><strong>If a population difference really exists, how likely is our study to detect it?</strong></p>
+</blockquote>
+<section id="repeating-the-study" class="level3">
+<h3 class="anchored" data-anchor-id="repeating-the-study">Repeating the study</h3>
+<p>Instead of conducting the study once, let’s simulate it many times.</p>
+<p>For each simulated study, we will:</p>
+<ol type="1">
+<li>sample <span class="math inline">\(n\)</span> observations from each population;</li>
+<li>estimate the difference between the group means;</li>
+<li>conduct a two-sample t-test;</li>
+<li>record whether <span class="math inline">\(p &lt; 0.05\)</span>.</li>
+</ol>
 <div id="qwebr-insertion-location-19"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Subtracting the second area from the first leaves the area between 100 and 140:</p>
-<p><span class="math display">\[\large
-P(100 &lt; X &lt; 140)
-=
-P(X \le 140) - P(X \le 100)\]</span></p>
-<p>For the Normal distribution, <code>pnorm()</code> gives the cumulative probability to the left of a value:</p>
+<p>Let’s plot the observed <span class="math inline">\(t\)</span>-values:</p>
 <div id="qwebr-insertion-location-20"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Therefore, the difference in the CDFs gives us the probability we are calculating:</p>
+<p>Each value in the histogram is the <span class="math inline">\(t\)</span>-statistic from one simulated study. In every simulation, the population means differ by 2.</p>
+<p>The blue region represents studies that reject <span class="math inline">\(H_0\)</span>; the gray region represents studies that fail to reject <span class="math inline">\(H_0\)</span>, even though the population means really are different.</p>
+<p>The probability of rejecting the null hypothesis when a particular alternative is true is called <strong>power</strong>:</p>
+<p><span class="math display">\[\large
+\text{Power}
+=
+P(\text{reject } H_0 \mid \mu_B - \mu_A = 2)\]</span></p>
+<p>The probability of failing to reject the null hypothesis when that alternative is true is the <strong>Type II error probability</strong>, denoted by <span class="math inline">\(\beta\)</span>:</p>
+<p><span class="math display">\[\large
+\beta
+=
+P(\text{fail to reject } H_0 \mid \mu_B - \mu_A = 2)\]</span></p>
+<p>Therefore,</p>
+<p><span class="math display">\[\large
+\text{Power} = 1-\beta\]</span></p>
 <div id="qwebr-insertion-location-21"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p><code>pnorm()</code> gives cumulative area to the left, so subtracting two cumulative probabilities gives the probability over an interval.</p>
+<p><strong>A study does not have a single power independent of the effect. Power depends on the particular population difference we want the study to be able to detect.</strong></p>
 </blockquote>
 </section>
-<section id="comparing-values-from-different-distributions" class="level3">
-<h3 class="anchored" data-anchor-id="comparing-values-from-different-distributions">Comparing values from different distributions</h3>
-<p>Suppose a woman has:</p>
-<ul>
-<li>systolic blood pressure = <strong>140 mmHg</strong></li>
-<li>diastolic blood pressure = <strong>85 mmHg</strong></li>
-</ul>
-<p>In our population, suppose:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th></th>
-<th style="text-align: right;">Mean</th>
-<th style="text-align: right;">Standard deviation</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Systolic BP</td>
-<td style="text-align: right;">125</td>
-<td style="text-align: right;">18</td>
-</tr>
-<tr class="even">
-<td>Diastolic BP</td>
-<td style="text-align: right;">75</td>
-<td style="text-align: right;">10</td>
-</tr>
-</tbody>
-</table>
-<p>Which blood pressure measurement is <strong>farther from what is typical in the population</strong>?</p>
-<p><br></p>
-<p>We could calculate the distance from each population mean:</p>
-<p><span class="math display">\[\large
-140 - 125 = 15\]</span></p>
-<p><span class="math display">\[\large
-85 - 75 = 10\]</span></p>
-<p>But these two distributions have different amounts of variability.</p>
-<blockquote class="blockquote">
-<p><strong>How can we compare where the two measurements fall relative to their distributions?</strong></p>
-</blockquote>
-</section>
-<section id="measuring-distance-in-standard-deviations" class="level3">
-<h3 class="anchored" data-anchor-id="measuring-distance-in-standard-deviations">Measuring distance in standard deviations</h3>
-<p>Instead of measuring distance from the mean in mmHg, we can measure it in <strong>standard deviations</strong>.</p>
-<p>For systolic blood pressure:</p>
-<p><span class="math display">\[\large
-\frac{140-125}{18} = 0.83\]</span></p>
-<p>The systolic blood pressure is <strong>0.83 standard deviations above its population mean</strong>.</p>
-<p>For diastolic blood pressure:</p>
-<p><span class="math display">\[\large
-\frac{85-75}{10} = 1.00\]</span></p>
-<p>The diastolic blood pressure is <strong>1 standard deviation above its population mean</strong>.</p>
-<p><br></p>
-<p>Although the systolic blood pressure is farther from its mean in <strong>mmHg</strong>, the diastolic blood pressure is farther from its mean in <strong>standard deviation units</strong>.</p>
-<blockquote class="blockquote">
-<p>Measuring distance in standard deviations puts the two measurements on a common scale.</p>
-</blockquote>
-</section>
-<section id="the-z-score" class="level3">
-<h3 class="anchored" data-anchor-id="the-z-score">The z-score</h3>
-<p>This standardized distance from the mean is called a <strong>z-score</strong>:</p>
-<p><span class="math display">\[\large
-z = \frac{x-\mu}{\sigma}\]</span></p>
-<p>A z-score tells us where an observation lies relative to its distribution:</p>
-<ul>
-<li><span class="math inline">\(z = 0\)</span>: at the mean</li>
-<li><span class="math inline">\(z = 1\)</span>: one standard deviation above the mean</li>
-<li><span class="math inline">\(z = -1\)</span>: one standard deviation below the mean</li>
-<li><span class="math inline">\(z = 2\)</span>: two standard deviations above the mean</li>
-</ul>
-</section>
-<section id="what-if-we-standardize-the-entire-distribution" class="level3">
-<h3 class="anchored" data-anchor-id="what-if-we-standardize-the-entire-distribution">What if we standardize the entire distribution?</h3>
-<p>We calculated a z-score for a single observation.</p>
-<p>But we could transform <strong>every value</strong> in a Normal distribution in the same way:</p>
-<p><span class="math display">\[\large
-Z = \frac{X-\mu}{\sigma}\]</span></p>
-<p>After standardizing:</p>
-<ul>
-<li>the mean becomes <strong>0</strong></li>
-<li>the standard deviation becomes <strong>1</strong></li>
-</ul>
-<p>So if:</p>
-<p><span class="math display">\[\large
-X \sim N(\mu,\sigma^2)\]</span></p>
-<p>then:</p>
-<p><span class="math display">\[\large
-Z \sim N(0,1)\]</span></p>
-<p>This is called the <strong>standard Normal distribution</strong>.</p>
-<p><em>If we standardize our population SBP data, we get</em></p>
+<section id="what-determines-power" class="level3">
+<h3 class="anchored" data-anchor-id="what-determines-power">What determines power?</h3>
+<p><strong>Power increases when the population difference becomes large relative to the sampling variability of its estimate.</strong></p>
+<p>Let’s see how changes in the study affect power.</p>
 <div id="qwebr-insertion-location-22"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="why-is-the-standard-normal-useful" class="level3">
-<h3 class="anchored" data-anchor-id="why-is-the-standard-normal-useful">Why is the standard Normal useful?</h3>
-<p>Standardization puts different Normal distributions onto the <strong>same scale</strong>.</p>
-<p>On this scale:</p>
-<ul>
-<li>0 is the population mean</li>
-<li>1 is one standard deviation above the mean</li>
-<li>-1 is one standard deviation below the mean</li>
-</ul>
-<p>Our two blood pressure measurements were:</p>
-<p><span class="math display">\[\large
-z_{\text{SBP}} = 0.83\]</span></p>
-<p><span class="math display">\[\large
-z_{\text{DBP}} = 1.00\]</span></p>
-<p>So although the systolic blood pressure was farther from its mean in <strong>mmHg</strong>, the diastolic blood pressure was farther from its mean <strong>relative to the variability in its distribution</strong>.</p>
-</section>
-<section id="the-standard-normal-distribution" class="level3">
-<h3 class="anchored" data-anchor-id="the-standard-normal-distribution">The standard Normal distribution</h3>
-<p>Let’s look at the density of the standard Normal distribution.</p>
+<p>Increasing the sample size (<span class="math inline">\(\large n_A\)</span>and<span class="math inline">\(\large n_B\)</span>) reduces the sampling variability of the estimated difference:<span class="math display">\[SE(\bar Y_B-\bar Y_A)
+=
+\sqrt{\frac{\sigma_A^2}{n_A}+
+\frac{\sigma_B^2}{n_B}}\]</span><code>{webr-r} estimate_power(n = 10) estimate_power(n = 20) estimate_power(n = 50) estimate_power(n = 100)</code></p>
+<p>Increasing the population standard deviations (<span class="math inline">\(\large \sigma_A\)</span>and<span class="math inline">\(\large \sigma_B\)</span>) increases the sampling variability of the estimated difference:</p>
 <div id="qwebr-insertion-location-23"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The horizontal axis now measures <strong>distance from the mean in standard deviations</strong>.</p>
-<ul>
-<li><span class="math inline">\(z = 0\)</span> is the mean</li>
-<li><span class="math inline">\(z = 1\)</span> is one standard deviation above the mean</li>
-<li><span class="math inline">\(z = -1\)</span> is one standard deviation below the mean</li>
-</ul>
-<blockquote class="blockquote">
-<p>After standardization, every Normal distribution has the same location and shape: a mean of 0 and a standard deviation of 1.</p>
-</blockquote>
-</section>
-<section id="how-much-of-a-normal-distribution-is-close-to-the-mean" class="level3">
-<h3 class="anchored" data-anchor-id="how-much-of-a-normal-distribution-is-close-to-the-mean">How much of a Normal distribution is close to the mean?</h3>
-<p>Because the standard Normal is measured in standard deviation units, we can ask:</p>
-<blockquote class="blockquote">
-<p><strong>What proportion of a Normal distribution lies within one or two standard deviations of its mean?</strong></p>
-</blockquote>
-<p>Within one standard deviation means:</p>
-<p><span class="math display">\[\large
-P(-1 &lt; Z &lt; 1)\]</span></p>
-<p>We can calculate this using <code>pnorm()</code>:</p>
+<p>Increasing the population difference (<span class="math inline">\(\large \mu_B - \mu_A\)</span>) increases power:</p>
 <div id="qwebr-insertion-location-24"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>So about <strong>68%</strong> of a Normal distribution lies within one standard deviation of its mean.</p>
-<p><br></p>
-<p>Within two standard deviations means:</p>
-<p><span class="math display">\[\large
-P(-2 &lt; Z &lt; 2)\]</span></p>
+</section>
+<section id="power-curves" class="level3">
+<h3 class="anchored" data-anchor-id="power-curves">Power curves</h3>
+<p>We can put these relationships together in a set of <em>power curves</em>:</p>
+<p><img src="images/power_curves.png" class="img-fluid"></p>
+<p><em>A power curve shows the probability of rejecting the null hypothesis across a range of possible population differences.</em></p>
+<p>For any particular population difference, power depends on the sample size and the variability of the outcome.</p>
+<blockquote class="blockquote">
+<p>Power also depends on the threshold we use for rejecting the null hypothesis. Increasing<span class="math inline">\(\large \alpha\)</span>makes it easier to reject<span class="math inline">\(H_0\)</span>and therefore increases power—but at the cost of increasing the probability of a <strong>Type I error</strong>. We generally specify<span class="math inline">\(\large \alpha\)</span>in advance rather than choosing it as a way to increase power.</p>
+</blockquote>
+</section>
+<section id="standardized-effect-size" class="level3">
+<h3 class="anchored" data-anchor-id="standardized-effect-size">Standardized effect size</h3>
+<p>The simulations show that power depends both on the size of the population difference and on the variability of the outcome.</p>
+<p>A difference of 2 units is relatively large when the population standard deviation is 3, but relatively small when the standard deviation is 10.</p>
+<p>One way to express the size of a difference relative to the variability is the <strong>standardized mean difference</strong>:<span class="math display">\[d = \frac{\mu_B-\mu_A}{\sigma}\]</span>For our example,<span class="math display">\[d = \frac{12-10}{3} = 0.67.\]</span>This standardized effect size is often called <strong>Cohen’s</strong><span class="math inline">\(d\)</span>.</p>
+<p>Standardized effect sizes express the population difference relative to the variability of the outcome and are particularly useful in power and sample-size calculations.</p>
+<p>However, when the original units are scientifically meaningful, a difference expressed in those units is often easier to interpret.</p>
+</section>
+<section id="from-power-to-sample-size" class="level3">
+<h3 class="anchored" data-anchor-id="from-power-to-sample-size">From power to sample size</h3>
+<p>Before conducting a study, we usually face the problem in the opposite direction.</p>
+<p>We specify a population difference that would be important to detect and ask:</p>
+<blockquote class="blockquote">
+<p><strong>How large a sample do we need to have a reasonable chance of detecting that difference?</strong></p>
+</blockquote>
+<p>We can calculate the required sample size using <code>power.t.test()</code> in <strong>R</strong>.</p>
+<p>Suppose a difference of 2 units is scientifically meaningful, we expect the population SD to be approximately 3, and we want an 80% probability of rejecting<span class="math inline">\(\large H_0\)</span>if the true population difference is 2, using<span class="math inline">\(\large \alpha = 0.05\)</span>. <strong>What is the target sample size for each group?</strong></p>
 <div id="qwebr-insertion-location-25"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>So about <strong>95%</strong> of a Normal distribution lies within two standard deviations of its mean.</p>
+<p><code>power.t.test()</code> calculates analytically the same quantity that we estimated through simulation.</p>
+<p>Alternatively, the <code>pwr.t.test()</code> function in the <code>pwr</code> package specifies the population difference using Cohen’s<span class="math inline">\(d\)</span>. In this case,<span class="math display">\[d = \frac{\Delta}{\sigma} = \frac{2}{3}.\]</span></p>
 <div id="qwebr-insertion-location-26"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The two approaches give essentially the same result; Cohen’s <em>d</em> simply combines the population difference and SD into a single standardized quantity.</p>
 <blockquote class="blockquote">
-<p>About <strong>95% of observations from a Normal distribution fall within two standard deviations of the mean</strong>.</p>
+<p>Sample size calculations require us to specify what population difference matters scientifically and how likely we want the study to be to detect that difference.</p>
 </blockquote>
-</section>
-<section id="working-with-the-normal-distribution-in-r" class="level3">
-<h3 class="anchored" data-anchor-id="working-with-the-normal-distribution-in-r">Working with the Normal distribution in R</h3>
-<p>We’ve now used several R functions for working with Normal distributions:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 26%">
-<col style="width: 73%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Function</th>
-<th>What it does</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>dnorm()</code></td>
-<td>Gives the <strong>density</strong> at a value</td>
-</tr>
-<tr class="even">
-<td><code>pnorm()</code></td>
-<td>Gives the <strong>cumulative probability</strong> to the left of a value</td>
-</tr>
-<tr class="odd">
-<td><code>qnorm()</code></td>
-<td>Gives the <strong>value</strong> corresponding to a cumulative probability</td>
-</tr>
-<tr class="even">
-<td><code>rnorm()</code></td>
-<td>Generates <strong>random observations</strong> from a Normal distribution</td>
-</tr>
-</tbody>
-</table>
-<p>We’ve already used <code>dnorm()</code>, <code>pnorm()</code>, and <code>rnorm()</code>.</p>
-<p><code>qnorm()</code> answers the reverse of the question answered by <code>pnorm()</code>.</p>
-<p>For example:</p>
-<div id="qwebr-insertion-location-27"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>This gives the value with <strong>95% of the standard Normal distribution below it</strong>.</p>
-</section>
-<section id="where-is-the-middle-95" class="level3">
-<h3 class="anchored" data-anchor-id="where-is-the-middle-95">Where is the middle 95%?</h3>
-<p>We just saw that approximately 95% of a Normal distribution lies between -2 and 2 standard deviations.</p>
-<p>But what values contain <strong>exactly 95%</strong> of the standard Normal distribution?</p>
-<p>If 95% is in the middle, the remaining 5% is divided equally between the two tails:</p>
-<ul>
-<li>2.5% below the lower boundary</li>
-<li>2.5% above the upper boundary</li>
-</ul>
-<p>So the boundaries are the 2.5th and 97.5th percentiles:</p>
-<div id="qwebr-insertion-location-28"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The middle 95% of the standard Normal distribution therefore lies approximately between:</p>
-<p><span class="math display">\[\large
--1.96 &lt; Z &lt; 1.96\]</span></p>
-<blockquote class="blockquote">
-<p>The value <strong>1.96</strong> will appear again when we begin constructing confidence intervals.</p>
-</blockquote>
-</section>
-<section id="original-scale-or-standardized-scale" class="level3">
-<h3 class="anchored" data-anchor-id="original-scale-or-standardized-scale">Original scale or standardized scale?</h3>
-<p>Standardization helps us understand where a value lies relative to its distribution.</p>
-<p>For example, a systolic blood pressure of 100 in our population has z-score:</p>
-<div id="qwebr-insertion-location-29"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>We can calculate the proportion of the population below this value using the z-score:</p>
-<div id="qwebr-insertion-location-30"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>But R can also calculate the probability directly using the original Normal distribution:</p>
-<div id="qwebr-insertion-location-31"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The answers are the same.</p>
-<blockquote class="blockquote">
-<p><strong>Standardization changes the scale, not where an observation lies within the distribution.</strong></p>
-</blockquote>
-</section>
-</section>
-<section id="the-binomial-distribution" class="level2">
-<h2 class="anchored" data-anchor-id="the-binomial-distribution">The Binomial distribution</h2>
-<p>So far, we have used the Normal distribution to describe a <strong>continuous</strong> variable: systolic blood pressure.</p>
-<p>But suppose instead we are studying an intervention designed to improve hypertension control.</p>
-<p>For each patient, there are two possible outcomes:</p>
-<ul>
-<li>hypertension is <strong>controlled</strong></li>
-<li>hypertension is <strong>not controlled</strong></li>
-</ul>
-<p>Suppose the probability that a patient’s hypertension is controlled is 0.60.</p>
-<p>If we treat <strong>10 patients</strong>:</p>
-<blockquote class="blockquote">
-<p><strong>How many of the 10 patients will have controlled hypertension?</strong></p>
-</blockquote>
-<section id="from-individual-outcomes-to-a-count" class="level3">
-<h3 class="anchored" data-anchor-id="from-individual-outcomes-to-a-count">From individual outcomes to a count</h3>
-<p>For each patient, we can represent hypertension control as:</p>
-<p><span class="math display">\[\large
-Y_i =
-\begin{cases}
-1 &amp; \text{if hypertension is controlled} \\
-0 &amp; \text{if hypertension is not controlled}
-\end{cases}\]</span></p>
-<p>with:</p>
-<p><span class="math display">\[\large
-P(Y_i = 1) = 0.60\]</span></p>
-<p>For 10 patients, the total number with controlled hypertension is:</p>
-<p><span class="math display">\[\large
-X = Y_1 + Y_2 + \cdots + Y_{10}\]</span></p>
-<p>The possible values of <span class="math inline">\(X\)</span> are:</p>
-<p><span class="math display">\[\large
-0,1,2,\ldots,10\]</span></p>
-<p>Unlike systolic blood pressure, <span class="math inline">\(X\)</span> is a <strong>discrete random variable</strong>.</p>
-</section>
-<section id="what-probabilities-are-possible" class="level3">
-<h3 class="anchored" data-anchor-id="what-probabilities-are-possible">What probabilities are possible?</h3>
-<p>We know the possible values of <span class="math inline">\(X\)</span>, but those values are not equally likely.</p>
-<blockquote class="blockquote">
-<p><strong>What is the probability of observing each possible number of patients with controlled hypertension?</strong></p>
-</blockquote>
-<p>In R, <code>dbinom()</code> gives the probability of observing a particular number of successes:</p>
-<div id="qwebr-insertion-location-32"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p><br></p>
-<p>We can plot these probabilities:</p>
-<div id="qwebr-insertion-location-33"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>This is a <strong>Binomial distribution</strong>.</p>
-<p>Unlike the Normal distribution, which describes probabilities using <strong>areas under a continuous density curve</strong>, the Binomial distribution assigns a probability to each possible count.</p>
-</section>
-<section id="describing-a-binomial-distribution" class="level3">
-<h3 class="anchored" data-anchor-id="describing-a-binomial-distribution">Describing a Binomial distribution</h3>
-<p>The Binomial distribution describes the <strong>number of times an outcome occurs</strong> across a fixed number of observations.</p>
-<p>It is determined by two parameters:</p>
-<ul>
-<li><span class="math inline">\(n\)</span>: the number of observations</li>
-<li><span class="math inline">\(p\)</span>: the probability of the outcome for each observation</li>
-</ul>
-<p>We also assume that:</p>
-<ul>
-<li>the probability <span class="math inline">\(p\)</span> is the same for each observation</li>
-<li>outcomes are independent across observations</li>
-</ul>
-<p>In our example:</p>
-<p><span class="math display">\[\large
-n=10, \qquad p=0.60\]</span></p>
-<p>so:</p>
-<p><span class="math display">\[\large
-X \sim \text{Binomial}(10,0.60)\]</span></p>
-<blockquote class="blockquote">
-<p>The parameters <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span> determine the probabilities of the possible values of <span class="math inline">\(X\)</span>.</p>
-</blockquote>
-</section>
-<section id="what-is-the-probability-that-exactly-6-patients-have-controlled-hypertension" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-the-probability-that-exactly-6-patients-have-controlled-hypertension">What is the probability that exactly 6 patients have controlled hypertension?</h3>
-<p>We can see from the distribution that 6 patients is one possible outcome.</p>
-<p>What is its probability?</p>
-<p>In R:</p>
-<div id="qwebr-insertion-location-34"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>So:</p>
-<p><span class="math display">\[\large
-P(X=6) \approx 0.25\]</span></p>
-<p>There is about a <strong>25% probability that exactly 6 of the 10 patients will have controlled hypertension</strong>.</p>
-</section>
-<section id="where-do-these-probabilities-come-from" class="level3">
-<h3 class="anchored" data-anchor-id="where-do-these-probabilities-come-from">Where do these probabilities come from?</h3>
-<p>We used <code>dbinom()</code> to calculate the probability of each possible number of patients with controlled hypertension.</p>
-<p>For example:</p>
-<div id="qwebr-insertion-location-35"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>gives:</p>
-<p><span class="math display">\[\large
-P(X=6) \approx 0.25\]</span></p>
-<p>But what is <code>dbinom()</code> actually calculating?</p>
-</section>
-<section id="the-binomial-probability-mass-function" class="level3">
-<h3 class="anchored" data-anchor-id="the-binomial-probability-mass-function">The Binomial probability mass function</h3>
-<p>For a Binomial random variable, the probability of observing exactly <span class="math inline">\(x\)</span> successes is:</p>
-<p><span class="math display">\[\large
-P(X=x)={n \choose x}p^x(1-p)^{n-x}\]</span></p>
-<p>For exactly 6 of our 10 patients with controlled hypertension:</p>
-<p><span class="math display">\[\large
-P(X=6)={10 \choose 6}(0.60)^6(0.40)^4\]</span></p>
-<p>If we knew <strong>which 6 patients</strong> had controlled hypertension, the probability of that particular pattern would be:</p>
-<p><span class="math display">\[\large
-(0.60)^6(0.40)^4\]</span></p>
-<p>But we don’t care <strong>which</strong> 6 patients have controlled hypertension.</p>
-<p>The term <span class="math inline">\({10 \choose 6}\)</span> counts the number of ways to choose 6 patients from 10 — in this case, <strong>210 different ways</strong>.</p>
-<p>So the Binomial probability combines:</p>
-<p><span class="math display">\[\large
-\underbrace{{n \choose x}}_{\text{number of ways}}
-\;
-\underbrace{p^x(1-p)^{n-x}}_{\text{probability of each way}}\]</span></p>
-</section>
-<section id="probabilities-across-all-possible-outcomes" class="level3">
-<h3 class="anchored" data-anchor-id="probabilities-across-all-possible-outcomes">Probabilities across all possible outcomes</h3>
-<ul>
-<li><p>For a continuous distribution, we calculate probabilities over <strong>areas</strong>.</p></li>
-<li><p>For a discrete distribution, individual values can have positive <strong>probabilities</strong>.</p></li>
-</ul>
-<p>But in either case, the probabilities across all possible outcomes must account for <strong>everything that could happen</strong>.</p>
-<ul>
-<li><p>For the Normal distribution, the <strong>total area under the density curve is 1</strong>.</p></li>
-<li><p>For the Binomial distribution, the <strong>probabilities of all possible values sum to 1</strong>. In this case:</p></li>
-</ul>
-<p><span class="math display">\[\large
-\sum_{x=0}^{10}
-{10 \choose x}
-p^x(1-p)^{10-x}
-=1\]</span></p>
-<p>In other words, one of the possible outcomes — 0, 1, 2, …, or 10 patients with controlled hypertension — <strong>has to occur</strong>.</p>
-</section>
-<section id="what-happens-when-we-change-the-probability" class="level3">
-<h3 class="anchored" data-anchor-id="what-happens-when-we-change-the-probability">What happens when we change the probability?</h3>
-<p>The Binomial distribution depends on <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span>.</p>
-<p>Let’s see what happens when we change them.</p>
-<div id="qwebr-insertion-location-36"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="center-and-variability-of-a-binomial-distribution" class="level3">
-<h3 class="anchored" data-anchor-id="center-and-variability-of-a-binomial-distribution">Center and variability of a Binomial distribution</h3>
-<p>Just like any distribution, a Binomial distribution has a <strong>mean</strong> and <strong>standard deviation</strong>.</p>
-<p>For <span class="math inline">\(X \sim \text{Binomial}(n,p)\)</span>:</p>
-<p><span class="math display">\[\large
-\mu = np\]</span></p>
-<p>and</p>
-<p><span class="math display">\[\large
-\sigma = \sqrt{np(1-p)}\]</span></p>
-<p>For our example, with <span class="math inline">\(n=10\)</span> and <span class="math inline">\(p=0.60\)</span>:</p>
-<p><span class="math display">\[\large
-\mu = 10(0.60)=6\]</span></p>
-<p><span class="math display">\[\large
-\sigma = \sqrt{10(0.60)(0.40)} \approx 1.55\]</span></p>
-<p>So the distribution is centered at <strong>6 patients</strong>, with a standard deviation of about <strong>1.55 patients</strong>.</p>
-</section>
-<section id="probabilities-over-several-possible-outcomes" class="level3">
-<h3 class="anchored" data-anchor-id="probabilities-over-several-possible-outcomes">Probabilities over several possible outcomes</h3>
-<p>Suppose we want to know the probability that <strong>at least 6 of the 10 patients</strong> have controlled hypertension:</p>
-<p><span class="math display">\[\large
-P(X \ge 6)\]</span></p>
-<p>This includes several possible outcomes:</p>
-<p><span class="math display">\[\large
-P(X \ge 6)
-=
-P(X=6)+P(X=7)+\cdots+P(X=10)\]</span></p>
-<p>Rather than adding these probabilities individually, we can use the Binomial cumulative distribution function.</p>
-<p>Just as <code>pnorm()</code> gives <span class="math inline">\(P(X \le x)\)</span> for a Normal distribution, <code>pbinom()</code> gives <span class="math inline">\(P(X \le x)\)</span> for a Binomial distribution.</p>
-<p>Therefore:</p>
-<p><span class="math display">\[\large
-P(X \ge 6)=1-P(X\le5)\]</span></p>
-<div id="qwebr-insertion-location-37"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>So there is about a <strong>63% probability that at least 6 of the 10 patients will have controlled hypertension</strong>.</p>
-</section>
-</section>
-<section id="the-poisson-distribution" class="level2">
-<h2 class="anchored" data-anchor-id="the-poisson-distribution">The Poisson distribution</h2>
-<p>Suppose patients experience an average of <strong>2 hospital admissions per year</strong>.</p>
-<p>If <span class="math inline">\(X\)</span> is the number of admissions during one year, we might model:</p>
-<p><span class="math display">\[\large
-X \sim \text{Poisson}(\lambda=2)\]</span></p>
-<p>For a Poisson distribution:</p>
-<p><span class="math display">\[\large
-E(X)=\lambda
-\qquad\text{and}\qquad
-Var(X)=\lambda\]</span></p>
-<p>so:</p>
-<p><span class="math display">\[\large
-SD(X)=\sqrt{\lambda}\]</span></p>
-<p>Unlike the Binomial distribution, there is no fixed maximum number of events:</p>
-<p><span class="math display">\[\large
-X=0,1,2,3,\ldots\]</span></p>
-<section id="what-does-a-poisson-distribution-look-like" class="level3">
-<h3 class="anchored" data-anchor-id="what-does-a-poisson-distribution-look-like">What does a Poisson distribution look like?</h3>
-<div id="qwebr-insertion-location-38"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The single parameter <span class="math inline">\(\lambda\)</span> determines both the <strong>center</strong> and the <strong>variability</strong> of the distribution.</p>
-</section>
-<section id="counting-events-over-time" class="level3">
-<h3 class="anchored" data-anchor-id="counting-events-over-time">Counting events over time</h3>
-<p>In the scenario where patients experience an average of <strong>2 hospital admissions per year</strong> and <span class="math inline">\(\lambda = 2\)</span>, the probability of observing exactly <span class="math inline">\(x\)</span> events is:</p>
-<p><span class="math display">\[\large
-P(X=x)=\frac{e^{-\lambda}\lambda^x}{x!},
-\qquad x=0,1,2,\ldots\]</span></p>
-<p>As with the Binomial distribution, individual counts have positive probabilities.</p>
-<div id="qwebr-insertion-location-39"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="rates-and-exposure" class="level3">
-<h3 class="anchored" data-anchor-id="rates-and-exposure">Rates and exposure</h3>
-<p>Often the expected number of events depends on the amount of <strong>time or exposure</strong>.</p>
-<p>If the event rate is <span class="math inline">\(r\)</span> and the amount of exposure is <span class="math inline">\(t\)</span>, then:</p>
-<p><span class="math display">\[\large
-\lambda = rt\]</span></p>
-<p>For example, if hospital admissions occur at an average rate of 2 per year, then over 3 years:</p>
-<p><span class="math display">\[\large
-\lambda = 2(3)=6\]</span></p>
-<p>and:</p>
-<p><span class="math display">\[\large
-X \sim \text{Poisson}(6)\]</span></p>
-<blockquote class="blockquote">
-<p>The expected number of events depends on both the <strong>event rate</strong> and the <strong>amount of exposure</strong>.</p>
-</blockquote>
-</section>
-<section id="working-with-the-poisson-distribution-in-r" class="level3">
-<h3 class="anchored" data-anchor-id="working-with-the-poisson-distribution-in-r">Working with the Poisson distribution in R</h3>
-<p>The R functions work just as they did for the Normal and Binomial distributions:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Function</th>
-<th>What it does</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>dpois()</code></td>
-<td>Probability of exactly <span class="math inline">\(x\)</span> events</td>
-</tr>
-<tr class="even">
-<td><code>ppois()</code></td>
-<td>Probability of <span class="math inline">\(x\)</span> or fewer events</td>
-</tr>
-<tr class="odd">
-<td><code>qpois()</code></td>
-<td>Count corresponding to a cumulative probability</td>
-</tr>
-<tr class="even">
-<td><code>rpois()</code></td>
-<td>Generates random counts</td>
-</tr>
-</tbody>
-</table>
-<p>For example, if <span class="math inline">\(X \sim \text{Poisson}(2)\)</span>:</p>
-<div id="qwebr-insertion-location-40"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-</section>
-<section id="other-distributions" class="level2">
-<h2 class="anchored" data-anchor-id="other-distributions">Other distributions</h2>
-<p>These three distributions are just three of many (albeit three of the most important).</p>
-<p>Others include the <em>uniform</em>, <em>t</em>, <em>chi-square</em>, <em>exponential</em>, and <em>beta</em> distributions.</p>
-<p>They all have the same family of functions in <em>R</em> (e.g., <code>dunif()</code>, <code>pt()</code>, etc.).</p>
-<p>In the future, if you need to understand or explore a new distribution, these are useful resources:</p>
-<ul>
-<li><a href="https://www.geeksforgeeks.org/r-language/probability-distributions-in-r/" target="_blank">Probability distributions in R — GeeksforGeeks</a>, particularly useful for seeing how distributions are implemented in <em>R</em></li>
-<li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda366.htm" target="_blank">NIST Probability Distributions</a>, a more detailed statistical reference</li>
-</ul>
-</section>
-<section id="measures-of-association" class="level2">
-<h2 class="anchored" data-anchor-id="measures-of-association">Measures of association</h2>
-<p>Suppose we measure two variables on the same individuals.</p>
-<p>For example:</p>
-<ul>
-<li>age and systolic blood pressure</li>
-<li>physical activity and resting heart rate</li>
-<li>height and weight</li>
-</ul>
-<blockquote class="blockquote">
-<p><strong>How can we describe the way two variables vary together?</strong></p>
-</blockquote>
-<p>A natural place to start is simply to look at the data.</p>
-<div id="qwebr-insertion-location-41"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>When larger values of <span class="math inline">\(X\)</span> tend to occur with larger values of <span class="math inline">\(Y\)</span>, we say the variables have a <strong>positive association</strong>.</p>
-<section id="measuring-how-two-variables-vary-together" class="level3">
-<h3 class="anchored" data-anchor-id="measuring-how-two-variables-vary-together">Measuring how two variables vary together</h3>
-<p>For each observation, we can measure how far each variable is from its mean:</p>
-<p><span class="math display">\[\large
-x_i-\bar{x}
-\qquad\text{and}\qquad
-y_i-\bar{y}\]</span></p>
-<p>We want to know whether these deviations tend to go in the <strong>same direction</strong> or in <strong>opposite directions</strong>.</p>
-<p>Multiplying the two deviations gives us exactly that:</p>
-<ul>
-<li>both above their means: <span class="math inline">\((+)(+) = +\)</span></li>
-<li>both below their means: <span class="math inline">\((-)(-) = +\)</span></li>
-<li>one above and one below: <span class="math inline">\((+)(-) = -\)</span></li>
-</ul>
-<p>So the product</p>
-<p><span class="math display">\[\large
-(x_i-\bar{x})(y_i-\bar{y})\]</span></p>
-<p>tells us whether an observation makes a <strong>positive or negative contribution to the covariance</strong>.</p>
-</section>
-<section id="revisiting-the-plot" class="level3">
-<h3 class="anchored" data-anchor-id="revisiting-the-plot">Revisiting the plot</h3>
-<p>Let’s plot these deviations from the means.</p>
-<div id="qwebr-insertion-location-42"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<ul>
-<li><p>Observations in the <strong>upper-right and lower-left</strong> quadrants contribute positively to the covariance.</p></li>
-<li><p>Observations in the other two quadrants contribute negatively.</p></li>
-<li><p>In this case it appears that the positive contributions outweigh the negative ones, so we should expect the covariance to be positive.</p></li>
-</ul>
-</section>
-<section id="covariance" class="level3">
-<h3 class="anchored" data-anchor-id="covariance">Covariance</h3>
-<p>To summarize these contributions across all observations, we calculate the <strong>covariance</strong>:</p>
-<p><span class="math display">\[\large
-s_{XY}
-=
-\frac{1}{n-1}
-\sum_{i=1}^{n}
-(x_i-\bar{x})(y_i-\bar{y})\]</span></p>
-<p>As with sample variance, the deviations used to calculate covariance have <span class="math inline">\(n-1\)</span> degrees of freedom.</p>
-<ul>
-<li>Positive covariance: the variables tend to vary in the <strong>same direction</strong>.</li>
-<li>Negative covariance: the variables tend to vary in <strong>opposite directions</strong>.</li>
-<li>Covariance near zero: little tendency for the variables to vary together <strong>linearly</strong>.</li>
-</ul>
-<p>For our data:</p>
-<div id="qwebr-insertion-location-43"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>As we expected, the covariance is positive.</p>
-</section>
-<section id="but-what-does-the-magnitude-of-covariance-tell-us" class="level3">
-<h3 class="anchored" data-anchor-id="but-what-does-the-magnitude-of-covariance-tell-us">But what does the magnitude of covariance tell us?</h3>
-<p>Covariance tells us whether two variables tend to vary in the <strong>same or opposite directions</strong>.</p>
-<p>But does its magnitude tell us how <strong>strongly</strong> they are associated?</p>
-<p>Let’s look at three examples.</p>
-<div id="qwebr-insertion-location-44"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-45"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="comparing-the-covariances" class="level3">
-<h3 class="anchored" data-anchor-id="comparing-the-covariances">Comparing the covariances</h3>
-<p>Now let’s calculate the covariance for each relationship:</p>
-<div id="qwebr-insertion-location-46"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The first two have almost exactly the <strong>same covariance</strong>, despite looking very different.</p>
-<p>And the first and third have very different covariances, despite showing similarly strong linear relationships.</p>
-<blockquote class="blockquote">
-<p>The magnitude of covariance depends on the <strong>scale and variability of the variables</strong>, so it is difficult to use covariance itself to describe the strength of an association.</p>
-</blockquote>
-</section>
-<section id="how-can-we-remove-the-effect-of-scale" class="level3">
-<h3 class="anchored" data-anchor-id="how-can-we-remove-the-effect-of-scale">How can we remove the effect of scale?</h3>
-<p>The problem with covariance is that the deviations are measured in the <strong>original units</strong> of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.</p>
-<p>But earlier we saw how to express a deviation in <strong>standard deviation units</strong>:</p>
-<p><span class="math display">\[\large
-z_{Xi}=\frac{x_i-\bar{x}}{s_X}
-\qquad\text{and}\qquad
-z_{Yi}=\frac{y_i-\bar{y}}{s_Y}\]</span></p>
-<p>If we multiply these standardized deviations and combine them across observations, we get the <strong>correlation</strong>:</p>
-<p><span class="math display">\[\large
-r
-=
-\frac{1}{n-1}
-\sum_{i=1}^n z_{Xi}z_{Yi}
-=
-\frac{s_{XY}}{s_Xs_Y}\]</span></p>
-<blockquote class="blockquote">
-<p>Correlation describes how two variables vary together after expressing both in standard deviation units.</p>
-</blockquote>
-</section>
-<section id="revisiting-the-three-data-sets-comparing-correlation" class="level3">
-<h3 class="anchored" data-anchor-id="revisiting-the-three-data-sets-comparing-correlation">Revisiting the three data sets: comparing correlation</h3>
-<div id="qwebr-insertion-location-47"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-48"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The correlations correspond much more closely to what we saw in the scatterplots.</p>
-<ul>
-<li><span class="math inline">\(r &gt; 0\)</span>: positive linear association</li>
-<li><span class="math inline">\(r &lt; 0\)</span>: negative linear association</li>
-<li><span class="math inline">\(r\)</span> near <span class="math inline">\(0\)</span>: little linear association</li>
-<li><span class="math inline">\(r\)</span> closer to <span class="math inline">\(-1\)</span> or <span class="math inline">\(1\)</span>: stronger linear association</li>
-</ul>
-<p>Correlation always lies between <span class="math inline">\(-1\)</span> and <span class="math inline">\(1\)</span>.</p>
-</section>
-<section id="what-does-correlation-look-like" class="level3">
-<h3 class="anchored" data-anchor-id="what-does-correlation-look-like">What does correlation look like?</h3>
-<div id="qwebr-insertion-location-49"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="does-zero-correlation-mean-no-relationship" class="level3">
-<h3 class="anchored" data-anchor-id="does-zero-correlation-mean-no-relationship">Does zero correlation mean no relationship?</h3>
-<p>Pearson correlation measures <strong>linear association</strong>.</p>
-<p>Consider a different relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>:</p>
-<div id="qwebr-insertion-location-50"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is clear, but it is not linear.</p>
-<div id="qwebr-insertion-location-51"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The correlation is close to zero.</p>
-<blockquote class="blockquote">
-<p>A correlation near zero does not mean there is <strong>no relationship</strong>. It means there is little <strong>linear relationship</strong>.</p>
-</blockquote>
-</section>
-<section id="zero-correlation-and-independence-are-not-the-same-thing" class="level3">
-<h3 class="anchored" data-anchor-id="zero-correlation-and-independence-are-not-the-same-thing">Zero correlation and independence are not the same thing</h3>
-<p>Two variables are <strong>independent</strong> if knowing the value of one provides no information about the other.</p>
-<p>If two variables are independent, their covariance and correlation are zero.</p>
-<p>But the reverse is not necessarily true:</p>
-<p><span class="math display">\[\large
-\text{independence}
-\quad\Longrightarrow\quad
-\text{zero correlation}\]</span></p>
-<p><span class="math display">\[\large
-\text{zero correlation}
-\quad\text{does not imply}\quad
-\text{independence}\]</span></p>
-<p>In our example, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> have correlation close to zero, but they are clearly <strong>not independent</strong>: knowing <span class="math inline">\(X\)</span> tells us a great deal about <span class="math inline">\(Y\)</span>.</p>
-</section>
-<section id="what-if-the-relationship-is-not-linear" class="level3">
-<h3 class="anchored" data-anchor-id="what-if-the-relationship-is-not-linear">What if the relationship is not linear?</h3>
-<p>Pearson correlation describes the strength of a <strong>linear relationship</strong>.</p>
-<p>But two variables can move consistently together without having a linear relationship.</p>
-<p>For example:</p>
-<div id="qwebr-insertion-location-52"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="spearman-correlation" class="level3">
-<h3 class="anchored" data-anchor-id="spearman-correlation">Spearman correlation</h3>
-<p><strong>Pearson correlation</strong> is calculated using the observed values of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.</p>
-<p><strong>Spearman correlation</strong> is calculated after replacing the values with their <strong>ranks</strong>.</p>
-<div id="qwebr-insertion-location-53"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Because Spearman correlation is based on ranks, it measures how consistently two variables move in the <strong>same or opposite direction</strong>, rather than how closely they follow a straight line.</p>
-<ul>
-<li><strong>Pearson:</strong> linear association</li>
-<li><strong>Spearman:</strong> monotonic association</li>
-</ul>
-<p>Spearman correlation is also useful for variables that are naturally represented by <strong>ranks or ordered categories</strong>.</p>
-</section>
-<section id="not-every-nonlinear-relationship-is-monotonic" class="level3">
-<h3 class="anchored" data-anchor-id="not-every-nonlinear-relationship-is-monotonic">Not every nonlinear relationship is monotonic</h3>
-<p>Recall our earlier quadratic example:</p>
-<div id="qwebr-insertion-location-54"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Both correlations are close to zero.</p>
-<p>The variables are strongly related, but the relationship is neither <strong>linear</strong> nor <strong>monotonic</strong>.</p>
-<blockquote class="blockquote">
-<p>Correlation — whether Pearson or Spearman — does not capture every kind of relationship between two variables.</p>
-</blockquote>
-</section>
-</section>
-<section id="week-5-homework-is-on-brightspace" class="level2">
-<h2 class="anchored" data-anchor-id="week-5-homework-is-on-brightspace">Week #5 Homework is on Brightspace</h2>
-<ul>
-<li>Due Tuesday, October 13th, at 11am</li>
-<li>Office hours via email if you have questions: Keith.Goldfeld@nyulangone.org</li>
-</ul>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
