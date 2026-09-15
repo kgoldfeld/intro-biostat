@@ -179,9 +179,10 @@ We now have systolic blood pressure measurements for **100 women**.
 
 What do our data look like?
 
-::: webr-plot
+
 
 ```{webr-r}
+#| classes: webr-plot
 #| fig-height: 4
 ggplot(data.table(sbp = sample), aes(x = sbp)) +
   geom_histogram(bins = 50, color = "grey85", fill = "grey70") +
@@ -190,7 +191,6 @@ ggplot(data.table(sbp = sample), aes(x = sbp)) +
     y = "Count"
   )
 ```
-:::
 
 #### How can we summarize these data?
 
@@ -378,8 +378,9 @@ Different probability distributions provide models for these different kinds of 
 
 Earlier, we created a population of systolic blood pressures using the function `rnorm()`:
 
-::: webr-plot
+
 ```{webr-r}
+#| classes: webr-plot
 #| fig-height: 4
 
 set.seed(1203)
@@ -392,7 +393,6 @@ ggplot(data.frame(sbp = population), aes(x = sbp)) +
     y = "Count"
   )
 ```
-:::
 
 The values were generated from a **Normal distribution**.
 

@@ -51,69 +51,48 @@ h5 {
 
 
 /* Plotting chunks */
-.webr-plot .qwebr-interactive-area {
+.qwebr-interactive-area.webr-plot {
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); 
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   column-gap: 1.5rem;
   align-items: center;
-
-  /* Keep the code/plot geometry that was working */
   width: 100%;
   margin-left: 0%;
 }
 
-
-
-
-/* Extend only the toolbar */
-
-.webr-plot .qwebr-editor-toolbar {
+.qwebr-interactive-area.webr-plot .qwebr-editor-toolbar {
   grid-column: 1 / -1;
   grid-row: 1;
-
   width: 150%;
   margin-bottom: 0.5rem;
 }
 
-
-/* Code on left */
-
-.webr-plot .qwebr-console-area {
+.qwebr-interactive-area.webr-plot .qwebr-console-area {
   grid-column: 1;
   grid-row: 2;
 }
 
-/* Plot on right */
-
-.webr-plot .qwebr-output-graph-area {
+.qwebr-interactive-area.webr-plot .qwebr-output-graph-area {
   grid-column: 2;
   grid-row: 2;
-
   min-width: 0;
   max-width: 100%;
-  
 }
 
-
 /* Default: ordinary WebR code and text output side by side */
-
-.qwebr-interactive-area:not(.webr-plot .qwebr-interactive-area)
-  .qwebr-console-area {
+.qwebr-interactive-area:not(.webr-plot) .qwebr-console-area {
   display: flex;
   flex-direction: row;
   gap: 1.5rem;
   align-items: flex-start;
 }
 
-
-.qwebr-interactive-area:not(.webr-plot .qwebr-interactive-area)
-  .qwebr-editor {
+.qwebr-interactive-area:not(.webr-plot) .qwebr-editor {
   flex: 45 1 0;
   min-width: 0;
 }
 
-.qwebr-interactive-area:not(.webr-plot .qwebr-interactive-area)
-  .qwebr-output-code-area {
+.qwebr-interactive-area:not(.webr-plot) .qwebr-output-code-area {
   flex: 55 1 0;
   min-width: 0;
   margin-top: 0;
