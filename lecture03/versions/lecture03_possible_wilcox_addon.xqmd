@@ -1,0 +1,198 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+### Mean-based versus rank-based comparisons
+
+Mean-based and rank-based methods often tell a similar story when two populations have the same shape and differ mainly by a shift in location. But this is not always the case.
+
+From before we saw that
+
+- A comparison of means uses the **actual numerical values** of the observations.
+- A rank-based comparison uses the **relative ordering** of the observations.
+
+Let's look at two examples.
+
+```{r}
+set.seed(2817)
+
+n <- 10000
+```
+
+#### Example 1: Same shape, shifted location
+
+A mean-based comparison asks about the difference in **average numerical values**:
+
+$$\Large
+\mu_B-\mu_A$$
+
+In this example,
+
+$$\Large
+Y_A \sim N(0,1)
+\qquad\text{and}\qquad
+Y_B \sim N(1,1)$$
+
+so
+
+$$\Large
+\mu_B-\mu_A = 1.$$
+
+Suppose the two populations have the same shape and spread, but Group B is shifted one unit to the right.
+
+```{r}
+y_a <- rnorm(n, mean = 0, sd = 1)
+y_b <- rnorm(n, mean = 1, sd = 1)
+
+dd1 <- data.table(
+  group = rep(c("A", "B"), each = n),
+  y = c(y_a, y_b)
+)
+```
+
+```{r}
+dd1[, .(
+  mean = mean(y),
+  median = median(y)
+), by = group]
+```
+
+```{r}
+ggplot(dd1, aes(x = y, linetype = group)) +
+  geom_density(linewidth = 0.8) +
+  labs(
+    x = "Outcome",
+    y = "Density",
+    linetype = "Group"
+  )
+```
+
+Here, Group B has a higher mean and a higher median.
+
+We can also ask a different question:
+
+> If we randomly select one observation from each population, how often would the observation from Group B be larger?
+
+Using the two simulated samples, we can estimate this probability by comparing every observation in Group B with every observation in Group A.
+
+```{r}
+mean(outer(y_b, y_a, ">"))
+```
+
+Because the distributions have the same shape and differ primarily by location, the mean-based and rank-based comparisons tell essentially the same story: Group B tends to have higher values.
+
+#### Example 2: A higher mean does not necessarily mean "usually higher"
+
+Now suppose Group A contains mostly low values, but also a small fraction of very large values.
+
+Group B is concentrated around a moderately higher value.
+
+A different way to compare the populations is to ask how likely an observation from one population is to be larger than an observation from the other:
+
+$$\Large
+P(Y_B > Y_A)$$
+
+If the two populations are identical and continuous,
+
+$$\Large
+P(Y_B > Y_A)=0.5.$$
+
+For Group A,
+
+$$\Large
+Y_A =
+\begin{cases}
+N(0,1) & \text{with probability }0.90 \\[4pt]
+N(20,1) & \text{with probability }0.10
+\end{cases}$$
+
+while
+
+$$\Large
+Y_B\sim N(1.5,1).$$
+
+The population mean for Group A is
+
+$$\Large
+\mu_A
+=
+0.90(0)+0.10(20)
+=
+2,$$
+
+while
+
+$$\Large
+\mu_B=1.5.$$
+
+Therefore,
+
+$$\Large
+\mu_A>\mu_B.$$
+
+```{r}
+y_a <- c(
+  rnorm(round(0.90 * n), mean = 0, sd = 1),
+  rnorm(round(0.10 * n), mean = 20, sd = 1)
+)
+
+y_b <- rnorm(n, mean = 1.5, sd = 1)
+
+dd2 <- data.table(
+  group = rep(c("A", "B"), times = c(length(y_a), length(y_b))),
+  y = c(y_a, y_b)
+)
+```
+
+```{r}
+dd2[, .(
+  mean = mean(y),
+  median = median(y)
+), by = group]
+```
+
+```{r}
+ggplot(dd2, aes(x = y, linetype = group)) +
+  geom_density(linewidth = 0.8) +
+  labs(
+    x = "Outcome",
+    y = "Density",
+    linetype = "Group"
+  )
+```
+
+In this example, Group A has the **higher mean**, because a small number of very large observations pull the mean upward.
+
+But most observations from Group A are still lower than observations from Group B.
+
+Again, we can estimate the probability that an observation from Group B is larger than an observation from Group A:
+
+```{r}
+mean(outer(y_b, y_a, ">"))
+```
+
+Yet
+
+$$\Large
+P(Y_B>Y_A) > 0.5.$$
+
+So these two statements can both be true:
+
+$$\Large
+\mu_A > \mu_B$$
+
+and
+
+$$\Large
+P(Y_B>Y_A) > 0.5.$$
+
+The two comparisons now tell different stories:
+
+- Group A has the **higher mean**.
+- Group B tends to have the **higher individual observations**.
+
+> Mean-based methods use the numerical magnitude of the observations. Rank-based methods use their relative ordering.
+
+When population distributions differ mainly by location, these approaches often lead to similar conclusions. When the shapes of the distributions differ substantially, they can answer meaningfully different questions.
