@@ -369,7 +369,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"download.file(\n  \"https://teaching.rdatagen.net/lecture04/data/dietData.csv\",\n  \"dietData.csv\"\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"setup","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\n  \ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(panel.grid = element_blank(),\n  plot.title = element_text(face = \"bold\", size = 12))\n)","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1987)\nn <- 30         # sample size for each group\n\nmu_a <- 10\nmu_b <- 10 \nmu_c <- 10 # 10 or 13\n\nsd <- 3 # 3 or 8\n\ndd <- data.table(\n  group = rep(c(\"A\", \"B\", \"C\"), each = n),\n  y = c(\n    rnorm(n, mean = mu_a, sd = sd),\n    rnorm(n, mean = mu_b, sd = sd),\n    rnorm(n, mean = mu_c, sd = sd)\n  )\n)","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = dd, aes(x = group, y = y)) +\n  geom_jitter(width = .05, height = 0, color = \"grey60\", size = 1) +\n  stat_summary(fun = mean, geom = \"crossbar\",width = 0.30, color = \"red\", linewidth = 0.7) +\n  ylim(-15, 40)","id":4,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"overall_mean <- mean(dd$y)\n\nggplot(data = dd, aes(x = group, y = y)) +\n geom_hline(yintercept = overall_mean, linetype = 2, color = \"grey40\") +\n geom_jitter(width = .05, height = 0,color = \"grey60\", size = 1) +\n stat_summary(fun = mean,geom = \"crossbar\", width = 0.30, color = \"red\", linewidth = 0.7) +\n ylim(-15, 40)","id":5,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- aov(y ~ group, data = dd)\nsummary(fit)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_obs <- summary(fit)[[1]][[\"F value\"]][1]\n\nplot_F(df1 = 2, df2 = 87, print_p = TRUE, F_obs = F_obs)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"data <- fread(\"data/dietData.csv\")\ndata[, Group := as.factor(Group)]\nhead(data, 10)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"table(data$Group)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = data, aes(x = Group, y = WeightChange)) +\n  geom_jitter(width = .05, height = 0, color = \"grey60\") +\n  stat_summary(fun = mean, geom = \"crossbar\", width = 0.30, color = \"red\", linewidth = 0.7)","id":10,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"data[, .(\n  n = .N,\n  mean = mean(WeightChange),\n  sd = sd(WeightChange)\n), by = Group]","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"res_aov <- aov(WeightChange ~ Group, data = data)\nsummary(res_aov)","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_obs <- summary(res_aov)[[1]][[\"F value\"]][1]\nplot_F(df1 = 3, df2 = 28, print_p = TRUE, F_obs = F_obs)","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"TukeyHSD(res_aov)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"oneway.test(WeightChange ~ Group, data = data, var.equal = FALSE)","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"kruskal.test(WeightChange ~ Group, data = data)","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(3817) \n\nn <- 20 # 20 or 35 per group\nmu_a <- 10\nmu_b <- 12\nsd <- 3\n\ndd <- data.table(\n  group = rep(c(\"A\", \"B\"), each = n),\n  y = c(\n    rnorm(n, mean = mu_a, sd = sd),\n    rnorm(n, mean = mu_b, sd = sd)\n  )\n)","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = group, y = y)) +\n  geom_jitter(width = .05, height = 0, color = \"grey60\") +\n  stat_summary(\n    fun = mean,\n    geom = \"crossbar\",\n    width = 0.30,\n    color = \"red\",\n    linewidth = 0.7\n  )","id":18,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"t.test(y ~ group, data = dd)","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(3817)\n\nn_sim <- 5000\n\nresults <- data.table(\n  sim = 1:n_sim,\n  diff = NA_real_,\n  t = NA_real_,\n  p_value = NA_real_\n)\n\nfor (s in 1:n_sim) {\n\n  y_a <- rnorm(n, mean = mu_a, sd = sd)\n  y_b <- rnorm(n, mean = mu_b, sd = sd)\n\n  tt <- t.test(y_b, y_a)\n\n  results[s, `:=`(\n    diff = mean(y_b) - mean(y_a),\n    t = unname(tt$statistic),\n p_value = tt$p.value\n  )]\n}\n\nresults[, significant := p_value < 0.05]","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(results, aes(x = t)) +\n  geom_histogram(\n    aes(fill = significant),\n    bins = 40,\n    color = \"white\"\n  ) +\n  scale_fill_manual(\n    values = c(\n      \"FALSE\" = \"grey80\",\n      \"TRUE\" = \"steelblue\"\n    ),\n    guide = \"none\"\n  ) +\n  annotate(\n    \"text\",\n    x = -0.1,\n    y = 500,\n    label = \"bold(beta == P(fail~to~reject~H[0]~'|'~mu[B] - mu[A] == 2))\",\n    parse = TRUE,\n    size = 3.5\n  ) +\n  annotate(\n    \"text\",\n    x = 5.3,\n    y = 420,\n    label = \"bold(Power == P(reject~H[0]~'|'~mu[B] - mu[A] == 2))\",\n    parse = TRUE,\n    size = 3.5\n  ) + \n  labs(\n    title = bquote(\n      bold(\"Distribution of t-statistics when\" ~\n         mu[B] - mu[A] == 2 ~\n         \"(n =\" ~ .(n) ~ \"per group)\")\n    ),\n    x = \"t-statistic\",\n    y = \"Count\"\n  ) +\n  ylim(0, 600)","id":21,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"results[, .(\n  power = mean(significant),\n  beta = mean(!significant)\n)]","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power <- function(n, mu_a = 10, mu_b = 12, sd = 3, n_sim = 5000) {\n\n  p_values <- numeric(n_sim)\n\n  for (s in 1:n_sim) {\n\n    y_a <- rnorm(n, mean = mu_a, sd = sd)\n    y_b <- rnorm(n, mean = mu_b, sd = sd)\n\n    p_values[s] <- t.test(y_b, y_a)$p.value\n }\n\n mean(p_values < 0.05)\n}","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power(n = 35, sd = 5)\nestimate_power(n = 35, sd = 4)\nestimate_power(n = 35, sd = 3)\nestimate_power(n = 35, sd = 2)","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power(n = 35, mu_b = 11, sd = 3)\nestimate_power(n = 35, mu_b = 12, sd = 3)\nestimate_power(n = 35, mu_b = 13, sd = 3)\nestimate_power(n = 35, mu_b = 14, sd = 3)","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"power.t.test(\n delta = 2,\n sd = 3,\n power = 0.80,\n sig.level = 0.05,\n type = \"two.sample\"\n)","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pwr::pwr.t.test(\n  d = 2/3,\n  power = 0.80,\n  sig.level = 0.05,\n  type = \"two.sample\",\n  alternative = \"two.sided\"\n)","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"download.file(\n  \"https://teaching.rdatagen.net/lecture04/data/dietData.csv\",\n  \"dietData.csv\"\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"setup","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\n  \ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(panel.grid = element_blank(),\n  plot.title = element_text(face = \"bold\", size = 12))\n)","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1987)\nn <- 30         # sample size for each group\n\nmu_a <- 10\nmu_b <- 10 \nmu_c <- 10 # 10 or 13\n\nsd <- 3 # 3 or 8\n\ndd <- data.table(\n  group = rep(c(\"A\", \"B\", \"C\"), each = n),\n  y = c(\n    rnorm(n, mean = mu_a, sd = sd),\n    rnorm(n, mean = mu_b, sd = sd),\n    rnorm(n, mean = mu_c, sd = sd)\n  )\n)\n\nhead(dd)","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = dd, aes(x = group, y = y)) +\n  geom_jitter(\n    width = .05, \n    height = 0, \n    color = \"grey60\", \n    size = 1) +\n  stat_summary(\n    fun = mean, \n    geom = \"crossbar\",\n    width = 0.30, \n    color = \"red\", \n    linewidth = 0.7) +\n  ylim(-15, 40)","id":4,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"overall_mean <- mean(dd$y)\n\nggplot(data = dd, aes(x = group, y = y)) +\n geom_hline(\n   yintercept = overall_mean, \n   linetype = 2, \n   color = \"grey40\") +\n geom_jitter(\n   width = .05, \n   height = 0,\n   color = \"grey60\", \n   size = 1) +\n stat_summary(\n   fun = mean,\n   geom = \"crossbar\", \n   width = 0.30, \n   color = \"red\", \n   linewidth = 0.7) +\n ylim(-15, 40)","id":5,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"plot_F <- function(\n    df1, df2, \n    print_p = FALSE, \n    F_obs = NULL) {\n\n  x <- seq(0, 16, length.out = 1000)\n\n  dd_f <- data.table(\n    f = x,\n    density = df(x, df1 = df1, df2 = df2)\n  )\n\n  p_f <- \n    ggplot(dd_f, aes(x = f, y = density)) +\n      labs(\n        x = \"F\",\n        y = \"Density\",\n        title = sprintf(\n          \"F-distribution (df1 = %d, df2 = %d)\", \n          df1, df2)) +\n      scale_y_continuous(\n        expand = expansion(mult = c(0, 0.05)))\n \n  if (print_p == TRUE) {\n    p_f <- p_f +\n    geom_area(\n      data = dd_f[f >= F_obs], \n      aes(x = f, y = density), \n      fill = \"grey90\") +\n    geom_segment(\n      x = F_obs,\n      xend = F_obs,\n      y = 0,\n      yend = df(F_obs, df1 = df1, df2 = df2),\n      linewidth = 0.2,\n      color = \"pink\") + \n  annotate(\n    \"text\", \n    x = F_obs - 2.5, y = 0.15, \n    label = sprintf(\"F = %.2f\", F_obs),\n    hjust = -0.1, size = 4)\n  }\n \n  p_f + geom_line(linewidth = 0.8)\n \n}\n\nplot_F(df1 = 2, df2 = 87)","id":6,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, .(\n n = .N,\n mean = mean(y),\n sd = sd(y)\n), by = group]","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- aov(y ~ group, data = dd)\nsummary(fit)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_obs <- summary(fit)[[1]][[\"F value\"]][1]\n\nplot_F(\n  df1 = 2, \n  df2 = 87, \n  print_p = TRUE, \n  F_obs = F_obs\n)","id":9,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"data <- fread(\"dietData.csv\")\ndata[, Group := as.factor(Group)]\nhead(data, 10)","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"table(data$Group)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  data = data, \n  aes(x = Group, y = WeightChange)\n) +\n  geom_jitter(\n    width = .05, \n    height = 0, \n    color = \"grey60\") +\n  stat_summary(\n    fun = mean, geom = \"crossbar\", \n    width = 0.30, color = \"red\", \n    linewidth = 0.7)","id":12,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"data[, .(\n    n = .N, \n    mean = mean(WeightChange), \n    sd = sd(WeightChange)\n  ), by = Group]","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"res_aov <- aov(WeightChange ~ Group, data = data)\nsummary(res_aov)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_obs <- summary(res_aov)[[1]][[\"F value\"]][1]\nplot_F(\n  df1 = 3, \n  df2 = 28, \n  print_p = TRUE, \n  F_obs = F_obs\n)","id":15,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"TukeyHSD(res_aov)","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"oneway.test(WeightChange ~ Group, data = data, var.equal = FALSE)","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"kruskal.test(WeightChange ~ Group, data = data)","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(3817) \n\nn <- 20 # 20 or 35 per group\nmu_a <- 10\nmu_b <- 12\nsd <- 3\n\ndd <- data.table(\n  group = rep(c(\"A\", \"B\"), each = n),\n  y = c(\n    rnorm(n, mean = mu_a, sd = sd),\n    rnorm(n, mean = mu_b, sd = sd)\n  )\n)","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = group, y = y)) +\n  geom_jitter(width = .05, height = 0, color = \"grey60\") +\n  stat_summary(\n    fun = mean,\n    geom = \"crossbar\",\n    width = 0.30,\n    color = \"red\",\n    linewidth = 0.7\n  )","id":20,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"t.test(y ~ group, data = dd)","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(3817)\n\nn_sim <- 5000\n\nresults <- data.table(\n  sim = 1:n_sim,\n  diff = NA_real_,\n  t = NA_real_,\n  p_value = NA_real_\n)\n\nfor (s in 1:n_sim) {\n\n  y_a <- rnorm(n, mean = mu_a, sd = sd)\n  y_b <- rnorm(n, mean = mu_b, sd = sd)\n\n  tt <- t.test(y_b, y_a)\n\n  results[s, `:=`(\n    diff = mean(y_b) - mean(y_a),\n    t = unname(tt$statistic),\n p_value = tt$p.value\n  )]\n}\n\nresults[, significant := p_value < 0.05]","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(results, aes(x = t)) +\n  geom_histogram(\n    aes(fill = significant),\n    bins = 40,\n    color = \"white\"\n  ) +\n  scale_fill_manual(\n    values = c(\n      \"FALSE\" = \"grey80\",\n      \"TRUE\" = \"steelblue\"\n    ),\n    guide = \"none\"\n  ) +\n  annotate(\n    \"text\",\n    x = -0.1,\n    y = 500,\n    label = \"bold(beta == P(fail~to~reject~H[0]~'|'~mu[B] - mu[A] == 2))\",\n    parse = TRUE,\n    size = 3.5\n  ) +\n  annotate(\n    \"text\",\n    x = 5.3,\n    y = 420,\n    label = \"bold(Power == P(reject~H[0]~'|'~mu[B] - mu[A] == 2))\",\n    parse = TRUE,\n    size = 3.5\n  ) + \n  labs(\n    title = bquote(\n      bold(\"Distribution of t-statistics when\" ~\n         mu[B] - mu[A] == 2 ~\n         \"(n =\" ~ .(n) ~ \"per group)\")\n    ),\n    x = \"t-statistic\",\n    y = \"Count\"\n  ) +\n  ylim(0, 600)","id":23,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"results[, .(\n  power = mean(significant),\n  beta = mean(!significant)\n)]","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power <- function(n, mu_a = 10, mu_b = 12, sd = 3, n_sim = 5000) {\n\n  p_values <- numeric(n_sim)\n\n  for (s in 1:n_sim) {\n\n    y_a <- rnorm(n, mean = mu_a, sd = sd)\n    y_b <- rnorm(n, mean = mu_b, sd = sd)\n\n    p_values[s] <- t.test(y_b, y_a)$p.value\n }\n\n mean(p_values < 0.05)\n}","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power(n = 10)\nestimate_power(n = 20)\nestimate_power(n = 50)\nestimate_power(n = 100)","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power(n = 35, sd = 5)\nestimate_power(n = 35, sd = 4)\nestimate_power(n = 35, sd = 3)\nestimate_power(n = 35, sd = 2)","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate_power(n = 35, mu_b = 11, sd = 3)\nestimate_power(n = 35, mu_b = 12, sd = 3)\nestimate_power(n = 35, mu_b = 13, sd = 3)\nestimate_power(n = 35, mu_b = 14, sd = 3)","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"power.t.test(\n delta = 2,\n sd = 3,\n power = 0.80,\n sig.level = 0.05,\n type = \"two.sample\"\n)","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pwr::pwr.t.test(\n  d = 2/3,\n  power = 0.80,\n  sig.level = 0.05,\n  type = \"two.sample\",\n  alternative = \"two.sided\"\n)","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2027,89 +2027,130 @@ F \approx
 <div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The dashed line represents the <strong>overall mean</strong>, and the red lines represent the <strong>group means</strong>.</p>
-<p>The two sources of variability, <strong>within-group variability</strong> and <strong>between-group variability</strong> can be measured using the same basic idea we use to calculate a variance:</p>
-<p><strong>squared distances from a mean</strong>.</p>
+<p>The two sources of variability, <strong>within-group variability</strong> and <strong>between-group variability</strong> can be measured using the same basic idea we use to calculate a variance: <strong>squared distances from a mean</strong>.</p>
 </section>
 <section id="within-group-variability" class="level3">
 <h3 class="anchored" data-anchor-id="within-group-variability">Within-group variability</h3>
-<p>For <strong>within-group variability</strong>, we measure the <strong>squared distance</strong> between each observation and the mean of its own group:<span class="math display">\[SS_{\text{within}}
+<p>For <strong>within-group variability</strong>, we measure the <strong>squared distance</strong> between each observation and the mean of its own group: <span class="math display">\[
+\large
+SS_{\text{within}}
 =
 \sum_{j=1}^{k}
 \sum_{i=1}^{n_j}
-(x_{ij}-\bar{x}_j)^2\]</span>where<span class="math inline">\(\Large k\)</span>is the number of groups and<span class="math inline">\(\Large n_j\)</span>is the number of observations in group<span class="math inline">\(\Large j\)</span>.</p>
+(x_{ij}-\bar{x}_j)^2
+\]</span> where <span class="math inline">\(k\)</span> is the number of groups and <span class="math inline">\(n_j\)</span> is the number of observations in group <span class="math inline">\(j\)</span>.</p>
 </section>
 <section id="between-group-variability" class="level3">
 <h3 class="anchored" data-anchor-id="between-group-variability">Between-group variability</h3>
-<p>For <strong>between-group variability</strong>, we measure the squared distance between each group mean and the overall mean, accounting for the number of observations in each group:<span class="math display">\[SS_{\text{between}}
+<p>For <strong>between-group variability</strong>, we measure the squared distance between each group mean and the overall mean, accounting for the number of observations in each group:</p>
+<p><span class="math display">\[
+\large
+SS_{\text{between}}
 =
 \sum_{j=1}^{k}
-n_j(\bar{x}_j-\bar{x})^2\]</span>The factor<span class="math inline">\(\large n_j\)</span>accounts for sample size, putting the variability among the sample means back on the scale of the individual observations.</p>
+n_j(\bar{x}_j-\bar{x})^2
+\]</span> The factor <span class="math inline">\(n_j\)</span> accounts for sample size, putting the variability among the sample means back on the scale of the individual observations.</p>
 </section>
-<section id="sums-of-squareslarge-ss_textwithinandlarge-ss_textbetweenare-called-the-sums-of-squares." class="level3">
-<h3 class="anchored" data-anchor-id="sums-of-squareslarge-ss_textwithinandlarge-ss_textbetweenare-called-the-sums-of-squares.">Sums of squares<span class="math inline">\(\large SS_{\text{within}}\)</span>and<span class="math inline">\(\large SS_{\text{between}}\)</span>are called the <strong>sums of squares</strong>.</h3>
-<p>As with a sample variance, we divide by the appropriate degrees of freedom to obtain measures of variability:<span class="math display">\[MS_{\text{within}}
+<section id="ss_textwithin-and-ss_textbetween-are-called-the-sums-of-squares." class="level3">
+<h3 class="anchored" data-anchor-id="ss_textwithin-and-ss_textbetween-are-called-the-sums-of-squares."><span class="math inline">\(SS_{\text{within}}\)</span> and <span class="math inline">\(SS_{\text{between}}\)</span> are called the <em>sums of squares</em>.</h3>
+<p>As with a sample variance, we divide by the appropriate degrees of freedom to obtain measures of variability:</p>
+<p><span class="math display">\[
+\large
+MS_{\text{within}}
 =
-\frac{SS_{\text{within}}}{N-k}\]</span><span class="math display">\[MS_{\text{between}}
+\frac{SS_{\text{within}}}{N-k}\]</span></p>
+<p><span class="math display">\[
+\large
+MS_{\text{between}}
 =
-\frac{SS_{\text{between}}}{k-1}\]</span>These quantities are called <strong>mean squares</strong>.</p>
+\frac{SS_{\text{between}}}{k-1}
+\]</span></p>
+<p>These quantities are called <strong>mean squares</strong>.</p>
 <blockquote class="blockquote">
-<p>Under the null hypothesis, both<span class="math inline">\(\large MS_{\text{within}}\)</span>and<span class="math inline">\(\large MS_{\text{between}}\)</span>estimate the same population variance<span class="math inline">\(\large \sigma^2\)</span>.</p>
+<p>Under the null hypothesis, both <span class="math inline">\(MS_{\text{within}}\)</span> and <span class="math inline">\(MS_{\text{between}}\)</span> estimate the same population variance <span class="math inline">\(\sigma^2\)</span>.</p>
 </blockquote>
-<p>ANOVA compares them using the <strong>F-statistic</strong>:<span class="math display">\[F
+<p>ANOVA compares them using the <strong>F-statistic</strong>:</p>
+<p><span class="math display">\[\large
+F
 =
 \frac{MS_{\text{between}}}
-{MS_{\text{within}}}\]</span>### Why does variability among the group means estimate<span class="math inline">\(\large \sigma^2\)</span>?</p>
-<p>Suppose each group has<span class="math inline">\(\large n\)</span>observations.</p>
+{MS_{\text{within}}}
+\]</span></p>
+</section>
+<section id="why-does-variability-among-the-group-means-estimate-sigma2" class="level3">
+<h3 class="anchored" data-anchor-id="why-does-variability-among-the-group-means-estimate-sigma2">Why does variability among the group means estimate <span class="math inline">\(\sigma^2\)</span>?</h3>
+<p>Suppose each group has <span class="math inline">\(n\)</span> observations.</p>
 <ul>
-<li><p>Individual observations vary with variance:<span class="math display">\[\operatorname{Var}(X)=\sigma^2\]</span>- Sample means vary less:<span class="math display">\[\operatorname{Var}(\bar X_j)=\frac{\sigma^2}{n}\]</span>- Under<span class="math inline">\(\large H_0\)</span>, differences among the sample means arise entirely from sampling variability.</p></li>
-<li><p>The between-group sum of squares multiplies the squared differences among the means by<span class="math inline">\(\large n\)</span>:<span class="math display">\[SS_{\text{between}}
-=
-n\sum_j(\bar X_j-\bar X)^2\]</span>&gt; Multiplying by<span class="math inline">\(\large n\)</span>puts the variability among the sample means back on the<span class="math inline">\(\large \sigma^2\)</span>scale.</p></li>
+<li>Individual observations vary with variance:</li>
 </ul>
+<p><span class="math display">\[
+\large
+\operatorname{Var}(X)=\sigma^2
+\]</span></p>
+<ul>
+<li>Sample means vary less:</li>
+</ul>
+<p><span class="math display">\[\large
+\operatorname{Var}(\bar X_j)=\frac{\sigma^2}{n}
+\]</span></p>
+<ul>
+<li><p>Under <span class="math inline">\(H_0\)</span>, differences among the sample means arise entirely from sampling variability.</p></li>
+<li><p>The between-group sum of squares multiplies the squared differences among the means by <span class="math inline">\(n\)</span>:</p></li>
+</ul>
+<p><span class="math display">\[
+\large
+SS_{\text{between}}
+=
+n\sum_j(\bar X_j-\bar X)^2\]</span></p>
+<blockquote class="blockquote">
+<p>Multiplying by <span class="math inline">\(n\)</span> puts the variability among the sample means back on the <span class="math inline">\(\sigma^2\)</span> scale.</p>
+</blockquote>
 </section>
 <section id="what-happens-when-the-population-means-are-equal" class="level3">
 <h3 class="anchored" data-anchor-id="what-happens-when-the-population-means-are-equal">What happens when the population means are equal?</h3>
 <p>Under the null hypothesis:</p>
-<p>-<span class="math inline">\(\large MS_{\text{within}}\)</span>estimates variability among individual observations within the populations. -<span class="math inline">\(\large MS_{\text{between}}\)</span>uses variability among the sample means to estimate that <strong>same underlying population variance</strong>.<span class="math display">\[MS_{\text{within}} \approx \sigma^2
+<ul>
+<li><span class="math inline">\(MS_{\text{within}}\)</span> estimates variability among individual observations within the populations.</li>
+<li><span class="math inline">\(MS_{\text{between}}\)</span> uses variability among the sample means to estimate that <strong>same underlying population variance</strong>.</li>
+</ul>
+<p><span class="math display">\[
+\large MS_{\text{within}} \approx \sigma^2
 \qquad\text{and}\qquad
-MS_{\text{between}} \approx \sigma^2\]</span>Therefore:<span class="math display">\[F=\frac{MS_{\text{between}}}{MS_{\text{within}}}
-\approx 1\]</span>&gt; If the population means differ,<span class="math inline">\(\large MS_{\text{between}}\)</span>also reflects those differences and tends to become larger.</p>
-<p>###<span class="math inline">\(\Large F\)</span>distribution</p>
-<p>The shape of the<span class="math inline">\(\Large F\)</span>distribution is determined by two degrees of freedom - one associated with<span class="math inline">\(\large MS_{\text{between}}\)</span>and one with<span class="math inline">\(\large MS_{\text{within}}\)</span>:<span class="math display">\[df_1 = k - 1,\qquad df_2 = N-k\]</span>The F-distribution for our example has<span class="math inline">\(\large df_1 = 3 - 1\)</span>, and<span class="math inline">\(\large df_2 = 90 - 3\)</span>```{webr-r} #| classes: webr-plot</p>
-<p>plot_F &lt;- function(df1, df2, print_p = FALSE, F_obs = NULL) {</p>
-<p>x &lt;- seq(0, 16, length.out = 1000)</p>
-<p>dd_f &lt;- data.table( f = x, density = df(x, df1 = df1, df2 = df2) )</p>
-<p>p_f &lt;- ggplot(dd_f, aes(x = f, y = density)) + labs( x = “F”, y = “Density”, title = sprintf(“F-distribution (df1 = %d, df2 = %d)”, df1, df2) ) + scale_y_continuous(expand = expansion(mult = c(0, 0.05)))</p>
-<p>if (print_p == TRUE) { p_f &lt;- p_f + geom_area(data = dd_f[f &gt;= F_obs], aes(x = f, y = density), fill = “grey90”) + geom_segment( x = F_obs, xend = F_obs, y = 0, yend = df(F_obs, df1 = df1, df2 = df2), linewidth = 0.2, color = “pink” ) + annotate(“text”, x = F_obs - 2.5, y = 0.15, label = sprintf(“F = %.2f”, F_obs),hjust = -0.1, size = 4) }</p>
-<p>p_f + geom_line(linewidth = 0.8)</p>
-<p>}</p>
-<p>plot_F(df1 = 2, df2 = 87)</p>
-<pre><code>
-
-### Fitting the ANOVA model
-
-Let's return to our simulated data and test:$$H_0:\mu_A=\mu_B=\mu_C$$$$H_A:\text{the population means are not all equal}$$Here are the group averages and within-group standard deviations:
-
-```{webr-r}
-dd[, .(
- n = .N,
- mean = mean(y),
- sd = sd(y)
-), by = group]</code></pre>
-<p>The model can be estimated in <strong>R</strong> using the function <code>aov()</code>:</p>
+MS_{\text{between}} \approx \sigma^2\]</span></p>
+<p>Therefore:</p>
+<p><span class="math display">\[\large
+F=\frac{MS_{\text{between}}}{MS_{\text{within}}}
+\approx 1
+\]</span></p>
+<blockquote class="blockquote">
+<p>If the population means differ, <span class="math inline">\(MS_{\text{between}}\)</span> also reflects those differences and tends to become larger.</p>
+</blockquote>
+</section>
+<section id="f-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="f-distribution"><span class="math inline">\(F\)</span> distribution</h3>
+<p>The shape of the <span class="math inline">\(F\)</span> distribution is determined by two degrees of freedom - one associated with <span class="math inline">\(MS_{\text{between}}\)</span> and one with <span class="math inline">\(MS_{\text{within}}\)</span>:</p>
+<p><span class="math display">\[\large df_1 = k - 1,\qquad df_2 = N-k\]</span> The F-distribution for our example has <span class="math inline">\(df_1 = 3 - 1\)</span>, and <span class="math inline">\(df_2 = 90 - 3\)</span>.</p>
 <div id="qwebr-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The shaded area to the right of the observed<span class="math inline">\(\large F\)</span>-statistic is the p-value:</p>
+</section>
+<section id="fitting-the-anova-model" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-the-anova-model">Fitting the ANOVA model</h3>
+<p>Let’s return to our simulated data and test:</p>
+<p><span class="math display">\[\large H_0:\mu_A=\mu_B=\mu_C\]</span></p>
+<p><span class="math display">\[\large H_A:\text{the population means are not all equal}\]</span></p>
+<p>Here are the group averages and within-group standard deviations:</p>
 <div id="qwebr-insertion-location-7"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The model can be estimated in <strong>R</strong> using the function <code>aov()</code>:</p>
+<div id="qwebr-insertion-location-8"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The shaded area to the right of the observed <span class="math inline">\(F\)</span>-statistic is the p-value:</p>
+<div id="qwebr-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="example---weight-loss-programs" class="level3">
 <h3 class="anchored" data-anchor-id="example---weight-loss-programs">Example - weight loss programs</h3>
 <p>In this example, participants are in one of four weight-loss groups (three active programs and a control). The outcome is weight loss over 8 weeks, defined as the difference between baseline and 8-week weight.</p>
-<div id="qwebr-insertion-location-8"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-9"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-11"></div>
@@ -2117,6 +2158,10 @@ dd[, .(
 <div id="qwebr-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-13"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-14"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-15"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The ANOVA p-value is small, suggesting that the population means are <strong>not all equal</strong>.</p>
 <p>However, the ANOVA does not tell us <strong>which groups differ from one another</strong>.</p>
@@ -2133,7 +2178,7 @@ dd[, .(
 <section id="tukeys-method" class="level3">
 <h3 class="anchored" data-anchor-id="tukeys-method">Tukey’s method …</h3>
 <p>allows us to estimate all pairwise differences while accounting for the fact that we are making multiple comparisons.</p>
-<div id="qwebr-insertion-location-14"></div>
+<div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>For each pair of groups, Tukey’s method provides:</p>
 <ul>
@@ -2156,7 +2201,7 @@ dd[, .(
 <li><p><strong>Equal population variances:</strong> The classical ANOVA <span class="math inline">\(F\)</span>-test is reasonably robust to moderate differences in variance, particularly when group sizes are similar.</p></li>
 <li><p>Equal sample sizes are <strong>not required</strong>, but when variances differ substantially, especially with unequal group sizes, we can use <strong>Welch’s ANOVA</strong> in <strong>R</strong> with function <code>oneway.test()</code>:</p></li>
 </ul>
-<div id="qwebr-insertion-location-15"></div>
+<div id="qwebr-insertion-location-17"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="a-rank-based-comparison-of-more-than-two-groups" class="level3">
@@ -2168,7 +2213,7 @@ dd[, .(
 </blockquote>
 <p>The Kruskal–Wallis statistic does this by comparing the <strong>average ranks</strong> across groups.</p>
 <p>This is done with the <strong>R</strong> function <code>kruskal.test()</code>:</p>
-<div id="qwebr-insertion-location-16"></div>
+<div id="qwebr-insertion-location-18"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <ul>
 <li><p>The small p-value suggests that the groups differ in where their observations tend to fall in the overall ranking.</p></li>
@@ -2189,11 +2234,11 @@ dd[, .(
 \mu_B-\mu_A=2.\]</span></p>
 <p>If we conduct a study comparing these two groups, will we necessarily detect the difference?</p>
 <p>Let’s simulate a study with <span class="math inline">\(n\)</span> observations in each group.</p>
-<div id="qwebr-insertion-location-17"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-18"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-19"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-20"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-21"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>We know that the population means differ by 2. But because of <strong>sampling variability</strong>, the estimated difference will vary from study to study.</p>
 <p>If we repeated the study with new samples, sometimes the observed difference would be large enough to produce a small p-value, and sometimes it would not.</p>
@@ -2210,10 +2255,10 @@ dd[, .(
 <li>conduct a two-sample t-test;</li>
 <li>record whether <span class="math inline">\(p &lt; 0.05\)</span>.</li>
 </ol>
-<div id="qwebr-insertion-location-20"></div>
+<div id="qwebr-insertion-location-22"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Let’s plot the observed <span class="math inline">\(t\)</span>-values:</p>
-<div id="qwebr-insertion-location-21"></div>
+<div id="qwebr-insertion-location-23"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Each value in the histogram is the <span class="math inline">\(t\)</span>-statistic from one simulated study. In every simulation, the population means differ by 2.</p>
 <p>The blue region represents studies that reject <span class="math inline">\(H_0\)</span>; the gray region represents studies that fail to reject <span class="math inline">\(H_0\)</span>, even though the population means really are different.</p>
@@ -2230,7 +2275,7 @@ P(\text{fail to reject } H_0 \mid \mu_B - \mu_A = 2)\]</span></p>
 <p>Therefore,</p>
 <p><span class="math display">\[\large
 \text{Power} = 1-\beta\]</span></p>
-<div id="qwebr-insertion-location-22"></div>
+<div id="qwebr-insertion-location-24"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><strong>A study does not have a single power independent of the effect. Power depends on the particular population difference we want the study to be able to detect.</strong></p>
@@ -2240,17 +2285,23 @@ P(\text{fail to reject } H_0 \mid \mu_B - \mu_A = 2)\]</span></p>
 <h3 class="anchored" data-anchor-id="what-determines-power">What determines power?</h3>
 <p><strong>Power increases when the population difference becomes large relative to the sampling variability of its estimate.</strong></p>
 <p>Let’s see how changes in the study affect power.</p>
-<div id="qwebr-insertion-location-23"></div>
+<div id="qwebr-insertion-location-25"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Increasing the sample size (<span class="math inline">\(\large n_A\)</span>and<span class="math inline">\(\large n_B\)</span>) reduces the sampling variability of the estimated difference:<span class="math display">\[SE(\bar Y_B-\bar Y_A)
+<p>Increasing the sample size (<span class="math inline">\(n_A\)</span> and <span class="math inline">\(n_B\)</span>) reduces the sampling variability of the estimated difference:</p>
+<p><span class="math display">\[
+\large
+SE(\bar Y_B-\bar Y_A)
 =
 \sqrt{\frac{\sigma_A^2}{n_A}+
-\frac{\sigma_B^2}{n_B}}\]</span><code>{webr-r} estimate_power(n = 10) estimate_power(n = 20) estimate_power(n = 50) estimate_power(n = 100)</code></p>
-<p>Increasing the population standard deviations (<span class="math inline">\(\large \sigma_A\)</span>and<span class="math inline">\(\large \sigma_B\)</span>) increases the sampling variability of the estimated difference:</p>
-<div id="qwebr-insertion-location-24"></div>
+\frac{\sigma_B^2}{n_B}}
+\]</span></p>
+<div id="qwebr-insertion-location-26"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Increasing the population difference (<span class="math inline">\(\large \mu_B - \mu_A\)</span>) increases power:</p>
-<div id="qwebr-insertion-location-25"></div>
+<p>Increasing the population standard deviations (<span class="math inline">\(\large \sigma_A\)</span>and<span class="math inline">\(\large \sigma_B\)</span>) increases the sampling variability of the estimated difference:</p>
+<div id="qwebr-insertion-location-27"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Increasing the population difference (<span class="math inline">\(\mu_B - \mu_A\)</span>) increases power:</p>
+<div id="qwebr-insertion-location-28"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="power-curves" class="level3">
@@ -2260,14 +2311,18 @@ P(\text{fail to reject } H_0 \mid \mu_B - \mu_A = 2)\]</span></p>
 <p><em>A power curve shows the probability of rejecting the null hypothesis across a range of possible population differences.</em></p>
 <p>For any particular population difference, power depends on the sample size and the variability of the outcome.</p>
 <blockquote class="blockquote">
-<p>Power also depends on the threshold we use for rejecting the null hypothesis. Increasing<span class="math inline">\(\large \alpha\)</span>makes it easier to reject<span class="math inline">\(H_0\)</span>and therefore increases power—but at the cost of increasing the probability of a <strong>Type I error</strong>. We generally specify<span class="math inline">\(\large \alpha\)</span>in advance rather than choosing it as a way to increase power.</p>
+<p>Power also depends on the threshold we use for rejecting the null hypothesis. Increasing <span class="math inline">\(\alpha\)</span> makes it easier to reject <span class="math inline">\(H_0\)</span> and therefore increases power—but at the cost of increasing the probability of a <strong>Type I error</strong>. We generally specify <span class="math inline">\(\alpha\)</span> in advance rather than choosing it as a way to increase power.</p>
 </blockquote>
 </section>
 <section id="standardized-effect-size" class="level3">
 <h3 class="anchored" data-anchor-id="standardized-effect-size">Standardized effect size</h3>
 <p>The simulations show that power depends both on the size of the population difference and on the variability of the outcome.</p>
 <p>A difference of 2 units is relatively large when the population standard deviation is 3, but relatively small when the standard deviation is 10.</p>
-<p>One way to express the size of a difference relative to the variability is the <strong>standardized mean difference</strong>:<span class="math display">\[d = \frac{\mu_B-\mu_A}{\sigma}\]</span>For our example,<span class="math display">\[d = \frac{12-10}{3} = 0.67.\]</span>This standardized effect size is often called <strong>Cohen’s</strong><span class="math inline">\(d\)</span>.</p>
+<p>One way to express the size of a difference relative to the variability is the <strong>standardized mean difference</strong>:</p>
+<p><span class="math display">\[\large d = \frac{\mu_B-\mu_A}{\sigma}\]</span></p>
+<p>For our example,</p>
+<p><span class="math display">\[\large d = \frac{12-10}{3} = 0.67.\]</span></p>
+<p>This standardized effect size is often called <strong>Cohen’s</strong> <span class="math inline">\(d\)</span>.</p>
 <p>Standardized effect sizes express the population difference relative to the variability of the outcome and are particularly useful in power and sample-size calculations.</p>
 <p>However, when the original units are scientifically meaningful, a difference expressed in those units is often easier to interpret.</p>
 </section>
@@ -2279,14 +2334,16 @@ P(\text{fail to reject } H_0 \mid \mu_B - \mu_A = 2)\]</span></p>
 <p><strong>How large a sample do we need to have a reasonable chance of detecting that difference?</strong></p>
 </blockquote>
 <p>We can calculate the required sample size using <code>power.t.test()</code> in <strong>R</strong>.</p>
-<p>Suppose a difference of 2 units is scientifically meaningful, we expect the population SD to be approximately 3, and we want an 80% probability of rejecting<span class="math inline">\(\large H_0\)</span>if the true population difference is 2, using<span class="math inline">\(\large \alpha = 0.05\)</span>. <strong>What is the target sample size for each group?</strong></p>
-<div id="qwebr-insertion-location-26"></div>
+<p>Suppose a difference of 2 units is scientifically meaningful, we expect the population SD to be approximately 3, and we want an 80% probability of rejecting <span class="math inline">\(H_0\)</span> if the true population difference is 2, using <span class="math inline">\(\alpha = 0.05\)</span>. <strong>What is the target sample size for each group?</strong></p>
+<div id="qwebr-insertion-location-29"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p><code>power.t.test()</code> calculates analytically the same quantity that we estimated through simulation.</p>
-<p>Alternatively, the <code>pwr.t.test()</code> function in the <code>pwr</code> package specifies the population difference using Cohen’s<span class="math inline">\(d\)</span>. In this case,<span class="math display">\[d = \frac{\Delta}{\sigma} = \frac{2}{3}.\]</span></p>
-<div id="qwebr-insertion-location-27"></div>
+<p>Alternatively, the <code>pwr.t.test()</code> function in the <code>pwr</code> package specifies the population difference using Cohen’s <span class="math inline">\(d\)</span>. In this case,</p>
+<p><span class="math display">\[\large
+d = \frac{\Delta}{\sigma} = \frac{2}{3}.\]</span></p>
+<div id="qwebr-insertion-location-30"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The two approaches give essentially the same result; Cohen’s <em>d</em> simply combines the population difference and SD into a single standardized quantity.</p>
+<p>The two approaches give essentially the same result; Cohen’s <span class="math inline">\(d\)</span> simply combines the population difference and SD into a single standardized quantity.</p>
 <blockquote class="blockquote">
 <p>Sample size calculations require us to specify what population difference matters scientifically and how likely we want the study to be to detect that difference.</p>
 </blockquote>
