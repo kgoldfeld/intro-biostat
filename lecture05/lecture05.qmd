@@ -1,0 +1,1746 @@
+---
+title: "Lecture 5: Modeling Continuous Outcomes"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+webr:
+  packages: ["data.table", "ggplot2", "patchwork", "broom"]
+---
+
+```{webr-r}
+#| context: setup
+
+download.file(
+  "https://teaching.rdatagen.net/lecture05/data/hanes_subset.RData",
+  "hanes_subset.RData"
+)
+```
+
+## Initial setup
+
+
+```{webr-r}
+#| autorun: true
+#| echo: false
+
+library(data.table)
+library(ggplot2)
+library(patchwork)
+library(broom)
+
+theme_set(
+  theme_bw(base_size = 14) +
+  theme(panel.grid = element_blank(),
+  plot.title = element_text(face = "bold", size = 12))
+)
+```
+
+
+
+## From comparing groups to modeling a relationship
+
+
+Can we describe how mean **blood pressure** changes continuously with **age**?
+
+We already know how to compare mean outcomes across groups. For example, we could divide people into age groups and compare mean blood pressure across those groups.
+
+But age is not naturally a group variable. It is quantitative.
+
+> **Can we describe how mean blood pressure changes continuously with age?**
+
+We will start with simulated data so that we know exactly how the population was generated.
+
+```{webr-r}
+set.seed(1205)
+
+n <- 200
+
+beta_0 <- 100
+beta_1 <- 0.5
+sigma <- 12
+
+dd <- data.table(age = runif(n, 20, 80))
+
+dd[, sbp := beta_0 + beta_1 * age + rnorm(.N, mean = 0, sd = sigma)]
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(dd, aes(x = age, y = sbp)) +
+  geom_point() +
+  labs(
+    x = "Age (years)",
+    y = "Systolic blood pressure (mm Hg)"
+  )
+```
+
+What does the plot suggest?
+
+- Older people tend to have higher systolic blood pressure.
+- But there is substantial variation among people of the same or similar age.
+
+
+### We could create groups...
+
+One approach would be to divide age into categories.
+
+```{webr-r}
+#| classes: webr-plot
+
+dd[, age_group := cut(
+  age,
+  breaks = c(20, 40, 60, 80),
+  right = FALSE
+)]
+
+ggplot(data = dd, aes(x = age_group, y = sbp)) +
+  geom_jitter(width = .05, height = 0, color = "grey60") +
+  stat_summary(fun = mean, geom = "crossbar", width = 0.30, color = "red", linewidth = 0.7)
+```
+
+We could then compare mean systolic blood pressure across the three groups, perhaps using ANOVA.
+
+***But this throws away information.***
+
+Someone who is 40 and someone who is 59 are treated as belonging to the same age group, while someone who is 39 and someone who is 40 are treated as belonging to different groups.
+
+The grouping is arbitrary: different cut points would give us different groups and different summaries.
+
+> **Rather than asking how mean blood pressure differs across age groups, we would like to describe how mean blood pressure changes with age.**
+
+
+
+## Modeling the mean outcome
+
+
+Because we generated these data ourselves, we know the population relationship:
+
+$$\large
+E(\text{SBP}\mid\text{age}) =
+100 + 0.5(\text{age})$$
+
+The left-hand side refers to the **mean systolic blood pressure among people of a particular age**.
+
+For example, at age 40:
+
+$$\large
+E(\text{SBP}\mid\text{age}=40)
+=
+100 + 0.5(40)
+=
+120$$
+
+At age 60:
+
+$$\large
+E(\text{SBP}\mid\text{age}=60)
+=
+100 + 0.5(60)
+=
+130$$
+
+So the slope tells us that:
+
+> **For each additional year of age, mean systolic blood pressure increases by 0.5 mm Hg.**
+
+More generally, a simple linear regression model describes the population mean of an outcome as
+
+$$\large
+E(Y\mid X=x)
+=
+\beta_0+\beta_1x$$
+
+where
+
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope
+
+The slope $\beta_1$ describes the change in **mean** $Y$ associated with a one-unit increase in $X$.
+
+> $\beta_0$ and $\beta_1$ are population parameters that we will estimate using a sample.
+
+
+### The mean is not an individual outcome
+
+Let's add the population mean relationship to the data.
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(dd, aes(x = age, y = sbp)) +
+  geom_point() +
+  geom_abline(
+    intercept = beta_0,
+    slope = beta_1,
+    linewidth = 1
+  ) +
+  labs(
+    x = "Age (years)",
+    y = "Systolic blood pressure (mm Hg)"
+  )
+```
+
+The line does not tell us the blood pressure of any particular person.
+
+It describes the **mean blood pressure at each age**.
+
+Individual observations vary around that mean.
+
+We can write this as
+
+$$\large
+Y_i
+=
+\beta_0+\beta_1X_i+\epsilon_i$$
+
+For our simulated data,
+
+$$\large
+\text{SBP}_i
+=
+100 + 0.5(\text{age}_i) + \epsilon_i$$
+
+where
+
+$$\large
+\epsilon_i \sim N(0,12^2)$$
+
+> The model separates the mean relationship between X and Y from the individual variation around that mean.
+
+
+### Changing the population relationship
+
+Because this is simulated data, we can change the population and see what happens.
+
+For example, what would happen if there were no relationship between age and mean blood pressure?
+
+We can use the function to visualize different scenarios:
+
+```{webr-r}
+#| classes: webr-plot
+
+set.seed(1205)
+
+sim_base <- data.table(
+  age = runif(200, 20, 80),
+  z = rnorm(200)
+)
+
+gen_data_and_plot <- function(beta_0 = 100, beta_1 = 0.5, sigma = 12) {
+  
+  dd_plot <- copy(sim_base)
+  
+  dd_plot[, sbp := beta_0 + beta_1 * age + sigma * z]
+  
+  ggplot(dd_plot, aes(x = age, y = sbp)) +
+    geom_abline(
+      intercept = beta_0,
+      slope = beta_1,
+      linewidth = 1
+    ) +
+    geom_point() +
+    labs(
+      title = bquote(beta[1] == .(beta_1) ~ "," ~~ sigma == .(sigma)),
+      x = "Age (years)",
+      y = "Systolic blood pressure (mm Hg)"
+    ) 
+}
+```
+
+```{webr-r}
+gen_data_and_plot(beta_1 = 1)
+gen_data_and_plot(beta_1 = 0.5)
+gen_data_and_plot(beta_1 = 0)
+```
+
+```{webr-r}
+gen_data_and_plot(beta_1 = 0.5, sigma = 25)
+gen_data_and_plot(beta_1 = 0.5, sigma = 12)
+gen_data_and_plot(beta_1 = 0.5, sigma = 5)
+```
+
+These parameters describe different features of the population:
+
+$$\large
+\beta_1
+\quad\longrightarrow\quad
+\text{how the mean changes with }X$$
+
+$$\large
+\sigma
+\quad\longrightarrow\quad
+\text{how much individuals vary around that mean}$$
+
+
+
+## Estimating the regression line
+
+
+### In a real study, we do not know the population line
+
+In the simulation we knew that
+
+$$\large
+\beta_0=100,\qquad
+\beta_1=0.5,\qquad
+\sigma=12$$
+
+because we generated the data.
+
+In a real study, these population quantities are unknown.
+
+We only observe a sample:
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(dd, aes(x = age, y = sbp)) +
+  geom_point() +
+  labs(
+    x = "Age (years)",
+    y = "Systolic blood pressure (mm Hg)"
+  )
+```
+
+So our next statistical question is:
+
+> **How can we use the observed data to estimate the unknown population regression line?**
+
+
+### How well does a line fit the data?
+
+Suppose we propose the following line:
+
+$$\large
+\widehat{\text{SBP}}
+=
+95 + 0.6(\text{age})$$
+
+For each person, the line gives us a **fitted value**. The difference between the observed and fitted value is called the **residual**.
+
+$$\large
+e_i
+=
+Y_i-\hat{Y}_i$$
+
+We can visualize these residuals as the vertical distances between the observed values and the proposed line.
+
+```{webr-r}
+#| classes: webr-plot
+
+b0 <- 95
+b1 <- 0.6
+
+dd[, fitted_proposed := b0 + b1 * age]
+
+set.seed(1122)
+show_resid <- sample(seq_len(nrow(dd)), 12)
+
+ggplot(dd, aes(x = age, y = sbp)) +
+  geom_point(color = "grey60") +
+  geom_abline(
+    intercept = b0,
+    slope = b1,
+    linewidth = 1
+  ) +
+  geom_segment(
+    data = dd[show_resid],
+    aes(
+      x = age,
+      xend = age,
+      y = sbp,
+      yend = fitted_proposed
+    ),
+    linewidth = 1,
+    linetype = 1,
+    color = "red"
+  ) +
+  labs(
+    x = "Age (years)",
+    y = "Systolic blood pressure (mm Hg)"
+  )
+```
+
+Some residuals are positive and some are negative.
+
+A line that fits the data well should generally have **small residuals**.
+
+
+### What criterion should we use to choose a line?
+
+There are infinitely many lines we could draw through the data.
+
+How should we evaluate each line? Simply adding the residuals will not work because positive and negative residuals can cancel each other out.
+
+> Proposal: try to minimize the sum of squared residuals:
+
+$$\large
+SSE = \sum_{i=1}^{n} e_i^2
+=
+\sum_{i=1}^{n}
+(Y_i-\hat{Y}_i)^2$$
+
+Let's start with some possible lines and take a look at the SSE for each:
+
+```{webr-r}
+#| classes: webr-plot
+
+try_line <- function(b0, b1) {
+  
+  yhat <- b0 + b1 * dd$age
+  sse <- sum((dd$sbp - yhat)^2)
+  
+  ggplot(dd, aes(x = age, y = sbp)) +
+    geom_point(color = "grey60") +
+    geom_abline(
+      intercept = b0,
+      slope = b1,
+      linewidth = 1
+    ) +
+    labs(
+      title = paste0(
+        "Intercept = ", round(b0, 2),
+        ", slope = ", round(b1, 2),
+        ", SSE = ", round(sse)
+      ),
+      x = "Age (years)",
+      y = "Systolic blood pressure (mm Hg)"
+    )
+}
+```
+
+```{webr-r}
+try_line(95, 0.7)
+try_line(93, 0.7)
+try_line(94, 0.5)
+try_line(96, 0.5)
+```
+
+*Can we do better?*
+
+
+### Finding the minimum
+
+**Least squares** finds the line that minimizes the sum of squared residuals (SSE).
+
+*We do not need to calculate this solution ourselves.* **R** can find the values of the intercept and slope for us.
+
+> **The least-squares regression line is the line that makes the sum of squared residuals as small as possible.**
+
+```{webr-r}
+fit <- lm(sbp ~ age, data = dd)
+
+coef(fit)
+```
+
+```{webr-r}
+try_line(coef(fit)[1], coef(fit)[2])
+```
+
+The fitted line has a lower SSE than all of our guesses—and, in fact, the lowest SSE of any possible line!
+
+The fitted regression equation is
+
+$$\large
+\widehat{\text{SBP}}
+=
+\hat{\beta}_0+
+\hat{\beta}_1(\text{age})$$
+
+where $\hat{\beta}_0$ and $\hat{\beta}_1$ are estimates of the unknown population parameters $\beta_0$ and $\beta_1$.
+
+
+### Estimated versus population relationship
+
+Because these data were simulated, we have an advantage that we would not have with real data: **we know the true population relationship**.
+
+Let's compare it with the relationship estimated from our sample.
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(dd, aes(x = age, y = sbp)) +
+  geom_point(color = "grey80") +
+  geom_abline(
+    intercept = beta_0,
+    slope = beta_1,
+    linewidth = 1,
+    linetype = 2,
+    color = "blue"
+  ) +
+  geom_abline(
+    intercept = coef(fit)[1],
+    slope = coef(fit)[2],
+    linewidth = 1,
+    color = "red"
+  ) +
+  labs(
+    x = "Age (years)",
+    y = "Systolic blood pressure (mm Hg)"
+  )
+```
+
+The two lines are not exactly the same.
+
+The population parameters are
+
+$$\large
+\beta_0=100,
+\qquad
+\beta_1=0.5$$
+
+while our sample gives estimates
+
+$$\large
+\hat{\beta}_0
+\qquad\text{and}\qquad
+\hat{\beta}_1.$$
+
+> **The estimated regression line differs from the population regression line because of sampling variability.**
+
+If we collected another random sample from the same population, we would get a somewhat different regression line.
+
+So what would happen if we repeated this study many times?
+
+
+
+## Sampling variability of the estimated slope
+
+
+From our sample, we estimated a slope $\hat{\beta}_1$.
+
+But this was only **one random sample** from the population.
+
+When we collect another sample from exactly the same population, we should get different observations and a somewhat different estimate of the slope.
+
+```{webr-r}
+set.seed(2201)
+
+dd_new <- data.table(
+  age = runif(n, 20, 80)
+)
+
+dd_new[, sbp :=
+  beta_0 + beta_1 * age +
+  rnorm(.N, mean = 0, sd = sigma)
+]
+
+fit_new <- lm(sbp ~ age, data = dd_new)
+
+coef(fit_new)
+```
+
+The estimated slope is not exactly the same as the one from our first sample.
+
+That's **sampling variability** — the same phenomenon we have seen throughout the course.
+
+
+### What happens across many samples?
+
+Now let's repeat the study many times.
+
+Each time we will:
+
+1.  draw a new sample of 200 people from the same population
+2.  fit the same linear regression model
+3.  save the estimated regression line
+
+```{webr-r}
+set.seed(2202)
+
+nsim <- 10000
+
+estimates <- rbindlist(lapply(seq_len(nsim), function(i) {
+  
+  dsim <- data.table(
+    age = runif(n, 20, 80)
+  )
+  
+  dsim[, sbp :=
+    beta_0 + beta_1 * age +
+    rnorm(.N, mean = 0, sd = sigma)
+  ]
+  
+  fit_sim <- lm(sbp ~ age, data = dsim)
+  
+  data.table(
+    sample = i,
+    beta_0_hat = coef(fit_sim)[1],
+    beta_1_hat = coef(fit_sim)[2]
+  )
+}))
+```
+
+Each repeated study produces a somewhat different estimated regression line.
+
+```{webr-r}
+#| classes: webr-plot
+
+set.seed(4312)
+
+lines_plot <- estimates[
+  sample(.N, 100)
+]
+
+ggplot() +
+  geom_abline(
+    data = lines_plot,
+    aes(
+      intercept = beta_0_hat,
+      slope = beta_1_hat
+    ),
+    linewidth = 0.3,
+    alpha = 0.15
+  ) +
+  geom_abline(
+    intercept = beta_0,
+    slope = beta_1,
+    linewidth = 1
+  ) +
+  coord_cartesian(
+    xlim = c(20, 80),
+    ylim = c(95, 150)
+  ) +
+  labs(
+    x = "Age (years)",
+    y = "Mean systolic blood pressure (mm Hg)"
+  )
+```
+
+All of these samples came from the **same population**, but sampling variability produces somewhat different estimated regression lines.
+
+
+### The sampling distribution of the slope
+
+Each estimated regression line has its own estimated slope $\hat{\beta}_1$.
+
+Remember, the true population slope is
+
+$$\large
+\beta_1 = 0.5$$
+
+Let's look at the distribution of the estimated slopes.
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(estimates, aes(x = beta_1_hat)) +
+  geom_histogram(
+    binwidth = 0.01,
+    color = "grey90",
+    fill = "grey75"
+  ) +
+  geom_vline(
+    xintercept = beta_1,
+    linewidth = 1,
+    linetype = 2
+  ) +
+  labs(
+    x = expression(hat(beta)[1]),
+    y = "Count"
+  )
+```
+
+The estimates vary from sample to sample, but they are centered around the true population slope.
+
+```{webr-r}
+mean(estimates$beta_1_hat)
+```
+
+The standard deviation of this sampling distribution tells us how much the estimated slope typically varies from sample to sample.
+
+```{webr-r}
+sd(estimates$beta_1_hat)
+```
+
+This is the **standard error** of the estimated slope.
+
+$$\large
+SE(\hat{\beta}_1)
+=
+SD\left(\text{sampling distribution of }\hat{\beta}_1\right)$$
+
+
+### Inference for the slope
+
+In a real study, we have only **one sample**, so we cannot observe the sampling distribution directly.
+
+Instead, we use our sample to estimate the standard error of $\hat{\beta}_1$.
+
+```{webr-r}
+tidy(fit)
+```
+
+The standard error reported by the regression model *estimates* the sampling variability that we observed directly through simulation.
+
+Once we have an estimate and its standard error, the rest should look familiar.
+
+To test
+
+$$\large
+H_0:\beta_1=0,$$
+
+we calculate
+
+$$\large
+t\text{-statistic}
+=
+\frac{\hat{\beta}_1-0}
+{SE(\hat{\beta}_1)}$$
+
+This has exactly the same structure we have seen before:
+
+$$\large
+\frac{\text{estimate}-\text{null value}}
+{\text{standard error}}$$
+
+And we can construct a confidence interval for the population slope:
+
+$$\large
+\hat{\beta}_1
+\ \pm\
+t_{\text{critical}}SE(\hat{\beta}_1)$$
+
+R provides these quantities directly.
+
+```{webr-r}
+tidy(fit, conf.int = TRUE)
+```
+
+
+
+## NHANES data analysis
+
+
+We now turn to real NHANES data and ask whether total cholesterol is associated with age.
+
+```{webr-r}
+load('hanes_subset.RData')
+hanes <- data.table(hanes)
+
+hanes
+```
+
+Here is a plot showing the relationship:
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(data = hanes, aes(x = SPAGE, y = CHOLESTEROLTOTAL)) +
+  geom_jitter(height = 0, width = 0.25, size = 1, color = "grey40")
+```
+
+The linear regression model in R is fit using function `lm()`
+
+```{webr-r}
+fit <- lm(CHOLESTEROLTOTAL ~ SPAGE, data = hanes)
+coef(fit)
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(data = hanes, aes(x = SPAGE, y = CHOLESTEROLTOTAL)) +
+  geom_jitter(height = 0, width = 0.25, size = 1, color = "grey40") +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+
+We can center age around 50 so that the intercept has a more meaningful interpretation:
+
+```{webr-r}
+hanes[, age50 := SPAGE - 50]
+fit_c <- lm(CHOLESTEROLTOTAL ~ age50, data = hanes)
+
+tidy(fit, conf.int = TRUE)
+tidy(fit_c, conf.int = TRUE)
+```
+
+- After centering age at 50, the intercept estimates mean total cholesterol at age 50. The slope estimates the difference in mean total cholesterol associated with a one-year difference in age.
+
+- Notice that centering changes the intercept but does not change the estimated slope, its standard error, confidence interval, or p-value. It also does not change the fitted values or how well the model fits the data.
+
+- The estimated slope describes the association between age and mean total cholesterol. The regression alone does not establish a causal relationship.
+
+The output above is from the `tidy()` function in the `broom` package. You may also encounter the standard **R** output produced by `summary()`:
+
+```{webr-r}
+summary(fit_c)
+```
+
+The key elements of the base **R** output are the coefficients, residual standard error, and $R^2$. In the coefficients section:
+
+- Estimate = $\hat\beta$
+- Std. Error = estimated sampling variability of $\hat\beta$
+- t value = estimate / SE for $H_0: \beta = 0$
+- Pr(\>\|t\|) = corresponding p-value
+
+The *residual standard error* estimates the standard deviation of individual outcomes around the regression line. It is our estimate of the population parameter $\sigma$.
+
+#### How much variability does the model explain?
+
+$$\large 
+R^2 = 
+1 - \frac{\text{residual variability}}{\text{total variability}} 
+= 1 - \frac{\sum{(Y_i - \hat{Y}_i)^2}}{\sum{(Y_i - \bar{Y})^2}}$$
+
+$R^2$ is the proportion of the observed variability in $Y$ accounted for by the fitted linear relationship.
+
+
+
+## Regression with a categorical predictor
+
+
+So far, our predictor has been quantitative. But predictors can also be categorical.
+
+Suppose we want to compare mean outcomes between two groups.
+
+```{webr-r}
+set.seed(1550)
+
+dd_group <- data.table(
+  group = rep(c("Control", "Treatment"), each = 50)
+)
+
+dd_group[, y := rnorm(
+  .N,
+  mean = ifelse(group == "Control", 50, 55),
+  sd = 10
+)]
+
+dd_group
+```
+
+We already know how to compare these groups using a two-sample t-test:
+
+```{webr-r}
+t.test(y ~ group, data = dd_group, var.equal = TRUE)
+```
+
+But we can also fit a linear regression model:
+
+```{webr-r}
+fit_group <- lm(y ~ group, data = dd_group)
+
+tidy(fit_group, conf.int = TRUE)
+```
+
+Notice that:
+
+- the intercept is the mean outcome in the **Control** group
+- the coefficient for Treatment is the **difference in means: Treatment − Control**
+
+We can think of the regression model as
+
+$$\large
+E(Y\mid X)=\beta_0+\beta_1X,
+\qquad
+X=
+\begin{cases}
+0 & \text{Control}\\
+1 & \text{Treatment}
+\end{cases}$$
+
+When $X=0$, the mean is $\beta_0$. When $X=1$, the mean is $\beta_0+\beta_1$.
+
+So $\beta_1$ is the difference between the two group means.
+
+> **The two-sample t-test can be viewed as a special case of linear regression.**
+
+Here we used the equal-variance version of the t-test so that it corresponds exactly to the standard linear regression model.
+
+The same idea extends to more than two groups: **ANOVA can also be expressed as a linear regression model with a categorical predictor.**
+
+
+
+## Multiple regression: accounting for another variable
+
+
+Up until this point, our regression models have contained one predictor at a time.
+
+But outcomes are often associated with several characteristics simultaneously.
+
+Suppose we are primarily interested in the relationship between **physical activity** and **systolic blood pressure**.
+
+But age may also matter:
+
+- older people tend to have higher systolic blood pressure
+- physical activity may differ with age
+
+So if age and physical activity are related, a simple comparison of blood pressure across activity levels may partly reflect differences in age.
+
+*We will again use simulation so that we know exactly how the population was generated.*
+
+Suppose the population is generated according to:
+
+$$\large
+\begin{aligned}
+\text{activity}_i
+&= 8 - 0.06\,\text{age}_i + \epsilon_{Ai}, \quad \epsilon_{Ai} \sim N(0, 1.5^2) \\[6pt]
+\text{SBP}_i
+&= 105 + 0.55\,\text{age}_i - 2\,\text{activity}_i + \epsilon_{Yi}, \quad \epsilon_{Yi} \sim N(0, 10^2)
+\end{aligned}$$
+
+In this population:
+
+- mean SBP is higher with increasing age
+- mean SBP is lower with greater physical activity
+- older people tend to be less physically active
+
+```{webr-r}
+set.seed(2501)
+
+n <- 500
+
+dd_multi <- data.table(
+  age = runif(n, 25, 80)
+)
+
+dd_multi[, activity :=
+  8 - 0.06 * age +
+  rnorm(.N, mean = 0, sd = 1.5)
+]
+
+dd_multi[, sbp :=
+  105 + 0.55 * age - 2.0 * activity +
+  rnorm(.N, mean = 0, sd = 10)
+]
+```
+
+
+### Let's first look at the relationship between activity and blood pressure
+
+First the plot:
+
+```{webr-r}
+#| classes: webr-plot
+
+p_unadjust <- ggplot(dd_multi, aes(x = activity, y = sbp)) +
+  geom_point(color = "grey60", size = 1) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  labs(
+    x = "Physical activity",
+    y = "Systolic blood pressure (mm Hg)"
+  )
+
+p_unadjust
+```
+
+We can fit the simple regression:
+
+```{webr-r}
+fit_activity <- lm(sbp ~ activity, data = dd_multi)
+
+tidy(fit_activity, conf.int = TRUE)
+```
+
+This gives the **unadjusted association** between activity and mean systolic blood pressure.
+
+
+### Accounting for age
+
+But we know how this population was generated: age is related to both activity and blood pressure.
+
+So our simple regression compares people with different activity levels who may also differ systematically in age.
+
+> **Can we estimate the association between activity and blood pressure while accounting for age?**
+
+For intuition, let's temporarily compare the activity–SBP relationship among people of similar ages.
+
+We are grouping age only for visualization; in the regression model, age will remain quantitative.
+
+```{webr-r}
+#| classes: webr-plot
+
+dd_multi[, age_group := cut(
+  age,
+  breaks = c(25, 40, 55, 70, 80),
+  include.lowest = TRUE,
+  right = FALSE
+)]
+
+ggplot(dd_multi, aes(
+  x = activity,
+  y = sbp,
+  color = age_group
+)) +
+  geom_smooth(
+    aes(x = activity, y = sbp),
+    inherit.aes = FALSE,
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE,
+    color = "black",
+    linewidth = 1,
+    linetype = 2
+  ) +
+  geom_point(alpha = 0.6, size = 1) +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE
+  ) +
+  labs(
+    x = "Physical activity",
+    y = "Systolic blood pressure (mm Hg)",
+    color = "Age"
+  ) +
+  guides(color = guide_legend(reverse = TRUE))
+```
+
+The colored lines compare activity and SBP among people of roughly similar ages. The dashed line is the overall, unadjusted relationship.
+
+
+### What does that mean with quantitative age?
+
+Multiple regression allows us to account for age **without dividing it into groups**.
+
+Let's break down the intuition. (*This is not what you actually have to do in practice*).
+
+First, we model physical activity as a function of age, and gather the residuals:
+
+```{webr-r}
+#| classes: webr-plot
+
+fit_age_activity <- lm(activity ~ age, data = dd_multi)
+
+dd_multi[, activity_resid := residuals(fit_age_activity)]
+dd_multi[, activity_fitted := fitted(fit_age_activity)]
+
+examples_above <- dd_multi[
+  activity_resid > 1.5 & activity_resid < 1.6
+][order(age)][c(1, .N)]
+
+examples_below <- dd_multi[
+  activity_resid > -1.9 & activity_resid < -1.8
+][order(age)][c(1, .N)]
+
+ggplot(dd_multi, aes(x = age, y = activity)) +
+  geom_point(size = 1, color = "grey80") +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black") +
+  geom_segment(
+    data = examples_above,
+    aes(x = age, xend = age, y = activity_fitted, yend = activity),
+    inherit.aes = FALSE,
+    linewidth = 0.8,
+    color = "red"
+  ) +
+  geom_point(
+    data = examples_above,
+    aes(x = age, y = activity),
+    inherit.aes = FALSE,
+    size = 1.5,
+    color = "red"
+  ) +
+  geom_segment(
+    data = examples_below,
+    aes(x = age, xend = age, y = activity_fitted, yend = activity),
+    inherit.aes = FALSE,
+    linewidth = 0.8,
+    color = "darkgreen"
+  ) +
+  geom_point(
+    data = examples_below,
+    aes(x = age, y = activity),
+    inherit.aes = FALSE,
+    size = 1.5,
+    color = "darkgreen"
+  )
+```
+
+Someone **above** the line is more active than expected for their age; someone **below** the line is less active than expected for their age.
+
+The residual is the vertical difference between the observed activity and the activity expected for that person's age:
+
+$$\large
+\text{activity residual}
+=
+\text{observed activity}
+-
+\text{activity expected for age}$$
+
+Likewise, we can calculate an SBP residual that tells us how much higher or lower someone's blood pressure is than expected for their age:
+
+```{webr-r}
+fit_age_sbp <- lm(sbp ~ age, data = dd_multi)
+dd_multi[, sbp_resid := residuals(fit_age_sbp)]
+```
+
+Now we compare:
+
+- **activity *relative* to what we expect for age**, with
+- **SBP *relative* to what we expect for age**.
+
+```{webr-r}
+#| classes: webr-plot
+
+p_resid <- ggplot(dd_multi, aes(x = activity_resid, y = sbp_resid)) +
+  geom_point(size = 1, aes(color = age_group)) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black")+
+  theme(legend.position = "none") +
+  labs(
+  x = "Activity residual",
+  y = "SBP residual"
+)
+
+p_unadjust <- ggplot(dd_multi, aes(x = activity, y = sbp)) +
+  geom_point(aes(color = age_group), size = 1) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black") +
+  labs(
+    x = "Physical activity",
+    y = "Systolic blood pressure (mm Hg)"
+  ) +
+  theme(legend.position = "none")
+
+p_unadjust + p_resid
+```
+
+We can estimate the age-adjusted relationship between activity and SBP using these residuals:
+
+```{webr-r}
+fit_resid <- lm(sbp_resid ~ activity_resid, data = dd_multi)
+tidy(fit_resid, conf.int = TRUE)
+```
+
+Multiple regression estimates this relationship directly:
+
+$$\large
+E(SBP \mid \text{age, activity}) = \beta_0 + \beta_1 \times \text{age} + \beta_2 \times \text{activity}$$
+
+```{webr-r}
+fit_full <- lm(sbp ~ age + activity, data = dd_multi)
+tidy(fit_full, conf.int = TRUE)
+```
+
+**The activity coefficient is exactly the slope we obtained using the residuals.**
+
+The activity coefficient $\beta_2$ in the full model describes the association between activity and mean SBP **after accounting for age**, using the variation in activity that is not explained by its linear relationship with age.
+
+Because we simulated the population, we know that the age-adjusted activity coefficient is −2. Our estimate is quite close to the true population value.
+
+
+
+## What if predictors are highly correlated?
+
+
+We just saw that the adjusted activity coefficient uses the variation in activity that remains after accounting for age.
+
+But what happens if age and activity are **very strongly related**?
+
+Let's create a new population where activity is much more closely related to age.
+
+```{webr-r}
+set.seed(2502)
+
+dd_highcor <- data.table(age = dd_multi$age)
+
+dd_highcor[, activity := 8 - 0.06 * age + rnorm(.N, mean = 0, sd = 0.25)]
+
+dd_highcor[, sbp := 105 + 0.55 * age - 2.0 * activity + rnorm(.N, mean = 0, sd = 10)]
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+p1 <- ggplot(dd_multi, aes(x = age, y = activity)) +
+  geom_point(size = 1, color = "grey60") +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  labs(
+    title = "Moderately correlated",
+    x = "Age",
+    y = "Physical activity"
+  )
+
+p2 <- ggplot(dd_highcor, aes(x = age, y = activity)) +
+  geom_point(size = 1, color = "grey60") +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  labs(
+    title = "Highly correlated",
+    x = "Age",
+    y = "Physical activity"
+  )
+
+p1 + p2
+```
+
+We can quantify the strength of these relationships using the correlation:
+
+```{webr-r}
+cor(dd_multi$age, dd_multi$activity)
+cor(dd_highcor$age, dd_highcor$activity)
+```
+
+When age and activity are highly correlated, there is much less variation in activity among people of similar ages.
+
+That means there is less independent information available to estimate the separate associations of age and activity with SBP.
+
+```{webr-r}
+fit_mod  <- lm(sbp ~ age + activity, data = dd_multi)
+fit_high <- lm(sbp ~ age + activity, data = dd_highcor)
+
+tidy(fit_mod, conf.int = TRUE)
+tidy(fit_high, conf.int = TRUE)
+```
+
+In both populations, the true activity coefficient is
+
+$$\large
+\beta_{\text{activity}}=-2.$$
+
+
+### High correlation between predictors . . .
+
+- does **not** by itself bias the regression coefficients
+- provides less information for estimating their **separate associations** with the outcome
+- results in **\larger standard errors and wider confidence intervals**
+- at the extreme, if two predictors are perfectly correlated, their separate associations **cannot be estimated**
+
+This loss of precision is sometimes summarized by the **variance inflation factor (VIF)**, which describes how much the variance of a coefficient is increased because a predictor is related to the other predictors in the model.
+
+So, high correlation is primarily a **precision problem**.
+
+But removing a highly correlated predictor is not necessarily the solution:
+
+- precision may improve
+- important differences that predictor accounts for may no longer be accounted for
+
+> **Variables should not be removed simply because they are highly correlated. Which variables belong in the model depends on the scientific question and what the coefficient is intended to estimate.**
+
+
+
+## Does the model adequately describe the data?
+
+
+We can always fit a linear regression model. But fitting a model does not mean that the model provides a good description of the data.
+
+How can we tell?
+
+Let's return to simulation, where we know exactly how the population was generated.
+
+```{webr-r}
+set.seed(1510)
+
+n <- 200
+
+dd_check <- data.table(x = runif(n, 0, 10))
+
+dd_check[, y := 20 + 3 * x + rnorm(.N, mean = 0, sd = 5)]
+```
+
+Here the population mean really is linear:
+
+$$\large
+E(Y\mid X)=20+3X$$
+
+and the variability around that mean is the same throughout the range of $X$.
+
+Let's fit a linear regression model.
+
+```{webr-r}
+#| classes: webr-plot
+
+fit_check <- lm(y ~ x, data = dd_check)
+
+ggplot(dd_check, aes(x = x, y = y)) +
+  geom_point(color = "grey60") +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE
+  ) +
+  labs(
+    x = "X",
+    y = "Y"
+  )
+```
+
+The fitted line appears to provide a reasonable description of how the mean outcome changes with $X$.
+
+But we can learn more by looking at what the model **did not explain**.
+
+
+### Looking at the residuals
+
+Recall that a residual is the difference between an observed and fitted value:
+
+$$\large
+e_i=Y_i-\hat{Y}_i$$
+
+If the model adequately describes the systematic relationship in the data, there should not be much systematic structure left in the residuals.
+
+```{webr-r}
+#| classes: webr-plot
+
+dd_check[, `:=`(
+  fitted = fitted(fit_check),
+  resid = residuals(fit_check)
+)]
+
+ggplot(dd_check, aes(x = fitted, y = resid)) +
+  geom_point(color = "grey60") +
+  geom_hline(yintercept = 0, linetype = 2) +
+  labs(
+    x = "Fitted value",
+    y = "Residual"
+  )
+```
+
+What are we looking for?
+
+> **Ideally, the residual plot should be fairly boring.**
+
+The residuals should be scattered around zero without an obvious systematic pattern.
+
+A pattern in the residuals suggests that there is structure in the data that our model has not adequately captured.
+
+So model checking is not simply a matter of passing a set of formal tests. We want to ask:
+
+> **Does the fitted model provide a reasonable description of the data, and is there systematic information left in the residuals?**
+
+
+### What if the mean relationship is not linear?
+
+Now suppose the true population relationship is curved rather than linear.
+
+```{webr-r}
+set.seed(511)
+
+dd_curve <- data.table(x = runif(n, 0, 10))
+
+dd_curve[, y := 20 + 6 * x - 0.4 * x^2 + rnorm(.N, mean = 0, sd = 5)]
+```
+
+Let's fit a linear regression anyway.
+
+```{webr-r}
+#| classes: webr-plot
+
+fit_curve <- lm(y ~ x, data = dd_curve)
+
+ggplot(dd_curve, aes(x = x, y = y)) +
+  geom_point(color = "grey60") +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE
+  ) +
+  labs(
+    x = "X",
+    y = "Y"
+  )
+```
+
+The linear model can still be fit, but the straight line does not adequately describe how the mean of $Y$ changes with $X$.
+
+What do the residuals look like?
+
+```{webr-r}
+#| classes: webr-plot
+
+dd_curve[, `:=`(
+  fitted = fitted(fit_curve),
+  resid = residuals(fit_curve)
+)]
+
+ggplot(dd_curve, aes(x = fitted, y = resid)) +
+  geom_point(color = "grey60") +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_smooth(
+    method = "loess",
+    formula = y ~ x,
+    se = FALSE
+  ) +
+  labs(
+    x = "Fitted value",
+    y = "Residual"
+  )
+```
+
+Now the residual plot is **not boring**.
+
+There is a systematic pattern: the model tends to overestimate the mean outcome in some parts of the range and underestimate it in others.
+
+> **A pattern in the residuals can reveal structure in the mean relationship that the fitted model has failed to capture.**
+
+
+### What if the variability changes?
+
+A linear model describes both the **mean relationship** and the variability of observations around that mean.
+
+So far, we have assumed that this variability is approximately constant across values of $X$.
+
+But suppose the mean relationship is still linear while the variability increases with $X$.
+
+```{webr-r}
+set.seed(512)
+
+dd_var <- data.table(x = runif(n, 0, 10))
+
+dd_var[, y := 20 + 3 * x + rnorm(.N, mean = 0, sd = 2 + x)]
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+fit_var <- lm(y ~ x, data = dd_var)
+
+ggplot(dd_var, aes(x = x, y = y)) +
+  geom_point(color = "grey60") +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE
+  ) +
+  labs(
+    x = "X",
+    y = "Y"
+  )
+```
+
+Here the linear model correctly describes the population mean:
+
+$$\large
+E(Y\mid X)=20+3X.$$
+
+But the variability around that mean increases as $X$ increases.
+
+What does this look like in the residuals?
+
+```{webr-r}
+#| classes: webr-plot
+
+dd_var[, `:=`(
+  fitted = fitted(fit_var),
+  resid = residuals(fit_var)
+)]
+
+ggplot(dd_var, aes(x = fitted, y = resid)) +
+  geom_point(color = "grey60") +
+  geom_hline(yintercept = 0, linetype = 2) +
+  labs(
+    x = "Fitted value",
+    y = "Residual"
+  )
+```
+
+Unlike the curved example, there is no systematic pattern in the **mean** of the residuals.
+
+Instead, their **spread increases** as the fitted values increase.
+
+> **The mean model may be appropriate even when the variability around that mean is not constant.**
+
+Why does this matter?
+
+The least-squares estimates of the regression coefficients can still be appropriate, **but the usual standard errors, confidence intervals, and p-values rely on assumptions about the variability of the errors**.
+
+So nonconstant variance is primarily a problem for **inference**, rather than evidence that the estimated mean relationship itself is wrong.
+
+
+### What about normality?
+
+Linear regression is often described as requiring **"normally distributed data."**
+
+That is not quite right:
+
+- the predictor $X$ does **not** need to be normally distributed
+- the outcome $Y$ does **not** need to be normally distributed
+- the normality assumption concerns the **errors around the conditional mean**
+
+$$\large
+\epsilon_i \mid X_i \sim N(0,\sigma^2)$$
+
+At any particular value of $X$, individual outcomes are assumed to be normally distributed around the regression line.
+
+We cannot observe the population errors, but we can examine the residuals.
+
+One common tool is a **normal Q-Q plot**:
+
+```{webr-r}
+qqnorm(residuals(fit_check))
+qqline(residuals(fit_check))
+```
+
+If the residuals are approximately normally distributed, the points should fall roughly along a straight line.
+
+
+### How much does normality matter?
+
+- small departures from normality are common
+- they do **not** automatically make linear regression inappropriate
+- normality matters primarily for the usual **small-sample inference** about regression coefficients
+- with reasonably \large samples, inference is generally fairly robust to moderate departures from normality
+
+> **We will not use formal tests of residual normality as a rule for deciding whether a linear regression model can be used.**
+
+
+### Can individual observations strongly affect the model?
+
+Observations can be "unusual" for a number of different reasons:
+
+- **Large residual**: unusual outcome given the predictors
+- **High leverage**: unusual predictor values
+- **High influence**: observation substantially affects the fitted model
+
+These ideas are related, but they are not the same.
+
+Let's add one observation to our earlier data.
+
+```{webr-r}
+dd_influence <- copy(dd_check)
+
+dd_influence <- rbind(
+  dd_influence,
+  data.table(x = 15, y = 25), # y = 25 or y = 60
+  fill = TRUE
+)
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+fit_original <- lm(y ~ x, data = dd_check)
+fit_influence <- lm(y ~ x, data = dd_influence)
+
+ggplot(dd_influence, aes(x = x, y = y)) +
+  geom_point(color = "grey60") +
+  geom_abline(
+    intercept = coef(fit_original)[1],
+    slope = coef(fit_original)[2],
+    linetype = 2
+  ) +
+  geom_abline(
+    intercept = coef(fit_influence)[1],
+    slope = coef(fit_influence)[2],
+    linewidth = 1
+  ) +
+  labs(
+    x = "X",
+    y = "Y"
+  )
+```
+
+The added observation has **high leverage** because its value of $X$ is far from the other observations.
+
+It also does not follow the relationship seen in the rest of the data. Together, these features make the observation **influential**: including it substantially changes the fitted regression line.
+
+> **An unusual observation is not automatically an observation that should be deleted.**
+
+It may represent a data error, an unusual but legitimate individual, or evidence that our model does not adequately describe part of the population. We should investigate unusual observations before deciding what to do.
+
+
+### Identifying leverage and influence
+
+**Leverage** measures how unusual an observation's predictor values are:
+
+```{webr-r}
+#| classes: webr-plot
+
+dd_influence[, leverage := hatvalues(fit_influence)]
+dd_influence[, obs := .I]
+
+ggplot(dd_influence, aes(x = obs, y = leverage)) +
+  geom_point() +
+  labs(
+    x = "Observation",
+    y = "Leverage"
+  )
+```
+
+High leverage does **not** necessarily mean high influence. An observation can have unusual predictor values but still follow the overall relationship closely.
+
+**Cook's distance** measures influence — how much an observation affects the fitted regression model:
+
+```{webr-r}
+#| classes: webr-plot
+
+dd_influence[, cooks_d := cooks.distance(fit_influence)]
+
+ggplot(dd_influence, aes(x = obs, y = cooks_d)) +
+  geom_point() +
+  labs(
+    x = "Observation",
+    y = "Cook's distance"
+  )
+```
+
+> **Leverage asks whether the predictors are unusual. Cook's distance asks whether the observation substantially affects the fitted model.**
+
+Both are tools for identifying observations worth investigating — **not automatic rules for removing observations**.
+
+
+
+## What should we actually check?
+
+
+When we fit a regression model, we want to ask whether the model provides a reasonable description of the data.
+
+Some useful steps are:
+
+- **Look at the data and the fitted model.** Does the estimated relationship appear to describe the observed data reasonably well?
+- **Look at residuals versus fitted values.** Systematic patterns may indicate that the mean relationship has not been adequately modeled; changes in spread may indicate nonconstant variance.
+- **Consider unusual observations.** Large residuals, high leverage, or high Cook's distance may identify observations worth investigating.
+- **Consider the distribution of the residuals**, particularly when the sample is small and inference depends more strongly on the normality assumption.
+
+Small departures from an idealized model are common. The important question is whether they are \large enough to meaningfully affect our estimates, uncertainty, or conclusions.
+
+
+### What if we find a problem?
+
+What we do depends on what the problem is.
+
+- A systematic pattern in the residuals may indicate that we need a different model for the mean.
+- Nonconstant variability may require a different approach to estimating uncertainty.
+- Moderate departures from normality often require no action, particularly in \larger samples.
+- Unusual or influential observations should be investigated, not automatically removed.
+
+> **Diagnostics help us identify ways in which a model may be inadequate. The appropriate response depends on the nature of the problem and the question we are asking.**
+
+
+
+## Back to NHANES: multiple regression
+
+
+Earlier, we examined the relationship between age and total cholesterol.
+
+We can now ask:
+
+> **How is age associated with total cholesterol after accounting for gender?**
+
+The model can be written as
+
+$$\large
+E(\text{cholesterol}\mid\text{age},\text{gender})
+=
+\beta_0
++\beta_1 I(\text{female})
++\beta_2(\text{age}-50)$$
+
+where $I(\text{female})=1$ for females and $0$ for males.
+
+The coefficients describe:
+
+- $\beta_0$: mean cholesterol at age 50 for males
+- $\beta_1$: difference in mean cholesterol between females and males **of the same age**
+- $\beta_2$: difference in mean cholesterol associated with a one-year difference in age, **for individuals of the same gender**
+
+> **Each coefficient in a multiple regression model is interpreted conditional on the other variables in the model.**
+
+```{webr-r}
+hanes[, gender := factor(
+  GENDER,
+  levels = c(1, 2),
+  labels = c("Male", "Female")
+)]
+
+fit_gender <- lm(
+  CHOLESTEROLTOTAL ~ gender + age50,
+  data = hanes
+)
+
+tidy(fit_gender, conf.int = TRUE)
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+plot_data <- data.table(
+  SPAGE = rep(seq(20, 80, by = 1), 2),
+  gender = rep(levels(hanes$gender), each = 61)
+)
+
+plot_data[, age50 := SPAGE - 50]
+plot_data[, cholesterol_hat := predict(fit_gender, newdata = plot_data)]
+
+ggplot(hanes, aes(
+  x = SPAGE,
+  y = CHOLESTEROLTOTAL,
+  color = gender
+)) +
+  geom_jitter(
+    alpha = 0.4,
+    size = 1,
+    height = 0,
+    width = 0.25
+  ) +
+  geom_line(
+    data = plot_data,
+    aes(y = cholesterol_hat),
+    linewidth = 1
+  ) +
+  labs(
+    x = "Age (years)",
+    y = "Total cholesterol (mg/dL)",
+    color = "Gender"
+  )
+```
+
+In this sample, mean total cholesterol was estimated to be about **1.0 mg/dL higher for each additional year of age**, comparing individuals of the same gender.
+
+Mean cholesterol was estimated to be about **1.0 mg/dL lower among females than males of the same age**, although the confidence interval is wide and includes no difference.
+
+The fitted lines are parallel because the model assumes that the association between age and cholesterol is the same for males and females.
+
+#### Inspecting the model
+
+As a first check of the model, we look at the residiuals:
+
+```{webr-r}
+#| classes: webr-plot
+
+hanes[, `:=`(
+  fitted = fitted(fit_gender),
+  resid = residuals(fit_gender)
+)]
+
+ggplot(hanes, aes(x = fitted, y = resid)) +
+  geom_point(color = "grey60") +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_smooth(
+    method = "loess",
+    formula = y ~ x,
+    se = FALSE
+  ) +
+  labs(
+    x = "Fitted value",
+    y = "Residual"
+  )
+```
+
+```{webr-r}
+qqnorm(residuals(fit_gender))
+qqline(residuals(fit_gender))
+```
+
+Then we evaluate leverage to identify observations with unusual predictor values.
+
+```{webr-r}
+#| classes: webr-plot
+
+hanes[, leverage := hatvalues(fit_gender)]
+hanes[, obs := .I]
+
+ggplot(hanes, aes(x = obs, y = leverage)) +
+  geom_point() +
+  labs(
+    x = "Observation",
+    y = "Leverage"
+  )
+```
+
+Finally, we look to see if any observations of particularly \large influence:
+
+```{webr-r}
+#| classes: webr-plot
+
+hanes[, cooks_d := cooks.distance(fit_gender)]
+
+ggplot(hanes, aes(x = obs, y = cooks_d)) +
+  geom_point() +
+  labs(
+    x = "Observation",
+    y = "Cook's distance"
+  )
+```
