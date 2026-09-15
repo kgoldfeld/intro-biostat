@@ -1,0 +1,14 @@
+---
+title: "Introduction to Biostatistics"
+---
+
+## Lectures
+
+1.  [**Understanding variability**](lecture01/lecture01.html)
+2.  [**Statistical inference**](lecture02/lecture02.html)
+3.  [**Estimation and uncertainty**](lecture03/lecture03.html)
+4.  [**Designing and analyzing studies**](lecture04/lecture04.html)
+5.  [**Modeling continuous outcomes**](lecture05/lecture05.html)
+6.  **Modeling categorical outcomes**
+7.  **Practical issues in data analysis**
+8.  **Prediction and classification**
