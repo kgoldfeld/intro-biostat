@@ -477,7 +477,7 @@ This probability is the **area under the Normal curve between 100 and 140**.
 
 ```{webr-r}
 #| classes: webr-plot
-#| 
+
 ggplot(normal_density, aes(x = x, y = density)) +
   geom_segment(
     x = 100, xend = 100,
