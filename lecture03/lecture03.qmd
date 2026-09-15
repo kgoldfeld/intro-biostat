@@ -267,17 +267,20 @@ ggplot(bw_CI_dd,
 bw_CI_dd[, mean(covers)]
 ```
 
+### What does 95% confidence mean?
 
-#### What does 95% confidence mean?
+The general formulation of the 95% confidence interval is
 
-The general formulation of the 95% confidence interval is$$\text{estimate}
+$$\text{estimate}
 \ \pm\
 \text{critical value}
 \times
-\widehat{\mathrm{SE}}$$- The population mean$\large \mu$is fixed.
+\widehat{\mathrm{SE}}
+$$
+- The population mean $\mu$is fixed.
 - The interval changes from sample to sample.
-- About 95% of intervals constructed this way contain$\large \mu$.
-- A particular interval either contains$\large \mu$or it does not.
+- About 95% of intervals constructed this way contain$\mu$.
+- A particular interval either contains$\mu$ or it does not.
 
 > 95% confidence describes the long-run performance of the procedure, **not** a 95% probability that$\large \mu$lies in this particular interval.
 
@@ -288,11 +291,18 @@ The general formulation of the 95% confidence interval is$$\text{estimate}
 
 In **Lecture 2**, we compared grip strength before and after rehabilitation by analyzing the **within-person changes**.
 
-Now, rather than testing whether the mean change differs from 0, we want to **estimate the mean change and quantify its uncertainty**.$$\text{estimate} = \bar{x}_{\text{change}},
+Now, rather than testing whether the mean change differs from 0, we want to **estimate the mean change and quantify its uncertainty**.
+
+$$
+\large
+\text{estimate} = \bar{x}_{\text{change}},
 \qquad
 \widehat{\mathrm{SE}}
 =
-\frac{s_{\text{change}}}{\sqrt{n}}$$First recreate the data from **Lecture 2**:
+\frac{s_{\text{change}}}{\sqrt{n}}
+$$
+
+First recreate the data from **Lecture 2**:
 
 ```{webr-r}
 set.seed(123)
