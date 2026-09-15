@@ -486,7 +486,11 @@ The classical one-way ANOVA has several assumptions, with some important caveats
 - Equal sample sizes are **not required**, but when variances differ substantially, especially with unequal group sizes, we can use **Welch's ANOVA** in **R** with function `oneway.test()`:
 
 ```{webr-r}
-oneway.test(WeightChange ~ Group, data = data, var.equal = FALSE)
+oneway.test(
+  WeightChange ~ Group, 
+  data = data, 
+  var.equal = FALSE
+)
 ```
 
 
