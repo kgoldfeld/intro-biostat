@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Lecture 4: Designing and Analyzing Studies"
 format:
   html:
     css: ../css/lecture.css
@@ -10,13 +10,21 @@ webr:
   packages: ["data.table", "ggplot2", "patchwork"]
 ---
 
-## Initial setup
+```{webr-r}
+#| context: setup
 
+download.file(
+  "https://teaching.rdatagen.net/lecture01/data/dietData.csv",
+  "dietData.csv"
+)
+```
+
+
+## Initial setup
 
 ```{webr-r}
 #| autorun: true
 #| echo: false
-#| classes: webr-plot
 
 library(data.table)
 library(ggplot2)
@@ -31,7 +39,6 @@ theme_set(
 
 
 ## Comparing more than two groups
-
 
 So far, we have considered comparisons between **two population means**.
 
