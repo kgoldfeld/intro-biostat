@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Lecture 3: Estimation and Uncertainty"
 format:
   html:
     css: ../css/lecture.css

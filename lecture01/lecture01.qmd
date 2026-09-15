@@ -1,5 +1,5 @@
 ---
-title: 'Lecture 1: Distributions and Measures of Association'
+title: 'Lecture 1: Understanding Variability'
 format:
   html:
     css: ../css/lecture.css
