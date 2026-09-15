@@ -719,7 +719,7 @@ We now turn to real NHANES data and ask whether total cholesterol is associated 
 load("hanes_subset.RData")
 hanes <- data.table(hanes)
 
-hanes
+hanes[, 1:8]
 ```
 
 Here is a plot showing the relationship:
