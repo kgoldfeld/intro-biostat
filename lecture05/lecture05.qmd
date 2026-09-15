@@ -21,7 +21,6 @@ download.file(
 
 ## Initial setup
 
-
 ```{webr-r}
 #| autorun: true
 #| echo: false
@@ -711,15 +710,12 @@ R provides these quantities directly.
 tidy(fit, conf.int = TRUE)
 ```
 
-
-
 ## NHANES data analysis
-
 
 We now turn to real NHANES data and ask whether total cholesterol is associated with age.
 
 ```{webr-r}
-load('hanes_subset.RData')
+load("hanes_subset.RData")
 hanes <- data.table(hanes)
 
 hanes
