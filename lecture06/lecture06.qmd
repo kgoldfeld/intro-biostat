@@ -95,6 +95,7 @@ dd <- data.table(
 dd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]          
 
 dd[, hypertension := rbinom(.N, size = 1, prob = p)]
+dd
 ```
 
 We know the probability used to generate each person's outcome because we created the population ourselves.
@@ -559,6 +560,8 @@ For a binary outcome, we often use the term **risk** to refer to the probability
 Let's compare the probability of hypertension at ages 30, 50, and 70 with the probability one year later:
 
 ```{webr-r}
+#| results: asis
+
 ages <- c(30, 50, 70)
 
 compare <- data.table(
@@ -595,7 +598,7 @@ compare |>
   fmt_number(
     columns = c(p_age, p_next, RD, RR, OR, log_OR),
     decimals = 3
-  )
+  ) 
 ```
 
 **The different measures tell us different things:**
