@@ -9,6 +9,6 @@ title: "Introduction to Biostatistics"
 3.  [**Estimation and uncertainty**](lecture03/lecture03.html)
 4.  [**Designing and analyzing studies**](lecture04/lecture04.html)
 5.  [**Modeling continuous outcomes**](lecture05/lecture05.html)
-6.  **Modeling categorical outcomes**
+6.  [**Modeling categorical outcomes**](lecture06/lecture06.html)
 7.  **Practical issues in data analysis**
 8.  **Prediction and classification**

@@ -7,7 +7,7 @@ engine: knitr
 filters:
   - webr
 webr:
-  packages: ["data.table", "ggplot2", "patchwork", "broom", "gt"]
+  packages: ["data.table", "ggplot2", "patchwork", "broom", "gt", "performance"]
 ---
 
 ```{webr-r}
@@ -15,7 +15,7 @@ webr:
 
 download.file(
   "https://teaching.rdatagen.net/lecture06/data/heart.csv",
-  "heart.csv
+  "heart.csv"
 )
 ```
 
@@ -50,9 +50,9 @@ theme_set(
 
 In the last lecture, we used regression to describe how the **mean of an outcome** changes with a predictor.
 
-For a continuous outcome $\large Y$, we wrote:
+For a continuous outcome $Y$, we wrote:
 
-$$\Large
+$$\large
 E(Y \mid X=x) = \beta_0 + \beta_1 x$$
 
 But many outcomes we care about are **binary**:
@@ -73,7 +73,7 @@ Suppose we are interested in the relationship between **age and hypertension**.
 
 For each person, define
 
-$$\Large
+$$\large
 Y =
 \begin{cases}
 1 & \text{if the person has hypertension} \\
@@ -125,14 +125,14 @@ We want to know:
 
 Recall that regression models the conditional mean:
 
-$$\Large
+$$\large
 E(Y \mid X=x)$$
 
 What does a mean represent when an outcome can only be 0 or 1?
 
 Suppose that among 100 people of the same age, 30 have hypertension. If hypertension is coded 1 for yes and 0 for no, the mean is
 
-$$\Large
+$$\large
 \bar{Y}
 =
 \frac{30(1)+70(0)}{100}
@@ -143,14 +143,14 @@ The mean is simply the **proportion of people with hypertension**.
 
 In the population, that proportion is a probability. Therefore, for a binary outcome coded 0 and 1,
 
-$$\Large
+$$\large
 E(Y \mid X=x)
 =
 P(Y=1 \mid X=x)$$
 
 So for a binary outcome:
 
-> **Modeling the conditional mean is the same thing as modeling the probability that** $\large Y=1$.
+> **Modeling the conditional mean is the same thing as modeling the probability that** $Y=1$.
 
 Because we simulated these data, we can see the true probability in the population.
 
@@ -189,10 +189,10 @@ fit_linear <- lm(hypertension ~ age, data = dd)
 
 The fitted model is
 
-$$\Large
+$$\large
 E(Y \mid \text{age}) = \hat{\beta}_0 + \hat{\beta}_1 \text{age}$$
 
-Since $\large E(Y \mid \text{age}) = P(Y=1 \mid \text{age})$, the fitted values from this model are estimates of the probability of hypertension.
+Since $E(Y \mid \text{age}) = P(Y=1 \mid \text{age})$, the fitted values from this model are estimates of the probability of hypertension.
 
 Let's compare the fitted linear model with the true probabilities we used to generate the data.
 
@@ -227,7 +227,7 @@ ggplot(dd, aes(x = age, y = hypertension)) +
 The linear model captures the general idea that hypertension becomes more common with age, but it does not capture the shape of the relationship very well.
 
 - A straight line assumes that the probability changes by the **same amount** for every one-year increase in age.
-- But probabilities are constrained: $\large 0 \leq P(Y=1 \mid X) \leq 1$
+- But probabilities are constrained: $0 \leq P(Y=1 \mid X) \leq 1$
 - A linear model does not enforce this constraint. Depending on the predictor values, it can produce fitted probabilities below 0 or above 1.
 
 
@@ -248,14 +248,14 @@ A probability is constrained to lie between 0 and 1.
 
 One way to transform a probability is to express it as **odds**:
 
-$$\Large
+$$\large
 \text{odds} = \frac{p}{1-p}$$
 
 Odds compare the probability that an event occurs with the probability that it does not occur.
 
 For example, if the probability of hypertension is 0.75,
 
-$$\Large
+$$\large
 \text{odds} = \frac{0.75}{0.25} = 3$$
 
 The odds of hypertension are **3 to 1**: for every 3 people with hypertension, we would expect about 1 without hypertension.
@@ -277,19 +277,19 @@ Here is a range of odds for probabilities between 0.10 and 0.90:
 
 Odds are no longer constrained to lie between 0 and 1:
 
-$$\Large
+$$\large
 0 < \text{odds} < \infty$$
 
 But they are still constrained — odds cannot be negative.
 
 Taking the logarithm removes this constraint:
 
-$$\Large
+$$\large
 \text{log odds} = \log\left(\frac{p}{1-p}\right)$$
 
 The log odds can take any value:
 
-$$\Large
+$$\large
 -\infty < \log\left(\frac{p}{1-p}\right) < \infty$$
 
 | Probability | Odds | Log odds |
@@ -309,14 +309,14 @@ We now have a quantity that can range from $-\infty$ to $\infty$.
 
 So instead of modeling the probability directly as a linear function of age, logistic regression models the **log odds** as a linear function of age:
 
-$$\Large
+$$\large
 \log\left(\frac{p}{1-p}\right)
 =
 \beta_0 + \beta_1 \text{age}$$
 
 where
 
-$$\Large
+$$\large
 p = P(Y=1 \mid \text{age})$$
 
 
@@ -324,46 +324,59 @@ p = P(Y=1 \mid \text{age})$$
 ## From log odds back to probability
 
 
-The logistic regression model is linear on the **log-odds scale**: $$\Large
+The logistic regression model is linear on the **log-odds scale**: 
+
+$$\large
 \log\left(\frac{p}{1-p}\right)
 =
 \beta_0 + \beta_1 X$$
 
 > But we are usually more interested in the **probability** of the outcome than in its log odds.
 
-We can transform the model back to the probability scale, first by exponentiating both sides: $$\Large
+We can transform the model back to the probability scale, first by exponentiating both sides: 
+$$\large
 \frac{p}{1-p}
 =
 \exp(\beta_0+\beta_1X)$$
 
-Multiply both sides by $(1-p)$: $$\Large
+Multiply both sides by $(1-p)$: 
+
+$$\large
 p
 =
 (1-p)\exp(\beta_0+\beta_1X)$$
 
-Collect the terms involving $p$: $$\Large
+Collect the terms involving $p$: 
+
+$$\large
 p + p\exp(\beta_0+\beta_1X)
 =
 \exp(\beta_0+\beta_1X)$$
 
-Factor out $p$: $$\Large
+Factor out $p$: 
+
+$$\large
 p\left[1+\exp(\beta_0+\beta_1X)\right]
 =
 \exp(\beta_0+\beta_1X)$$
 
-So $$\Large
+So 
+
+$$\large
 p
 =
 \frac{\exp(\beta_0+\beta_1X)}
 {1+\exp(\beta_0+\beta_1X)}$$
 
-which is equivalent to $$\Large
+which is equivalent to 
+
+$$\large
 p
 =
 \frac{1}
 {1+\exp[-(\beta_0+\beta_1X)]}$$
 
-This transformation guarantees that the predicted probability remains between 0 and 1, regardless of the values of $\large X$, $\large \beta_0$, or $\large \beta_1$.
+This transformation guarantees that the predicted probability remains between 0 and 1, regardless of the values of $X$, $\beta_0$, or $\beta_1$.
 
 > You do not need to reproduce this algebra. The important point is that the probability curve follows directly from the linear model for the log odds.
 
@@ -373,7 +386,7 @@ This transformation guarantees that the predicted probability remains between 0 
 dd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]
 ```
 
-where $\large \beta_0 = -5.5$ and $\large \beta_1 = 0.075$.
+where $\beta_0 = -5.5$ and $\beta_1 = 0.075$.
 
 
 
@@ -390,7 +403,7 @@ tidy(fit_logistic)
 
 Recall that the population values we used to generate the data were
 
-$$\Large
+$$\large
 \beta_0 = -5.5
 \qquad\text{and}\qquad
 \beta_1 = 0.075$$
@@ -434,18 +447,20 @@ The fitted logistic regression model recovers the underlying probability relatio
 ## Interpreting the coefficients
 
 
-Our logistic regression model has the form $$\Large
+Our logistic regression model has the form $$\large
 \log\left(\frac{p}{1-p}\right)
 =
 \beta_0+\beta_1X$$
 
-Just as in linear regression, $\large \beta_1$ describes the change in the left-hand side associated with a one-unit increase in $\large X$.
+Just as in linear regression, $\beta_1$ describes the change in the left-hand side associated with a one-unit increase in $X$.
 
 But now the left-hand side is the **log odds** of the outcome.
 
-> $\large \beta_1$ is the change in the log odds of the outcome associated with a one-unit increase in $\large X$.
+> $\beta_1$ is the change in the log odds of the outcome associated with a one-unit increase in $X$.
 
-For our simulated population, $$\Large
+For our simulated population, 
+
+$$\large
 \beta_1 = 0.075$$
 
 so a one-year increase in age is associated with an increase of 0.075 in the log odds of hypertension.
@@ -457,23 +472,23 @@ so a one-year increase in age is associated with an increase of 0.075 in the log
 ## From coefficients to odds ratios
 
 
-At age $\large x$, the odds of hypertension are
+At age $x$, the odds of hypertension are
 
-$$\Large
+$$\large
 \text{odds}(x)
 =
 \exp(\beta_0+\beta_1x)$$
 
-At age $\large x+1$, the odds are
+At age $x+1$, the odds are
 
-$$\Large
+$$\large
 \text{odds}(x+1)
 =
 \exp[\beta_0+\beta_1(x+1)]$$
 
 The ratio of these two odds is
 
-$$\Large
+$$\large
 \begin{aligned}
 \frac{\text{odds}(x+1)}{\text{odds}(x)}
 &=
@@ -488,7 +503,7 @@ $$\Large
 
 In our population,
 
-$$\Large
+$$\large
 \exp(0.075) = 1.078$$
 
 So each additional year of age multiplies the odds of hypertension by about 1.08.
@@ -521,12 +536,12 @@ exp(coef(fit_logistic)["age"])
 
 In our population model, each one-year increase in age has the same effect on the **log odds** of hypertension:
 
-$$\Large
+$$\large
 \beta_1 = 0.075$$
 
 and therefore the same odds ratio:
 
-$$\Large
+$$\large
 \text{OR} = \exp(0.075) = 1.078$$
 
 But does this mean that the **probability** of hypertension increases by the same amount at every age?
@@ -595,9 +610,9 @@ But the **odds ratio** and **log odds ratio** remain constant.
 
 As with linear regression, there is uncertainty in our estimated coefficient.
 
-We can approximate a 95% confidence interval for $\large \beta_1$ using
+We can approximate a 95% confidence interval for $\beta_1$ using
 
-$$\Large
+$$\large
 \hat{\beta}_1 \pm 1.96 \times SE(\hat{\beta}_1)$$
 
 Let's calculate this interval for the age coefficient.
@@ -618,7 +633,7 @@ ci_log
 
 This confidence interval is on the **log-odds scale**.
 
-Since exponentiating $\large \hat{\beta}_1$ gives us the odds ratio, we can exponentiate both endpoints to get a confidence interval for the odds ratio:
+Since exponentiating $\hat{\beta}_1$ gives us the odds ratio, we can exponentiate both endpoints to get a confidence interval for the odds ratio:
 
 ```{webr-r}
 exp(ci_log)
@@ -646,13 +661,13 @@ tidy(
 
 The null hypothesis for the age coefficient is
 
-$$\Large H_0: \beta_1 = 0$$
+$$\large H_0: \beta_1 = 0$$
 
 On the odds-ratio scale, this is equivalent to
 
-$$\Large H_0: OR = 1$$
+$$\large H_0: OR = 1$$
 
-So a confidence interval for $\large \beta_1$ that excludes 0 corresponds to a confidence interval for the odds ratio that excludes 1.
+So a confidence interval for $\beta_1$ that excludes 0 corresponds to a confidence interval for the odds ratio that excludes 1.
 
 The p-value reported by `tidy()` tests this null hypothesis.
 
@@ -669,14 +684,14 @@ For example:
 
 Recall that the fitted logistic regression model is
 
-$$\Large
+$$\large
 \log\left(\frac{p}{1-p}\right)
 =
 \hat{\beta}_0+\hat{\beta}_1\text{age}$$
 
 and that we can transform from log odds back to probability using
 
-$$\Large
+$$\large
 p =
 \frac{1}
 {1+\exp[-(\beta_0+\beta_1X)]}$$
@@ -705,7 +720,7 @@ The argument `type = "response"` asks **R** to return the prediction on the **pr
 
 Without `type = "response"`, `predict()` returns the prediction on the scale of the linear predictor:
 
-$$\Large
+$$\large
 \hat{\beta}_0+\hat{\beta}_1X$$
 
 which, for logistic regression, is the log-odds scale.
@@ -782,7 +797,7 @@ The fitted logistic regression model gives us an estimated probability of hypert
 
 Just as with linear regression, logistic regression can include more than one predictor:
 
-$$\Large
+$$\large
 \log\left(\frac{p}{1-p}\right)
 =
 \beta_0+\beta_1X_1+\beta_2X_2$$
@@ -895,12 +910,12 @@ The coefficient for physical activity now describes its association with the odd
 
 Because we generated the population ourselves, we know the true conditional effect of physical activity:
 
-$$\Large
+$$\large
 \beta_{\text{activity}}=-0.35$$
 
 or, on the odds-ratio scale,
 
-$$\Large
+$$\large
 OR_{\text{activity}}
 =
 \exp(-0.35)
@@ -1059,7 +1074,7 @@ The reduction in deviance can be used to formally compare **nested models**.
 
 For our model,
 
-$$\Large
+$$\large
 827.9 - 668.7 = 159.2$$
 
 Under the null hypothesis that the additional predictors do not improve the model, this difference is ***approximately chi-square distributed***.
@@ -1136,7 +1151,7 @@ Because CK is expressed in units of 50, the odds ratio for `ck50` compares patie
 
 The estimated odds ratio is
 
-$$\Large
+$$\large
 OR = 5.78$$
 
 with a 95% confidence interval from 4.00 to 8.92.
