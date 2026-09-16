@@ -91,7 +91,9 @@ dd <- data.table(
   age = runif(n, 20, 80)
 )
 
-dd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]          # to be explained later ...
+# to be explained later ...
+dd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]          
+
 dd[, hypertension := rbinom(.N, size = 1, prob = p)]
 ```
 
@@ -396,7 +398,11 @@ where $\beta_0 = -5.5$ and $\beta_1 = 0.075$.
 We can use the `glm()` function in *R* to estimate the logistic regression model using our simulated data.
 
 ```{webr-r}
-fit_logistic <- glm(hypertension ~ age, family = binomial, data = dd)
+fit_logistic <- glm(
+  hypertension ~ age, 
+  family = binomial, 
+  data = dd
+)
 
 tidy(fit_logistic)
 ```
@@ -415,7 +421,9 @@ We can obtain the fitted values on the probability scale and compare them with t
 ```{webr-r}
 #| classes: webr-plot
 
-dd[, p_logistic := predict(fit_logistic, type = "response")]
+dd[, p_logistic := 
+  predict(fit_logistic, type = "response")
+]
 
 ggplot(dd, aes(x = age, y = hypertension)) +
   geom_point(alpha = 0.35, size = 0.5) +
@@ -713,7 +721,11 @@ This gives us the **estimated probability of hypertension at age 50**.
 We usually don't need to perform this calculation ourselves.
 
 ```{webr-r}
-predict(fit_logistic, newdata = data.frame(age = 50), type = "response")
+predict(
+  fit_logistic, 
+  newdata = data.frame(age = 50), 
+  type = "response"
+)
 ```
 
 The argument `type = "response"` asks **R** to return the prediction on the **probability scale**.
@@ -853,7 +865,11 @@ First, let's look at the relationship between age and physical activity.
 
 ggplot(dd2, aes(x = age, y = activity)) +
   geom_point(alpha = 0.35, size = 0.7) +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  geom_smooth(
+    method = "lm", 
+    formula = y ~ x, 
+    se = FALSE
+  ) +
   labs(
     x = "Age",
     y = "Physical activity"
@@ -1109,8 +1125,9 @@ We will use these data to ask:
 > **How is CK level associated with the probability that a patient has had a heart attack?**
 
 ```{webr-r}
-heart <- fread("data/heart.csv")
+heart <- fread("heart.csv")
 heart[, ck50 := ck / 50]
+heart
 ```
 
 Let's first look at the observed proportion of patients who had a heart attack at each CK level.
@@ -1118,7 +1135,10 @@ Let's first look at the observed proportion of patients who had a heart attack a
 ```{webr-r}
 #| classes: webr-plot
 
-heart_prop <- heart[,.(proportion = mean(heart_attack), n = .N),by = ck]
+heart_prop <- heart[,
+  .(proportion = mean(heart_attack), n = .N),
+  by = ck
+]
 
 ggplot(heart_prop, aes(x = ck, y = proportion)) +
   geom_point(size = 2) +
@@ -1140,10 +1160,12 @@ The observed proportion with heart attack increases substantially with CK level.
 We can model the probability of heart attack as a function of CK using logistic regression:
 
 ```{webr-r}
-fit_glm <- glm(heart_attack ~ ck50, family = binomial, data = heart)
-```
+fit_glm <- glm(
+  heart_attack ~ ck50, 
+  family = binomial, 
+  data = heart
+)
 
-```{webr-r}
 tidy(fit_glm, exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -1172,10 +1194,23 @@ We can compare the fitted probabilities with the proportions actually observed a
 ```{webr-r}
 #| classes: webr-plot
 
-pred <- data.table(ck = seq(min(heart$ck), max(heart$ck), length.out = 200))
+pred <- data.table(
+  ck = seq(
+    min(heart$ck), 
+    max(heart$ck),
+    length.out = 200
+  )
+)
+
 pred[, ck50 := ck / 50]
 
-pred[, p_hat := predict(fit_glm, newdata = pred, type = "response")]
+pred[, p_hat := 
+  predict(
+    fit_glm, 
+    newdata = pred, 
+    type = "response"
+  )
+]
 
 ggplot() +
   geom_line(
@@ -1195,14 +1230,8 @@ ggplot() +
     y = "Probability of heart attack",
     size = "Number of patients"
   )
-
-performance::check_collinearity(fit_glm)
-
-tidy(fit_glm, conf.int = TRUE)
-
-confint(fit_glm)          # profile likelihood
-confint.default(fit_glm)  # Wald
 ```
+
 
 The points show the **observed proportion** of patients who had a heart attack at each CK level. The curve shows the **probability predicted by the logistic regression model**.
 
