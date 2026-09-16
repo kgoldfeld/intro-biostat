@@ -557,7 +557,11 @@ dd <- data.table(
 #| classes: webr-plot
 
 ggplot(dd, aes(x = group, y = y)) +
-  geom_jitter(width = .05, height = 0, color = "grey60") +
+  geom_jitter(
+    width = .05, 
+    height = 0, 
+    color = "grey60"
+  ) +
   stat_summary(
     fun = mean,
     geom = "crossbar",
@@ -640,7 +644,8 @@ ggplot(results, aes(x = t)) +
     "text",
     x = -0.1,
     y = 500,
-    label = "bold(beta == P(fail~to~reject~H[0]~'|'~mu[B] - mu[A] == 2))",
+    label = 
+      "bold(beta == P(fail~to~reject~H[0]~'|'~mu[B] - mu[A] == 2))",
     parse = TRUE,
     size = 3.5
   ) +
@@ -648,7 +653,8 @@ ggplot(results, aes(x = t)) +
     "text",
     x = 5.3,
     y = 420,
-    label = "bold(Power == P(reject~H[0]~'|'~mu[B] - mu[A] == 2))",
+    label = 
+      "bold(Power == P(reject~H[0]~'|'~mu[B] - mu[A] == 2))",
     parse = TRUE,
     size = 3.5
   ) + 
@@ -704,7 +710,13 @@ results[, .(
 Let's see how changes in the study affect power.
 
 ```{webr-r}
-estimate_power <- function(n, mu_a = 10, mu_b = 12, sd = 3, n_sim = 5000) {
+estimate_power <- function(
+  n, 
+  mu_a = 10, 
+  mu_b = 12, 
+  sd = 3, 
+  n_sim = 5000
+) {
 
   p_values <- numeric(n_sim)
 
@@ -804,11 +816,11 @@ Suppose a difference of 2 units is scientifically meaningful, we expect the popu
 
 ```{webr-r}
 power.t.test(
- delta = 2,
- sd = 3,
- power = 0.80,
- sig.level = 0.05,
- type = "two.sample"
+  delta = 2,
+  sd = 3,
+  power = 0.80,
+  sig.level = 0.05,
+  type = "two.sample"
 )
 ```
 

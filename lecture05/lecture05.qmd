@@ -64,7 +64,10 @@ sigma <- 12
 
 dd <- data.table(age = runif(n, 20, 80))
 
-dd[, sbp := beta_0 + beta_1 * age + rnorm(.N, mean = 0, sd = sigma)]
+dd[, sbp := 
+  beta_0 + beta_1 * age + 
+    rnorm(.N, mean = 0, sd = sigma)
+]
 ```
 
 ```{webr-r}
@@ -98,8 +101,18 @@ dd[, age_group := cut(
 )]
 
 ggplot(data = dd, aes(x = age_group, y = sbp)) +
-  geom_jitter(width = .05, height = 0, color = "grey60") +
-  stat_summary(fun = mean, geom = "crossbar", width = 0.30, color = "red", linewidth = 0.7)
+  geom_jitter(
+    width = .05, 
+    height = 0, 
+    color = "grey60"
+  ) +
+  stat_summary(
+    fun = mean, 
+    geom = "crossbar", 
+    width = 0.30, 
+    color = "red", 
+    linewidth = 0.7
+  )
 ```
 
 We could then compare mean systolic blood pressure across the three groups, perhaps using ANOVA.
@@ -230,11 +243,17 @@ sim_base <- data.table(
   z = rnorm(200)
 )
 
-gen_data_and_plot <- function(beta_0 = 100, beta_1 = 0.5, sigma = 12) {
+gen_data_and_plot <- function(
+    beta_0 = 100, 
+    beta_1 = 0.5, 
+    sigma = 12) {
   
   dd_plot <- copy(sim_base)
   
-  dd_plot[, sbp := beta_0 + beta_1 * age + sigma * z]
+  dd_plot[, sbp := 
+              beta_0 + beta_1 * age + 
+                sigma * z
+  ]
   
   ggplot(dd_plot, aes(x = age, y = sbp)) +
     geom_abline(
@@ -244,10 +263,13 @@ gen_data_and_plot <- function(beta_0 = 100, beta_1 = 0.5, sigma = 12) {
     ) +
     geom_point() +
     labs(
-      title = bquote(beta[1] == .(beta_1) ~ "," ~~ sigma == .(sigma)),
+      title = bquote(
+        beta[1] == .(beta_1) ~ "," ~~
+        sigma == .(sigma)
+      ),
       x = "Age (years)",
       y = "Systolic blood pressure (mm Hg)"
-    ) 
+)
 }
 ```
 
@@ -727,8 +749,16 @@ Here is a plot showing the relationship:
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = hanes, aes(x = SPAGE, y = CHOLESTEROLTOTAL)) +
-  geom_jitter(height = 0, width = 0.25, size = 1, color = "grey40")
+ggplot(
+  data = hanes, 
+  aes(x = SPAGE, y = CHOLESTEROLTOTAL)
+) +
+  geom_jitter(
+    height = 0, 
+    width = 0.25, 
+    size = 1, 
+    color = "grey40"
+  )
 ```
 
 The linear regression model in R is fit using function `lm()`
@@ -741,9 +771,21 @@ coef(fit)
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = hanes, aes(x = SPAGE, y = CHOLESTEROLTOTAL)) +
-  geom_jitter(height = 0, width = 0.25, size = 1, color = "grey40") +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+ggplot(
+  data = hanes, 
+  aes(x = SPAGE, y = CHOLESTEROLTOTAL)
+) +
+  geom_jitter(
+    height = 0, 
+    width = 0.25, 
+    size = 1, 
+    color = "grey40"
+  ) +
+  geom_smooth(
+    method = "lm", 
+    formula = y ~ x, 
+    se = FALSE
+  )
 ```
 
 We can center age around 50 so that the intercept has a more meaningful interpretation:
@@ -915,9 +957,14 @@ First the plot:
 ```{webr-r}
 #| classes: webr-plot
 
-p_unadjust <- ggplot(dd_multi, aes(x = activity, y = sbp)) +
+p_unadjust <- ggplot(
+  dd_multi, 
+  aes(x = activity, y = sbp)
+) +
   geom_point(color = "grey60", size = 1) +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  geom_smooth(
+    method = "lm", formula = y ~ x, se = FALSE
+  ) +
   labs(
     x = "Physical activity",
     y = "Systolic blood pressure (mm Hg)"
@@ -1002,25 +1049,51 @@ First, we model physical activity as a function of age, and gather the residuals
 ```{webr-r}
 #| classes: webr-plot
 
-fit_age_activity <- lm(activity ~ age, data = dd_multi)
+fit_age_activity <- lm(
+  activity ~ age, 
+  data = dd_multi
+)
 
-dd_multi[, activity_resid := residuals(fit_age_activity)]
-dd_multi[, activity_fitted := fitted(fit_age_activity)]
+dd_multi[, 
+  activity_resid := residuals(fit_age_activity)
+]
+
+dd_multi[, 
+  activity_fitted := fitted(fit_age_activity)
+]
 
 examples_above <- dd_multi[
-  activity_resid > 1.5 & activity_resid < 1.6
+  activity_resid > 1.5 & 
+    activity_resid < 1.6
 ][order(age)][c(1, .N)]
 
 examples_below <- dd_multi[
-  activity_resid > -1.9 & activity_resid < -1.8
+  activity_resid > -1.9 & 
+    activity_resid < -1.8
 ][order(age)][c(1, .N)]
 
-ggplot(dd_multi, aes(x = age, y = activity)) +
-  geom_point(size = 1, color = "grey80") +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black") +
+ggplot(
+  dd_multi, 
+  aes(x = age, y = activity)
+) +
+  geom_point(
+    size = 1, 
+    color = "grey80"
+  ) +
+  geom_smooth(
+    method = "lm", 
+    formula = y ~ x, 
+    se = FALSE, 
+    color = "black"
+  ) +
   geom_segment(
     data = examples_above,
-    aes(x = age, xend = age, y = activity_fitted, yend = activity),
+    aes(
+      x = age, 
+      xend = age, 
+      y = activity_fitted, 
+      yend = activity
+    ),
     inherit.aes = FALSE,
     linewidth = 0.8,
     color = "red"
@@ -1034,7 +1107,12 @@ ggplot(dd_multi, aes(x = age, y = activity)) +
   ) +
   geom_segment(
     data = examples_below,
-    aes(x = age, xend = age, y = activity_fitted, yend = activity),
+    aes(
+      x = age, 
+      xend = age, 
+      y = activity_fitted, 
+      yend = activity
+    ),
     inherit.aes = FALSE,
     linewidth = 0.8,
     color = "darkgreen"
@@ -1074,24 +1152,45 @@ Now we compare:
 ```{webr-r}
 #| classes: webr-plot
 
-p_resid <- ggplot(dd_multi, aes(x = activity_resid, y = sbp_resid)) +
-  geom_point(size = 1, aes(color = age_group)) +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black")+
+p_resid <- ggplot(
+  dd_multi,
+  aes(x = activity_resid, y = sbp_resid)
+) +
+  geom_point(
+    aes(color = age_group),
+    size = 1
+  ) +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE,
+    color = "black"
+  ) +
   theme(legend.position = "none") +
   labs(
-  x = "Activity residual",
-  y = "SBP residual"
-)
+    x = "Activity residual",
+    y = "SBP residual"
+  )
 
-p_unadjust <- ggplot(dd_multi, aes(x = activity, y = sbp)) +
-  geom_point(aes(color = age_group), size = 1) +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black") +
+p_unadjust <- ggplot(
+  dd_multi,
+  aes(x = activity, y = sbp)
+) +
+  geom_point(
+    aes(color = age_group),
+    size = 1
+  ) +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE,
+    color = "black"
+  ) +
   labs(
     x = "Physical activity",
     y = "Systolic blood pressure (mm Hg)"
   ) +
   theme(legend.position = "none")
-
 p_unadjust + p_resid
 ```
 
@@ -1134,26 +1233,50 @@ set.seed(2502)
 
 dd_highcor <- data.table(age = dd_multi$age)
 
-dd_highcor[, activity := 8 - 0.06 * age + rnorm(.N, mean = 0, sd = 0.25)]
+dd_highcor[, activity := 
+  8 - 0.06 * age + 
+    rnorm(.N, mean = 0, sd = 0.25)]
 
-dd_highcor[, sbp := 105 + 0.55 * age - 2.0 * activity + rnorm(.N, mean = 0, sd = 10)]
+dd_highcor[, sbp := 
+  105 + 0.55 * age - 2.0 * activity + 
+    rnorm(.N, mean = 0, sd = 10)]
 ```
 
 ```{webr-r}
 #| classes: webr-plot
 
-p1 <- ggplot(dd_multi, aes(x = age, y = activity)) +
-  geom_point(size = 1, color = "grey60") +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+p1 <- ggplot(
+  dd_multi,
+  aes(x = age, y = activity)
+) +
+  geom_point(
+    size = 1,
+    color = "grey60"
+  ) +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE
+  ) +
   labs(
     title = "Moderately correlated",
     x = "Age",
     y = "Physical activity"
   )
 
-p2 <- ggplot(dd_highcor, aes(x = age, y = activity)) +
-  geom_point(size = 1, color = "grey60") +
-  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+p2 <- ggplot(
+  dd_highcor,
+  aes(x = age, y = activity)
+) +
+  geom_point(
+    size = 1,
+    color = "grey60"
+  ) +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE
+  ) +
   labs(
     title = "Highly correlated",
     x = "Age",
@@ -1307,7 +1430,10 @@ set.seed(511)
 
 dd_curve <- data.table(x = runif(n, 0, 10))
 
-dd_curve[, y := 20 + 6 * x - 0.4 * x^2 + rnorm(.N, mean = 0, sd = 5)]
+d_curve[, y :=
+  20 + 6 * x - 0.4 * x^2 +
+    rnorm(.N, mean = 0, sd = 5)
+]
 ```
 
 Let's fit a linear regression anyway.
@@ -1535,10 +1661,15 @@ It may represent a data error, an unusual but legitimate individual, or evidence
 ```{webr-r}
 #| classes: webr-plot
 
-dd_influence[, leverage := hatvalues(fit_influence)]
+dd_influence[, 
+  leverage := hatvalues(fit_influence)
+]
 dd_influence[, obs := .I]
 
-ggplot(dd_influence, aes(x = obs, y = leverage)) +
+ggplot(
+  dd_influence, 
+  aes(x = obs, y = leverage)
+) +
   geom_point() +
   labs(
     x = "Observation",
@@ -1553,7 +1684,9 @@ High leverage does **not** necessarily mean high influence. An observation can h
 ```{webr-r}
 #| classes: webr-plot
 
-dd_influence[, cooks_d := cooks.distance(fit_influence)]
+dd_influence[, 
+  cooks_d := cooks.distance(fit_influence)
+]
 
 ggplot(dd_influence, aes(x = obs, y = cooks_d)) +
   geom_point() +
