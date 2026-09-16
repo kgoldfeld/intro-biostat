@@ -159,14 +159,16 @@ We now have systolic blood pressure measurements for **100 women**.
 
 What do our data look like?
 
-
-
 ```{webr-r}
 #| classes: webr-plot
 #| fig-height: 4
 
 ggplot(data.table(sbp = sample), aes(x = sbp)) +
-  geom_histogram(bins = 50, color = "grey85", fill = "grey70") +
+  geom_histogram(
+    bins = 50, 
+    color = "grey85", 
+    fill = "grey70"
+  ) +
   labs(
     x = "Systolic blood pressure",
     y = "Count"
@@ -367,19 +369,26 @@ Earlier, we created a population of systolic blood pressures using the function 
 set.seed(1203)
 population <- rnorm(2000000, mean = 125, sd = 18)
 
-ggplot(data.frame(sbp = population), aes(x = sbp)) +
-  geom_histogram(bins = 50, color = "grey85", fill = "grey70") +
+ggplot(
+  data.frame(sbp = population), 
+  aes(x = sbp)
+) +
+  geom_histogram(
+    bins = 50, 
+    color = "grey85", 
+    fill = "grey70"
+  ) +
   labs(
     x = "Systolic blood pressure",
     y = "Count"
   )
 ```
 
-The values were generated from a **Normal distribution**.
+The values were generated from a **normal distribution**.
 
-### The Normal distribution
+### The normal distribution
 
-The Normal distribution is a continuous probability distribution described by two parameters:
+The normal distribution is a continuous probability distribution described by two parameters:
 
 - $\mu$: the population mean
 
@@ -399,9 +408,9 @@ Changing $\mu$ changes the **center** of the distribution.
 
 Changing $\sigma$ changes its **spread**.
 
-### The Normal density
+### The normal density
 
-The histogram shows the values we generated from the Normal distribution.
+The histogram shows the values we generated from the normal distribution.
 
 The **probability density function** describes the smooth curve underlying those values.
 
@@ -453,21 +462,26 @@ Suppose we want to know the probability that systolic blood pressure is between 
 $$\large
 P(100 < X < 140)$$
 
-This probability is the **area under the Normal curve between 100 and 140**.
+This probability is the **area under the normal curve between 100 and 140**.
 
 ```{webr-r}
 #| classes: webr-plot
 
 ggplot(normal_density, aes(x = x, y = density)) +
   geom_segment(
-    x = 100, xend = 100,
-    y = 0, yend = dnorm(100, mean = mu, sd = sigma),
-    linewidth =.2, color = "pink"
+    x = 100, 
+    xend = 100,
+    y = 0, 
+    yend = dnorm(100, mean = mu, sd = sigma),
+    linewidth =.2, 
+    color = "pink"
   ) +
   geom_segment(
     x = 140, xend = 140,
-    y = 0, yend = dnorm(140, mean = mu, sd = sigma),
-    linewidth =.2, color = "pink"
+    y = 0, 
+    yend = dnorm(140, mean = mu, sd = sigma),
+    linewidth =.2, 
+    color = "pink"
   ) +
   geom_area(
     data = subset(normal_density, x >= 100 & x <= 140),
@@ -495,9 +509,12 @@ $P(X \le 140)$ is the entire area to the left of 140:
 
 ggplot(normal_density, aes(x = x, y = density)) +
   geom_segment(
-    x = 140, xend = 140,
-    y = 0, yend = dnorm(140, mean = mu, sd = sigma),
-    linewidth = .2, color = "pink"
+    x = 140, 
+    xend = 140,
+    y = 0, 
+    yend = dnorm(140, mean = mu, sd = sigma),
+    linewidth = .2, 
+    color = "pink"
   ) +
   geom_area(
     data = subset(normal_density, x <= 140),
@@ -518,9 +535,12 @@ And $P(X \le 100)$ is the area to the left of 100 (in darker grey):
 
 ggplot(normal_density, aes(x = x, y = density)) +
   geom_segment(
-    x = 140, xend = 140,
-    y = 0, yend = dnorm(140, mean = mu, sd = sigma),
-    linewidth = .2, color = "pink"
+    x = 140, 
+    xend = 140,
+    y = 0, 
+    yend = dnorm(140, mean = mu, sd = sigma),
+    linewidth = .2, 
+    color = "pink"
   ) +
   geom_area(
     data = subset(normal_density, x <= 140),
@@ -532,9 +552,12 @@ ggplot(normal_density, aes(x = x, y = density)) +
     y = "Density"
   ) +
     geom_segment(
-    x = 100, xend = 100,
-    y = 0, yend = dnorm(100, mean = mu, sd = sigma),
-    linewidth = .2, color = "pink"
+      x = 100, 
+      xend = 100,
+      y = 0, 
+      yend = dnorm(100, mean = mu, sd = sigma),
+      linewidth = .2, 
+      color = "pink"
   ) +
   geom_area(
     data = subset(normal_density, x <= 100),
@@ -550,7 +573,7 @@ P(100 < X < 140)
 =
 P(X \le 140) - P(X \le 100)$$
 
-For the Normal distribution, `pnorm()` gives the cumulative probability to the left of a value:
+For the normal distribution, `pnorm()` gives the cumulative probability to the left of a value:
 
 ```{webr-r}
 pnorm(140, mean = mu, sd = sigma)
@@ -638,7 +661,7 @@ A z-score tells us where an observation lies relative to its distribution:
 
 We calculated a z-score for a single observation.
 
-But we could transform **every value** in a Normal distribution in the same way:
+But we could transform **every value** in a normal distribution in the same way:
 
 $$\large
 Z = \frac{X-\mu}{\sigma}$$
@@ -658,7 +681,7 @@ then:
 $$\large
 Z \sim N(0,1)$$
 
-This is called the **standard Normal distribution**.
+This is called the **standard normal distribution**.
 
 *If we standardize our population SBP data, we get*
 
@@ -669,9 +692,9 @@ round(mean(z_sbp), 3)
 round(sd(z_sbp), 3)
 ```
 
-### Why is the standard Normal useful?
+### Why is the standard normal useful?
 
-Standardization puts different Normal distributions onto the **same scale**.
+Standardization puts different normal distributions onto the **same scale**.
 
 On this scale:
 
@@ -689,9 +712,9 @@ z_{\text{DBP}} = 1.00$$
 
 So although the systolic blood pressure was farther from its mean in **mmHg**, the diastolic blood pressure was farther from its mean **relative to the variability in its distribution**.
 
-### The standard Normal distribution
+### The standard normal distribution
 
-Let's look at the density of the standard Normal distribution.
+Let's look at the density of the standard normal distribution.
 
 
 ```{webr-r}
@@ -704,7 +727,10 @@ standard_normal <- data.frame(
   density = dnorm(z)
 )
 
-ggplot(standard_normal, aes(x = z, y = density)) +
+ggplot(
+  standard_normal, 
+  aes(x = z, y = density)
+) +
   geom_line(linewidth = 1) +
   labs(
     x = "z-score",
@@ -719,13 +745,13 @@ The horizontal axis now measures **distance from the mean in standard deviations
 - $z = 1$ is one standard deviation above the mean
 - $z = -1$ is one standard deviation below the mean
 
-> After standardization, every Normal distribution has the same location and shape: a mean of 0 and a standard deviation of 1.
+> After standardization, every normal distribution has the same location and shape: a mean of 0 and a standard deviation of 1.
 
-### How much of a Normal distribution is close to the mean?
+### How much of a normal distribution is close to the mean?
 
-Because the standard Normal is measured in standard deviation units, we can ask:
+Because the standard normal is measured in standard deviation units, we can ask:
 
-> **What proportion of a Normal distribution lies within one or two standard deviations of its mean?**
+> **What proportion of a normal distribution lies within one or two standard deviations of its mean?**
 
 Within one standard deviation means:
 
@@ -738,7 +764,7 @@ We can calculate this using `pnorm()`:
 pnorm(1) - pnorm(-1)
 ```
 
-So about **68%** of a Normal distribution lies within one standard deviation of its mean.
+So about **68%** of a normal distribution lies within one standard deviation of its mean.
 
 <br>
 
@@ -751,7 +777,7 @@ P(-2 < Z < 2)$$
 pnorm(2) - pnorm(-2)
 ```
 
-So about **95%** of a Normal distribution lies within two standard deviations of its mean.
+So about **95%** of a normal distribution lies within two standard deviations of its mean.
 
 
 ```{webr-r}
@@ -769,7 +795,10 @@ ggplot(standard_normal, aes(x = z, y = density)) +
     linewidth = .2, color = "pink"
   ) +
   geom_area(
-    data = subset(standard_normal, z >= -2 & z <= 2),
+    data = subset(
+      standard_normal, 
+      z >= -2 & z <= 2
+    ),
     fill = "grey90"
   ) +
   geom_line(linewidth = 1) +
@@ -780,18 +809,18 @@ ggplot(standard_normal, aes(x = z, y = density)) +
 ```
 
 
-> About **95% of observations from a Normal distribution fall within two standard deviations of the mean**.
+> About **95% of observations from a normal distribution fall within two standard deviations of the mean**.
 
-### Working with the Normal distribution in R
+### Working with the normal distribution in R
 
-We've now used several R functions for working with Normal distributions:
+We've now used several R functions for working with normal distributions:
 
 | Function  | What it does                                                  |
 |-------------------|-----------------------------------------------------|
 | `dnorm()` | Gives the **density** at a value                              |
 | `pnorm()` | Gives the **cumulative probability** to the left of a value   |
 | `qnorm()` | Gives the **value** corresponding to a cumulative probability |
-| `rnorm()` | Generates **random observations** from a Normal distribution  |
+| `rnorm()` | Generates **random observations** from a normal distribution  |
 
 We've already used `dnorm()`, `pnorm()`, and `rnorm()`.
 
@@ -803,13 +832,13 @@ For example:
 qnorm(0.95)
 ```
 
-This gives the value with **95% of the standard Normal distribution below it**.
+This gives the value with **95% of the standard normal distribution below it**.
 
 ### Where is the middle 95%?
 
-We just saw that approximately 95% of a Normal distribution lies between -2 and 2 standard deviations.
+We just saw that approximately 95% of a normal distribution lies between -2 and 2 standard deviations.
 
-But what values contain **exactly 95%** of the standard Normal distribution?
+But what values contain **exactly 95%** of the standard normal distribution?
 
 If 95% is in the middle, the remaining 5% is divided equally between the two tails:
 
@@ -823,7 +852,7 @@ qnorm(0.025)
 qnorm(0.975)
 ```
 
-The middle 95% of the standard Normal distribution therefore lies approximately between:
+The middle 95% of the standard normal distribution therefore lies approximately between:
 
 $$\large
 -1.96 < Z < 1.96$$
@@ -847,7 +876,7 @@ We can calculate the proportion of the population below this value using the z-s
 pnorm(z_100)
 ```
 
-But R can also calculate the probability directly using the original Normal distribution:
+But R can also calculate the probability directly using the original normal distribution:
 
 ```{webr-r}
 pnorm(100, mean = 125, sd = 18)
@@ -857,9 +886,9 @@ The answers are the same.
 
 > **Standardization changes the scale, not where an observation lies within the distribution.**
 
-## The Binomial distribution
+## The binomial distribution
 
-So far, we have used the Normal distribution to describe a **continuous** variable: systolic blood pressure.
+So far, we have used the normal distribution to describe a **continuous** variable: systolic blood pressure.
 
 But suppose instead we are studying an intervention designed to improve hypertension control.
 
@@ -929,7 +958,10 @@ We can plot these probabilities:
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(binomial_prob, aes(x = x, y = probability)) +
+ggplot(
+  binomial_prob, 
+  aes(x = x, y = probability)
+) +
   geom_col(width = .8, fill = "grey80") +
   scale_x_continuous(breaks = 0:10) +
   labs(
@@ -939,13 +971,13 @@ ggplot(binomial_prob, aes(x = x, y = probability)) +
 ```
 
 
-This is a **Binomial distribution**.
+This is a **binomial distribution**.
 
-Unlike the Normal distribution, which describes probabilities using **areas under a continuous density curve**, the Binomial distribution assigns a probability to each possible count.
+Unlike the normal distribution, which describes probabilities using **areas under a continuous density curve**, the binomial distribution assigns a probability to each possible count.
 
-### Describing a Binomial distribution
+### Describing a binomial distribution
 
-The Binomial distribution describes the **number of times an outcome occurs** across a fixed number of observations.
+The binomial distribution describes the **number of times an outcome occurs** across a fixed number of observations.
 
 It is determined by two parameters:
 
@@ -965,7 +997,7 @@ n=10, \qquad p=0.60$$
 so:
 
 $$\large
-X \sim \text{Binomial}(10,0.60)$$
+X \sim \text{binomial}(10,0.60)$$
 
 > The parameters $n$ and $p$ determine the probabilities of the possible values of $X$.
 
@@ -1005,9 +1037,9 @@ P(X=6) \approx 0.25$$
 
 But what is `dbinom()` actually calculating?
 
-### The Binomial probability mass function
+### The binomial probability mass function
 
-For a Binomial random variable, the probability of observing exactly $x$ successes is:
+For a binomial random variable, the probability of observing exactly $x$ successes is:
 
 $$\large
 P(X=x)={n \choose x}p^x(1-p)^{n-x}$$
@@ -1026,7 +1058,7 @@ But we don't care **which** 6 patients have controlled hypertension.
 
 The term ${10 \choose 6}$ counts the number of ways to choose 6 patients from 10 — in this case, **210 different ways**.
 
-So the Binomial probability combines:
+So the binomial probability combines:
 
 $$\large
 \underbrace{{n \choose x}}_{\text{number of ways}}
@@ -1041,9 +1073,9 @@ $$\large
 
 But in either case, the probabilities across all possible outcomes must account for **everything that could happen**.
 
-- For the Normal distribution, the **total area under the density curve is 1**.
+- For the normal distribution, the **total area under the density curve is 1**.
 
-- For the Binomial distribution, the **probabilities of all possible values sum to 1**. In this case:
+- For the binomial distribution, the **probabilities of all possible values sum to 1**. In this case:
 
 $$\large
 \sum_{x=0}^{10}
@@ -1055,7 +1087,7 @@ In other words, one of the possible outcomes — 0, 1, 2, ..., or 10 patients wi
 
 ### What happens when we change the probability?
 
-The Binomial distribution depends on $n$ and $p$.
+The binomial distribution depends on $n$ and $p$.
 
 Let's see what happens when we change them.
 
@@ -1077,16 +1109,18 @@ ggplot(binomial_prob, aes(x = x, y = probability)) +
   geom_col(width = .8, fill = "grey80") +
   scale_x_continuous(breaks = 0:n) +
   labs(
-    title = paste0("Binomial(n = ", n, ", p = ", p, ")"),
+    title = paste0(
+      "Binomial(n = ", n, ", p = ", p, ")"
+    ),
     x = "Number with controlled hypertension",
     y = "Probability"
   )
 ```
 
 
-### Center and variability of a Binomial distribution
+### Center and variability of a binomial distribution
 
-Just like any distribution, a Binomial distribution has a **mean** and **standard deviation**.
+Just like any distribution, a binomial distribution has a **mean** and **standard deviation**.
 
 For $X \sim \text{Binomial}(n,p)$:
 
@@ -1122,9 +1156,9 @@ P(X \ge 6)
 =
 P(X=6)+P(X=7)+\cdots+P(X=10)$$
 
-Rather than adding these probabilities individually, we can use the Binomial cumulative distribution function.
+Rather than adding these probabilities individually, we can use the binomial cumulative distribution function.
 
-Just as `pnorm()` gives $P(X \le x)$ for a Normal distribution, `pbinom()` gives $P(X \le x)$ for a Binomial distribution.
+Just as `pnorm()` gives $P(X \le x)$ for a normal distribution, `pbinom()` gives $P(X \le x)$ for a binomial distribution.
 
 Therefore:
 
@@ -1158,7 +1192,7 @@ so:
 $$\large
 SD(X)=\sqrt{\lambda}$$
 
-Unlike the Binomial distribution, there is no fixed maximum number of events:
+Unlike the binomial distribution, there is no fixed maximum number of events:
 
 $$\large
 X=0,1,2,3,\ldots$$
@@ -1180,9 +1214,14 @@ poisson_prob <- data.frame(
 
 ggplot(poisson_prob, aes(x = x, y = probability)) +
   geom_col(width = .8, fill = "grey80") +
-  scale_x_continuous(breaks = x, limits = c(-0.5, 20.5)) +
+  scale_x_continuous(
+    breaks = x, 
+    limits = c(-0.5, 20.5)
+  ) +
   labs(
-    title = paste0("Poisson(lambda = ", lambda, ")"),
+    title = paste0(
+      "Poisson(lambda = ", lambda, ")"
+    ),
     x = "Number of hospital admissions",
     y = "Probability"
   ) 
@@ -1199,7 +1238,7 @@ $$\large
 P(X=x)=\frac{e^{-\lambda}\lambda^x}{x!},
 \qquad x=0,1,2,\ldots$$
 
-As with the Binomial distribution, individual counts have positive probabilities.
+As with the binomial distribution, individual counts have positive probabilities.
 
 ```{webr-r}
 dpois(0, lambda = 2)
@@ -1232,7 +1271,7 @@ X \sim \text{Poisson}(6)$$
 
 ### Working with the Poisson distribution in R
 
-The R functions work just as they did for the Normal and Binomial distributions:
+The R functions work just as they did for the normal and binomial distributions:
 
 | Function  | What it does                                    |
 |-----------|-------------------------------------------------|
@@ -1501,7 +1540,8 @@ Correlation always lies between $-1$ and $1$.
 ```{webr-r}
 #| classes: webr-plot
 
-generate_correlated <- function(n = 150, rho = 0.8) { 
+generate_correlated <- 
+  function(n = 150, rho = 0.8) { 
 
   x <- rnorm(n)
   y <- rho * x + sqrt(1 - rho^2) * rnorm(n)
@@ -1517,17 +1557,25 @@ plot_correlation <- function(dat) {
   ggplot(dat, aes(x, y)) +
     geom_point(size = 0.3) +
     labs(
-      title = sprintf("Correlation = %.2f", r)
+      title = sprintf(
+        "Correlation = %.2f", r
+      )
     ) +
     coord_equal(
       xlim = c(-lims, lims),
       ylim = c(-lims, lims)
     ) +
     theme(
-      plot.title = element_text(hjust = .5, size = 12)
+      plot.title = 
+        element_text(hjust = .5, size = 12)
     )
 }
-plot_correlation( generate_correlated(n = 500, rho = -0.7) ) # -0.7, 0, 0.7
+
+# Check -0.7, 0, 0.7
+
+plot_correlation(
+  generate_correlated(n = 500, rho = -0.7) 
+) 
 ```
 
 
@@ -1548,7 +1596,10 @@ n <- 200
 x_quad <- runif(n, -2, 2)
 y_quad <- x_quad^2 + rnorm(n, sd = 0.15)
 
-ggplot(data.table(x_quad, y_quad), aes(x_quad, y_quad)) +
+ggplot(
+  data.table(x_quad, y_quad), 
+  aes(x_quad, y_quad)
+) +
   geom_point(size = 2, alpha = 0.7) +
   labs(
     x = "x",
@@ -1604,7 +1655,10 @@ set.seed(1234)
 x_mono <- 1:100
 y_mono <- exp(x_mono / 25) + rnorm(100, 0, 1)
 
-ggplot(data.table(x_mono, y_mono), aes(x_mono, y_mono)) +
+ggplot(
+  data.table(x_mono, y_mono), 
+  aes(x_mono, y_mono)
+) +
   geom_point(size = 1.5) +
   labs(
     x = "x",
