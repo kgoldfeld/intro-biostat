@@ -11,4 +11,4 @@ title: "Introduction to Biostatistics"
 5.  [**Modeling continuous outcomes**](lecture05/lecture05.html)
 6.  [**Modeling categorical outcomes**](lecture06/lecture06.html)
 7.  [**Practical issues in data analysis**](lecture07/lecture07.html)
-8.  **Prediction and classification**
+8.  [**Prediction and classification**](lecture08/lecture08.html)
