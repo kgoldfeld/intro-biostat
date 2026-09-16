@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Lecture 8: Prediction and Classification"
 format:
   html:
     css: ../css/lecture.css
@@ -132,8 +132,17 @@ dd[, .(age, hypertension_5yr, predicted_risk)][1:10]
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = dd, aes(x = age, y = predicted_risk)) +
-  geom_point(aes(x = age, y = hypertension_5yr), size = .7) +
+ggplot(
+  data = dd, 
+  aes(x = age, y = predicted_risk)
+) +
+  geom_point(
+    aes(
+      x = age, 
+      y = hypertension_5yr
+    ), 
+    size = 0.7
+  ) +
   geom_line()
 ```
 
@@ -199,6 +208,8 @@ dd[, (noise_vars) := lapply(
   1:20,
   function(j) rnorm(.N)
 )]
+
+dd[, .(x1, x9, x13, x20)]
 ```
 
 Imagine that we don't know which variables are actually useful predictors.
@@ -218,7 +229,10 @@ Or we could fit a much more complicated model using age and all 20 additional va
 ```{webr-r}
 fit_complex <- glm(
   hypertension_5yr ~ .,
-  data = dd[, c("hypertension_5yr", "age", noise_vars), with = FALSE],
+  data = dd[, 
+    c("hypertension_5yr", "age", noise_vars), 
+    with = FALSE
+  ],
   family = binomial
 )
 ```
@@ -248,8 +262,11 @@ $$\large
 Smaller values indicate predictions that are closer to the observed outcomes.
 
 ```{webr-r}
-dd[, pred_simple := predict(fit_simple, type = "response")]
-dd[, pred_complex := predict(fit_complex, type = "response")]
+dd[, 
+  pred_simple := predict(fit_simple, type = "response")]
+
+dd[,
+  pred_complex := predict(fit_complex, type = "response")]
 
 dd[, .(
   simple = mean((hypertension_5yr - pred_simple)^2),
@@ -430,10 +447,12 @@ dd_new[, risk_group := cut(
   include.lowest = TRUE
 )]
 
-calibration <- dd_new[, .(
-  predicted = mean(pred_simple),
-  observed = mean(hypertension_5yr)
-), keyby = risk_group]
+calibration <- dd_new[,
+  .(predicted = mean(pred_simple),
+    observed = mean(hypertension_5yr)
+  ),
+  keyby = risk_group
+]
 
 calibration
 ```
@@ -441,10 +460,20 @@ calibration
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(calibration, aes(x = predicted, y = observed)) +
-  geom_abline(intercept = 0, slope = 1, linetype = 2) +
+ggplot(
+  calibration, 
+  aes(x = predicted, y = observed)
+) +
+  geom_abline(
+    intercept = 0, 
+    slope = 1, 
+    linetype = 2
+  ) +
   geom_point(size = 3) +
-  coord_equal(xlim = c(0, 0.6), ylim = c(0, 0.6) ) +
+  coord_equal(
+    xlim = c(0, 0.6), 
+    ylim = c(0, 0.6)
+  ) +
   labs(
     x = "Average predicted risk",
     y = "Observed proportion with hypertension"
@@ -487,8 +516,17 @@ $$\large
 \end{cases}$$
 
 ```{webr-r}
-dd_new[, classified_high_risk := as.integer(pred_simple >= 0.30)]   # also look at 0.20, 0.40
-dd_new[1:10, .(predicted_risk = pred_simple, hypertension_5yr, classified_high_risk)]
+dd_new[, 
+  classified_high_risk := as.integer(pred_simple >= 0.30)]
+
+dd_new[1:10, 
+  .(predicted_risk = pred_simple, 
+    hypertension_5yr, 
+    classified_high_risk
+  )
+]
+
+# also look at 0.20, 0.40
 ```
 
 Now every person has two pieces of information:
@@ -512,8 +550,16 @@ We can summarize them in a table:
 
 ```{webr-r}
 table(
-  Classified = dd_new$classified_high_risk,
-  Observed = dd_new$hypertension_5yr
+  Classified = factor(
+    dd_new$classified_high_risk,
+    levels = c(1, 0),
+    labels = c("High risk", "Low risk")
+  ),
+  Observed = factor(
+    dd_new$hypertension_5yr,
+    levels = c(1, 0),
+    labels = c("Hypertension", "No hypertension")
+  )
 )
 ```
 
@@ -577,7 +623,10 @@ $$\large
 {\text{True negatives}+\text{False positives}}$$
 
 ```{webr-r}
-dd_new[hypertension_5yr == 0, mean(classified_high_risk == 0)]
+dd_new[
+  hypertension_5yr == 0, 
+  mean(classified_high_risk == 0)
+]
 ```
 
 This is the **specificity** of the classification rule.
@@ -604,7 +653,10 @@ $$\large
 {\text{True positives}+\text{False positives}}$$
 
 ```{webr-r}
-dd_new[classified_high_risk == 1, mean(hypertension_5yr)]
+dd_new[
+  classified_high_risk == 1, 
+  mean(hypertension_5yr)
+]
 ```
 
 With our threshold of 0.30, about half of the people classified as high risk actually developed hypertension.
@@ -659,13 +711,21 @@ dd_new[, outcome := factor(
 
 risk_density <- function(threshold) {
   
-  ggplot(dd_new, aes(x = pred_simple, fill = outcome)) +
+  ggplot(
+    dd_new, 
+    aes(x = pred_simple, fill = outcome)
+  ) +
     geom_density(alpha = 0.20) +
     geom_density(
-      aes(y = after_stat(ifelse(x >= threshold, density, 0))),
+      aes(y = 
+        after_stat(ifelse(x >= threshold, density, 0))
+      ),
       alpha = 0.55
     ) +
-    geom_vline(xintercept = threshold, linetype = 2) +
+    geom_vline(
+      xintercept = threshold, 
+      linetype = 2
+    ) +
     labs(
       x = "Predicted 5-year risk",
       y = "Density",
@@ -688,9 +748,9 @@ At our threshold of 0.30:
 
 ### What happens when we move the threshold?
 
-> ***What happens if we raise the threshold? What if we lower it?***
-
 ```{webr-r}
+#| classes: webr-plot
+
 risk_density(0.50)   # try 0.50, then 0.10
 ```
 
@@ -724,8 +784,12 @@ roc <- rbindlist(lapply(thresholds, function(threshold) {
   
   data.table(
     threshold = threshold,
-    sensitivity = mean(classified[dd_new$hypertension_5yr == 1]),
-    false_positive_rate = mean(classified[dd_new$hypertension_5yr == 0])
+    sensitivity = mean(
+      classified[dd_new$hypertension_5yr == 1]
+    ),
+    false_positive_rate = mean(
+      classified[dd_new$hypertension_5yr == 0]
+    )
   )
 }))
 ```
@@ -733,7 +797,7 @@ roc <- rbindlist(lapply(thresholds, function(threshold) {
 Let's look at a few of the thresholds:
 
 ```{webr-r}
-roc[c(50, 100, 400)]
+roc[c(50, 142, 400)]
 ```
 
 For each threshold, we now have **two proportions**:
@@ -746,9 +810,16 @@ We can plot one against the other:
 ```{webr-r}
 #| classes: webr-plot
 
-roc_plot <- ggplot(roc, aes(x = false_positive_rate, y = sensitivity)) +
+roc_plot <- ggplot(
+  roc, 
+  aes(x = false_positive_rate, y = sensitivity)
+) +
   geom_step() +
-  coord_equal(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE) +
+  coord_equal(
+    xlim = c(0, 1), 
+    ylim = c(0, 1), 
+    expand = FALSE
+  ) +
   labs(
     x = "False positive rate (1 - specificity)",
     y = "Sensitivity"
@@ -792,7 +863,11 @@ across all thresholds.
 #| classes: webr-plot
 
 roc_plot +
-  geom_abline(intercept = 0, slope = 1, linetype = 2)
+  geom_abline(
+    intercept = 0, 
+    slope = 1, 
+    linetype = 2
+  )
 ```
 
 The diagonal therefore represents **no discrimination**.
@@ -829,13 +904,27 @@ beta_age <- 0.0  # try 0, 0.05, 0.15
 
 dd <- DGP(500, beta_age)
 
-fit <- glm(hypertension_5yr ~ age, data = dd, family = binomial)
+fit <- glm(
+  hypertension_5yr ~ age, 
+  data = dd, 
+  family = binomial
+)
 
 set.seed(82761)
 
 dd_test <- DGP(500, beta_age)
-dd_test[, predicted_risk := predict(fit, newdata = dd_test, type = "response")]
-dd_test[, outcome := factor(hypertension_5yr, levels = c(0, 1), labels = c("No hypertension", "Hypertension"))]
+dd_test[, 
+  predicted_risk := 
+    predict(fit, newdata = dd_test, type = "response")
+]
+
+dd_test[,
+  outcome := factor(
+    hypertension_5yr, 
+    levels = c(0, 1), 
+    labels = c("No hypertension", "Hypertension")
+  )
+]
 ```
 
 ### How separated are the predicted risks?
@@ -843,7 +932,10 @@ dd_test[, outcome := factor(hypertension_5yr, levels = c(0, 1), labels = c("No h
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(dd_test, aes(x = predicted_risk, fill = outcome)) +
+ggplot(
+  dd_test, 
+  aes(x = predicted_risk, fill = outcome)
+) +
   geom_density(alpha = 0.35) +
   labs(
     x = "Predicted 5-year risk",
@@ -862,23 +954,40 @@ ggplot(dd_test, aes(x = predicted_risk, fill = outcome)) +
 
 thresholds <- c(
   Inf,
-  sort(unique(dd_test$predicted_risk), decreasing = TRUE),
+  sort(
+    unique(dd_test$predicted_risk), 
+    decreasing = TRUE
+  ),
   -Inf
 )
 
-roc_test <- rbindlist(lapply(thresholds, function(threshold) {
-  
-  classified <- as.integer(dd_test$predicted_risk >= threshold)
-  
-  data.table(
-    sensitivity = mean(classified[dd_test$hypertension_5yr == 1]),
-    false_positive_rate = mean(classified[dd_test$hypertension_5yr == 0])
-  )
-}))
+roc_test <- rbindlist(lapply(
+  thresholds, function(threshold) {
+    classified <- as.integer(
+      dd_test$predicted_risk >= threshold
+    )
+    
+    data.table(
+      sensitivity = mean(
+        classified[dd_test$hypertension_5yr == 1]
+      ),
+      false_positive_rate = mean(
+        classified[dd_test$hypertension_5yr == 0]
+      )
+    )
+  }
+))
 
-ggplot(roc_test, aes(x = false_positive_rate, y = sensitivity)) +
+ggplot(
+  roc_test, 
+  aes(x = false_positive_rate, y = sensitivity)
+) +
   geom_step() +
-  geom_abline(intercept = 0, slope = 1, linetype = 2) +
+  geom_abline(
+    intercept = 0, 
+    slope = 1, 
+    linetype = 2
+  ) +
   coord_equal(
     xlim = c(0, 1),
     ylim = c(0, 1),
@@ -925,11 +1034,25 @@ This summary is called the **AUC**, which has a particularly useful interpretati
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(roc, aes(x = false_positive_rate, y = sensitivity)) +
-  geom_ribbon(aes(ymin = 0, ymax = sensitivity), alpha = 0.25) +
+ggplot(
+  roc, 
+  aes(x = false_positive_rate, y = sensitivity)
+) +
+  geom_ribbon(
+    aes(ymin = 0, ymax = sensitivity), 
+    alpha = 0.25
+  ) +
   geom_step() +
-  geom_abline(intercept = 0, slope = 1, linetype = 2) +
-  coord_equal(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE) +
+  geom_abline(
+    intercept = 0, 
+    slope = 1, 
+    linetype = 2
+  ) +
+  coord_equal(
+    xlim = c(0, 1), 
+    ylim = c(0, 1), 
+    expand = FALSE
+  ) +
   labs(
     x = "False positive rate (1 - specificity)",
     y = "Sensitivity"

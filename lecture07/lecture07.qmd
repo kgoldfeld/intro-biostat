@@ -993,7 +993,7 @@ Let's again repeat the sampling process many times.
 ```{webr-r}
 set.seed(123)
 
-n_sims <- 1000
+n_sims <- 100
 
 sim_means <- replicate(n_sims, {
   
