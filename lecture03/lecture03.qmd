@@ -7,7 +7,7 @@ engine: knitr
 filters:
   - webr
 webr:
-  packages: ["data.table", "ggplot2", "patchwork"]
+  packages: ["data.table", "ggplot2", "patchwork", "ratesci"]
 ---
 
 ## Initial setup
@@ -22,8 +22,10 @@ library(patchwork)
 
 theme_set(
   theme_bw(base_size = 14) +
-    theme(panel.grid = element_blank(),
-          plot.title = element_text(face = "bold", size = 12))
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold", size = 12)
+  )
 )
 ```
 
@@ -79,7 +81,9 @@ dd[, density := dt(x, df = 29)]
 ggplot(dd, aes(x, density)) +
   geom_line(linewidth = 1) +
   labs(
-    x = expression(t == frac(bar(x) - mu, s / sqrt(n))),
+    x = expression(
+      t == frac(bar(x) - mu, s / sqrt(n))
+    ),
     y = "Density",
     title = "t-distribution with df = 29"
   )
@@ -130,9 +134,12 @@ ggplot(dd, aes(x, density)) +
     linetype = 2
   ) +
   labs(
-    x = expression(t == frac(bar(x) - mu, s / sqrt(n))),
+    x = expression(
+      t == frac(bar(x) - mu, s / sqrt(n))
+    ),
     y = "Density",
-    title = "Central 95% region for t-distribution with df = 29"
+    title = 
+      "Central 95% region for t-distribution with df = 29"
   )
 ```
 
@@ -252,13 +259,16 @@ ggplot(bw_CI_dd,
   ) +
   scale_y_reverse() +
   scale_color_manual(
-    values = c("TRUE" = "grey60", "FALSE" = "firebrick"),
+    values = c(
+      "TRUE" = "grey60", "FALSE" = "firebrick"
+    ),
     guide = "none"
   ) +
   labs(
     x = "Birth Weight (ounces)",
     y = "Sample",
-    title = "95% confidence intervals from repeated samples"
+    title = 
+      "95% confidence intervals from repeated samples"
   ) +
  theme(aspect.ratio = 0.9)
 ```
@@ -317,8 +327,16 @@ sd_change <- 3
 
 effect_size <- 4
 
-grip_before <- rnorm(sample_size, mean = mu_before, sd = sd_before)
-grip_after <- grip_before + effect_size + rnorm(sample_size, 0, sd_change)
+grip_before <- rnorm(
+  sample_size, 
+  mean = mu_before, 
+  sd = sd_before
+)
+
+grip_after <- 
+  grip_before + 
+  effect_size + 
+  rnorm(sample_size, 0, sd_change)
 
 dd <- data.table(grip_before, grip_after)
 dd[, grip_change := grip_after - grip_before]
@@ -402,7 +420,9 @@ dd[, group := factor(group, levels = c("statin", "diet"))]
 Next estimate the 95% confidence interval manually:
 
 ```{webr-r}
-estimate <- dd[group == "statin", mean(ldl)] - dd[group == "diet", mean(ldl)]
+estimate <- 
+  dd[group == "statin", mean(ldl)] - 
+  dd[group == "diet", mean(ldl)]
 
 se <- sqrt(
  dd[group == "statin", var(ldl) / .N] +
@@ -445,9 +465,12 @@ density_dt <- data.table(
 )
 
 density_dt[, `:=`(
-  Normal = dnorm(x, mean = mu, sd = 5),
-  `Moderate skew` = dgamma(x, shape = 4, rate = 4 / mu),
-  `Strong skew` = dgamma(x, shape = 1, rate = 1 / mu)
+  Normal = 
+    dnorm(x, mean = mu, sd = 5),
+  `Moderate skew` = 
+    dgamma(x, shape = 4, rate = 4 / mu),
+  `Strong skew` = 
+    dgamma(x, shape = 1, rate = 1 / mu)
 )]
 
 density_dt <- melt(
@@ -459,7 +482,9 @@ density_dt <- melt(
 
 density_dt[, distribution := factor(
   distribution,
-  levels = c("Normal", "Moderate skew", "Strong skew")
+  levels = c(
+    "Normal", "Moderate skew", "Strong skew"
+  )
 )]
 
 ggplot(density_dt, aes(x = x, y = density)) +
@@ -474,7 +499,8 @@ ggplot(density_dt, aes(x = x, y = density)) +
     x = "Outcome",
     y = "Density",
     color = NULL,
-    title = "Populations with increasing right skew"
+    title = 
+      "Populations with increasing right skew"
   ) +
   facet_grid(~ distribution) +
   theme(aspect.ratio = 0.8)
@@ -554,11 +580,16 @@ shape <- 1
 distribution <- "Gamma"
 replications <- 50000
 
-results <- rbindlist(
-  lapply(
-    1:replications, 
-    function(x) gen_stats(sample_size, mu, shape = shape, distribution = distribution)
+sim_stats <- function(x) {
+  gen_stats(
+    sample_size, mu,
+    shape = shape,
+    distribution = distribution
   )
+}
+
+results <- rbindlist(
+  lapply(1:replications, sim_stats)
 )
 
 results[, mean(reject)]
@@ -935,15 +966,12 @@ The observed success rates are$$\hat{p}_1 = \frac{35}{48} = 0.729
 #| classes: webr-plot
 
 dd <- data.table(
- group = rep(paste("Group", 1:2), each = 2),
- outcome = rep(
- c("Completed", "Did not complete"),
- times = 2
- ),
- count = c(
- 35, 13,
- 27, 25
- )
+  group = rep(paste("Group", 1:2), each = 2),
+  outcome = rep(
+    c("Completed", "Did not complete"),
+    times = 2
+  ),
+  count = c(35, 13, 27, 25)
 )
 
 ggplot(dd, aes(
@@ -1029,23 +1057,27 @@ Under no association, the expected outcome distribution is the same in both grou
 #| classes: webr-plot
 
 dd <- data.table(
- group = rep(paste("Group", 1:2), each = 2),
- outcome = rep(
- c("Completed", "Did not complete"),
- times = 2
- ),
- count = c(
- 29.76, 18.24,
- 32.24, 19.76
- )
+  group = rep(paste("Group", 1:2), each = 2),
+  outcome = rep(
+    c("Completed", "Did not complete"),
+    times = 2
+  ),
+  count = c(29.76, 18.24, 32.24, 19.76)
 )
 
-ggplot(dd, aes(
+ggplot(
+  dd, 
+  aes(
     x = group, 
     y = count, 
     fill = outcome
-  )) +
-  geom_col(position = "fill", linewidth = 0.4, alpha = 0.95) +
+  )
+) +
+  geom_col(
+    position = "fill", 
+    linewidth = 0.4, 
+    alpha = 0.95
+  ) +
   scale_y_continuous(labels = scales::percent) +
   scale_fill_manual(
     values = c(
@@ -1173,10 +1205,10 @@ Or we can perform the entire analysis directly from the contingency table using 
 
 ```{webr-r}
 tab <- matrix(
- c(35, 13,
- 27, 25),
- nrow = 2,
- byrow = TRUE
+  c(35, 13,
+    27, 25),
+  nrow = 2,
+  byrow = TRUE
 )
 
 tab
@@ -1254,10 +1286,11 @@ In **R**:
 
 ```{webr-r}
 tab_small <- matrix(
- c(5, 0,
- 1, 4),
- nrow = 2,
- byrow = TRUE
+  c(5, 0,
+    1, 4
+  ),
+  nrow = 2,
+  byrow = TRUE
 )
 
 fisher.test(tab_small)
@@ -1332,8 +1365,10 @@ $$
 \large
 H_0: P(\text{A survives, B does not})
 =
-P(\text{B survives, A does not}) \\
-
+P(\text{B survives, A does not})
+$$
+$$
+\large
 H_A: P(\text{A survives, B does not})
 \neq
 P(\text{B survives, A does not}).
@@ -1343,10 +1378,10 @@ We can test this hypothesis in **R** using the function `mcnemar.test()`:
 
 ```{webr-r}
 tab <- matrix(
- c(30, 20,
- 8, 42),
- nrow = 2,
- byrow = TRUE
+  c(30, 20,
+     8, 42),
+  nrow = 2,
+  byrow = TRUE
 )
 
 mcnemar.test(tab)
@@ -1357,7 +1392,14 @@ We can estimate the difference in survival probabilities and construct a 95% con
 ```{webr-r}
 library(ratesci)
 
-rdpairci(c(30, 20, 8, 42))$estimates["SCAS", ]
+# webR currently uses an older version of ratesci;
+# current versions use rdpairci()
+
+ci <- pairbinci(
+  c(30, 20, 8, 42)
+)$estimates
+
+ci[, c("lower", "est", "upper")]
 ```
 
 The estimated survival probability is 12 percentage points higher with treatment A than with treatment B (95% CI: 1.7 to 22.5 percentage points). The observed difference is inconsistent with the null hypothesis of equal survival probabilities ($p = 0.038$).
