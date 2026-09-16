@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Lecture 7: Practical Issues in Data Analysis"
 format:
   html:
     css: ../css/lecture.css
@@ -194,7 +194,10 @@ We now reject an individual null hypothesis only when $p < 0.0025$:
 
 ```{webr-r}
 set.seed(123)
-n_sims <- 10000
+
+n_sims <- 1000
+
+n <- 100
 n_outcomes <- 20
 
 alpha_bonf <- 0.05 / n_outcomes
@@ -389,7 +392,10 @@ p_values <- sapply(effect, function(delta) {
   t.test(treatment, control)$p.value
 })
 
-d_result <- data.table(effect = effect, reject_null = as.integer(p_values < 0.05))
+d_result <- data.table(
+  effect = effect, 
+  reject_null = as.integer(p_values < 0.05)
+)
 ```
 
 ```{webr-r}
@@ -405,7 +411,12 @@ c(
 ```
 
 ```{webr-r}
-FDP <- ifelse(total_discoveries == 0, 0, false_discoveries / total_discoveries)
+FDP <- ifelse(
+  total_discoveries == 0, 
+  0, 
+  false_discoveries / total_discoveries
+)
+
 FDP
 ```
 
@@ -421,7 +432,7 @@ For each simulated study, we calculate the **false discovery proportion**.
 ```{webr-r}
 set.seed(123)
 
-n_sims <- 1000
+n_sims <- 100
 
 sim_FDP <- replicate(n_sims, {
   
@@ -431,12 +442,22 @@ sim_FDP <- replicate(n_sims, {
     t.test(treatment, control)$p.value
   })
   
-  d_result <- data.table(effect = effect, reject_null = as.integer(p_values < 0.05))
+  d_result <- data.table(
+    effect = effect, 
+    reject_null = as.integer(p_values < 0.05)
+  )
 
-  false_discoveries <- d_result[effect == 0, sum(reject_null)]
-  total_discoveries <- d_result[, sum(reject_null)]
+  false_discoveries <- 
+    d_result[effect == 0, sum(reject_null)]
   
-  ifelse(total_discoveries == 0, 0, false_discoveries / total_discoveries)
+  total_discoveries <- 
+    d_result[, sum(reject_null)]
+  
+  ifelse(
+    total_discoveries == 0, 
+    0, 
+    false_discoveries / total_discoveries
+  )
 })
 
 head(sim_FDP)
@@ -477,11 +498,19 @@ p_values <- sapply(effect, function(delta) {
 
 p_values_BH <- p.adjust(p_values, method = "BH")
 
-d_result_BH <- data.table(effect = effect, reject_null = as.integer(p_values_BH < 0.05))
+d_result_BH <- data.table(
+  effect = effect, 
+  reject_null = as.integer(p_values_BH < 0.05)
+)
 
-false_discoveries <- d_result_BH[effect == 0, sum(reject_null)]
-true_discoveries <- d_result_BH[effect != 0, sum(reject_null)]
-total_discoveries <- d_result_BH[, sum(reject_null)]
+false_discoveries <- 
+  d_result_BH[effect == 0, sum(reject_null)]
+
+true_discoveries <- 
+  d_result_BH[effect != 0, sum(reject_null)]
+
+total_discoveries <- 
+  d_result_BH[, sum(reject_null)]
 
 c(
   false = false_discoveries,
@@ -500,7 +529,7 @@ FDP
 ```{webr-r}
 set.seed(123)
 
-n_sims <- 500
+n_sims <- 100
 
 sim_FDP_BH <- replicate(n_sims, {
   
@@ -517,10 +546,17 @@ sim_FDP_BH <- replicate(n_sims, {
     reject_null = as.integer(p_values_BH < 0.05)
   )
   
-  false_discoveries <- d_results[effect == 0, sum(reject_null)]
-  total_discoveries <- d_results[, sum(reject_null)]
+  false_discoveries <- 
+    d_results[effect == 0, sum(reject_null)]
   
-  ifelse(total_discoveries == 0, 0, false_discoveries / total_discoveries)
+  total_discoveries <- 
+    d_results[, sum(reject_null)]
+  
+  ifelse(
+    total_discoveries == 0, 
+    0, 
+    false_discoveries / total_discoveries
+  )
 })
 
 mean(sim_FDP_BH)
@@ -657,8 +693,11 @@ ggplot(data = dd, aes(x = health, y = outcome)) +
     yintercept = dd[, mean(outcome)],
     linetype = 2,
     linewidth = 1
-  )+ 
-  geom_hline(yintercept = 50, color = "grey80") + 
+  ) + 
+  geom_hline(
+    yintercept = 50, 
+    color = "grey80"
+  ) + 
   geom_point(size = 1, color = "grey50")
 ```
 
@@ -677,7 +716,8 @@ The probability of missingness is unrelated to:
 ```{webr-r}
 dd[, missing := rbinom(.N, 1, 0.30)]
 
-dd[, outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+dd[, 
+  outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
 
 dd[, .(
   n_observed = sum(!is.na(outcome_obs)),
@@ -719,6 +759,7 @@ In each simulated study, we estimate the population mean using:
 ```{webr-r}
 set.seed(123)
 
+n <- 1000
 n_sims <- 1000
 
 sim_means <- replicate(n_sims, {
@@ -730,7 +771,8 @@ sim_means <- replicate(n_sims, {
   d_sim[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]
   
   d_sim[, missing := rbinom(.N, 1, 0.30)]
-  d_sim[, outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+  d_sim[, 
+    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
   
   est_complete <- d_sim[, mean(outcome)]
   est_missing <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
@@ -770,7 +812,8 @@ Because baseline health is observed for everyone, we know something about why th
 ```{webr-r}
 dd[, p_missing := plogis(-1 - 2 * health)]
 dd[, missing := rbinom(.N, 1, p_missing)]
-dd[, outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+dd[, 
+  outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
 
 dd[, .(
   n_observed = sum(!is.na(outcome_obs)),
@@ -782,7 +825,12 @@ dd[, .(
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = dd, aes(x = health, y = outcome, color = factor(missing))) +
+ggplot(data = dd, 
+  aes(
+    x = health, 
+    y = outcome, 
+    color = factor(missing)
+  )) +
   geom_hline(
     yintercept = dd[missing == 0, mean(outcome)],
     linetype = 2,
@@ -805,7 +853,7 @@ Because baseline health predicts the outcome, systematically losing participants
 ```{webr-r}
 set.seed(1234)
 
-n_sims <- 1000
+n_sims <- 100
 
 sim_means <- replicate(n_sims, {
   
@@ -817,7 +865,8 @@ sim_means <- replicate(n_sims, {
   
   d_sim[, p_missing := plogis(-1 - 2 * health)]
   d_sim[, missing := rbinom(.N, 1, p_missing)]
-  d_sim[, outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+  d_sim[, 
+    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
   
   est_complete <- d_sim[, mean(outcome)]
   est_missing <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
@@ -897,7 +946,8 @@ Participants with lower outcome values are more likely to have a missing outcome
 ```{webr-r}
 dd[, p_missing := plogis(3.5 - 0.1 * outcome)]
 dd[, missing := rbinom(.N, 1, p_missing)]
-dd[, outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+dd[, 
+  outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
 
 dd[, .(
   n_observed = sum(!is.na(outcome_obs)),
@@ -909,7 +959,12 @@ dd[, .(
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = dd, aes(x = health, y = outcome, color = factor(missing))) +
+ggplot(data = dd, 
+  aes(
+    x = health, 
+    y = outcome, 
+    color = factor(missing)
+  )) +
   geom_hline(
     yintercept = dd[missing == 0, mean(outcome)],
     linetype = 2,
@@ -950,7 +1005,8 @@ sim_means <- replicate(n_sims, {
   
   d_sim[, p_missing := plogis(3.5 - 0.1 * outcome)]
   d_sim[, missing := rbinom(.N, 1, p_missing)]
-  d_sim[, outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+  d_sim[, 
+    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
   
   est_complete <- d_sim[, mean(outcome)]
   est_missing <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
