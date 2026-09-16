@@ -1,0 +1,1194 @@
+---
+title: "Logistic regression"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+webr:
+  packages: ["data.table", "ggplot2", "patchwork", "broom", "gt"]
+---
+
+```{webr-r}
+#| context: setup
+
+download.file(
+  "https://teaching.rdatagen.net/lecture06/data/heart.csv",
+  "heart.csv
+)
+```
+
+
+## Initial setup
+
+
+```{webr-r}
+#| autorun: true
+#| echo: false
+
+library(data.table)
+library(ggplot2)
+library(patchwork)
+library(broom)
+library(gt)
+
+theme_set(
+  theme_bw(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold", size = 12),
+    axis.title = element_text(size = 12)
+  )
+)
+```
+
+
+
+## From continuous to binary outcomes
+
+
+In the last lecture, we used regression to describe how the **mean of an outcome** changes with a predictor.
+
+For a continuous outcome $\large Y$, we wrote:
+
+$$\Large
+E(Y \mid X=x) = \beta_0 + \beta_1 x$$
+
+But many outcomes we care about are **binary**:
+
+- disease / no disease
+- hospitalized / not hospitalized
+- treatment success / treatment failure
+- alive / dead
+
+Can we use the same regression framework when the outcome takes only two possible values?
+
+
+
+## A simulated population
+
+
+Suppose we are interested in the relationship between **age and hypertension**.
+
+For each person, define
+
+$$\Large
+Y =
+\begin{cases}
+1 & \text{if the person has hypertension} \\
+0 & \text{if the person does not have hypertension}
+\end{cases}$$
+
+Let's simulate a population in which the probability of hypertension increases with age.
+
+```{webr-r}
+set.seed(1234)
+
+n <- 500
+
+dd <- data.table(
+  age = runif(n, 20, 80)
+)
+
+dd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]          # to be explained later ...
+dd[, hypertension := rbinom(.N, size = 1, prob = p)]
+```
+
+We know the probability used to generate each person's outcome because we created the population ourselves.
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(dd, aes(x = age, y = hypertension)) +
+  geom_point(alpha = 0.35, size = 0.5) +
+  scale_y_continuous(
+    breaks = c(0, 1),
+    labels = c("No", "Yes")
+  ) +
+  labs(
+    x = "Age",
+    y = "Hypertension outcome"
+  )
+```
+
+Each observed outcome is either **0 or 1**. But our scientific question is not really whether a particular individual has hypertension.
+
+We want to know:
+
+> **How does the probability of hypertension change with age?**
+
+
+
+## The mean of a binary outcome is a probability
+
+
+Recall that regression models the conditional mean:
+
+$$\Large
+E(Y \mid X=x)$$
+
+What does a mean represent when an outcome can only be 0 or 1?
+
+Suppose that among 100 people of the same age, 30 have hypertension. If hypertension is coded 1 for yes and 0 for no, the mean is
+
+$$\Large
+\bar{Y}
+=
+\frac{30(1)+70(0)}{100}
+=
+0.30$$
+
+The mean is simply the **proportion of people with hypertension**.
+
+In the population, that proportion is a probability. Therefore, for a binary outcome coded 0 and 1,
+
+$$\Large
+E(Y \mid X=x)
+=
+P(Y=1 \mid X=x)$$
+
+So for a binary outcome:
+
+> **Modeling the conditional mean is the same thing as modeling the probability that** $\large Y=1$.
+
+Because we simulated these data, we can see the true probability in the population.
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(dd, aes(x = age, y = hypertension)) +
+  geom_point(alpha = 0.35, size = 0.5) +
+  scale_y_continuous(
+    breaks = c(0, 1),
+    labels = c("No", "Yes")
+  ) +
+  geom_line(
+    aes(y = p),
+    data = dd[order(age)],
+    linewidth = 1
+  ) +
+  labs(
+    x = "Age",
+    y = "Hypertension outcome / probability"
+  )
+```
+
+
+
+## Can we use linear regression?
+
+
+We want to model the probability of hypertension as a function of age.
+
+We already know how to model a conditional mean. Why not just use linear regression?
+
+```{webr-r}
+fit_linear <- lm(hypertension ~ age, data = dd)
+```
+
+The fitted model is
+
+$$\Large
+E(Y \mid \text{age}) = \hat{\beta}_0 + \hat{\beta}_1 \text{age}$$
+
+Since $\large E(Y \mid \text{age}) = P(Y=1 \mid \text{age})$, the fitted values from this model are estimates of the probability of hypertension.
+
+Let's compare the fitted linear model with the true probabilities we used to generate the data.
+
+```{webr-r}
+#| classes: webr-plot
+
+dd[, p_linear := predict(fit_linear)]
+
+ggplot(dd, aes(x = age, y = hypertension)) +
+  geom_point(alpha = 0.35, size = 0.5) +
+  geom_line(
+    aes(y = p),
+    data = dd[order(age)],
+    linewidth = 1
+  ) +
+  geom_line(
+    aes(y = p_linear),
+    data = dd[order(age)],
+    linewidth = 1,
+    linetype = 2,
+    color = "darkred"
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 1, by = 0.2)
+  ) +
+  labs(
+    x = "Age",
+    y = "Hypertension outcome / probability"
+  )
+```
+
+The linear model captures the general idea that hypertension becomes more common with age, but it does not capture the shape of the relationship very well.
+
+- A straight line assumes that the probability changes by the **same amount** for every one-year increase in age.
+- But probabilities are constrained: $\large 0 \leq P(Y=1 \mid X) \leq 1$
+- A linear model does not enforce this constraint. Depending on the predictor values, it can produce fitted probabilities below 0 or above 1.
+
+
+### What we need is a regression model that ...
+
+- allows the probability to change with age
+- keeps predicted probabilities between 0 and 1
+- retains the basic structure of a linear regression model
+
+> How can we turn a probability, which is constrained between 0 and 1, into something we can model on an unrestricted linear scale?
+
+
+
+## From probabilities to odds
+
+
+A probability is constrained to lie between 0 and 1.
+
+One way to transform a probability is to express it as **odds**:
+
+$$\Large
+\text{odds} = \frac{p}{1-p}$$
+
+Odds compare the probability that an event occurs with the probability that it does not occur.
+
+For example, if the probability of hypertension is 0.75,
+
+$$\Large
+\text{odds} = \frac{0.75}{0.25} = 3$$
+
+The odds of hypertension are **3 to 1**: for every 3 people with hypertension, we would expect about 1 without hypertension.
+
+Here is a range of odds for probabilities between 0.10 and 0.90:
+
+| Probability | Odds |
+|------------:|-----:|
+|        0.10 | 0.11 |
+|        0.25 | 0.33 |
+|        0.50 | 1.00 |
+|        0.75 | 3.00 |
+|        0.90 | 9.00 |
+
+
+
+## From odds to log odds
+
+
+Odds are no longer constrained to lie between 0 and 1:
+
+$$\Large
+0 < \text{odds} < \infty$$
+
+But they are still constrained — odds cannot be negative.
+
+Taking the logarithm removes this constraint:
+
+$$\Large
+\text{log odds} = \log\left(\frac{p}{1-p}\right)$$
+
+The log odds can take any value:
+
+$$\Large
+-\infty < \log\left(\frac{p}{1-p}\right) < \infty$$
+
+| Probability | Odds | Log odds |
+|------------:|-----:|---------:|
+|        0.10 | 0.11 |    −2.20 |
+|        0.25 | 0.33 |    −1.10 |
+|        0.50 | 1.00 |     0.00 |
+|        0.75 | 3.00 |     1.10 |
+|        0.90 | 9.00 |     2.20 |
+
+
+
+## Logistic regression
+
+
+We now have a quantity that can range from $-\infty$ to $\infty$.
+
+So instead of modeling the probability directly as a linear function of age, logistic regression models the **log odds** as a linear function of age:
+
+$$\Large
+\log\left(\frac{p}{1-p}\right)
+=
+\beta_0 + \beta_1 \text{age}$$
+
+where
+
+$$\Large
+p = P(Y=1 \mid \text{age})$$
+
+
+
+## From log odds back to probability
+
+
+The logistic regression model is linear on the **log-odds scale**: $$\Large
+\log\left(\frac{p}{1-p}\right)
+=
+\beta_0 + \beta_1 X$$
+
+> But we are usually more interested in the **probability** of the outcome than in its log odds.
+
+We can transform the model back to the probability scale, first by exponentiating both sides: $$\Large
+\frac{p}{1-p}
+=
+\exp(\beta_0+\beta_1X)$$
+
+Multiply both sides by $(1-p)$: $$\Large
+p
+=
+(1-p)\exp(\beta_0+\beta_1X)$$
+
+Collect the terms involving $p$: $$\Large
+p + p\exp(\beta_0+\beta_1X)
+=
+\exp(\beta_0+\beta_1X)$$
+
+Factor out $p$: $$\Large
+p\left[1+\exp(\beta_0+\beta_1X)\right]
+=
+\exp(\beta_0+\beta_1X)$$
+
+So $$\Large
+p
+=
+\frac{\exp(\beta_0+\beta_1X)}
+{1+\exp(\beta_0+\beta_1X)}$$
+
+which is equivalent to $$\Large
+p
+=
+\frac{1}
+{1+\exp[-(\beta_0+\beta_1X)]}$$
+
+This transformation guarantees that the predicted probability remains between 0 and 1, regardless of the values of $\large X$, $\large \beta_0$, or $\large \beta_1$.
+
+> You do not need to reproduce this algebra. The important point is that the probability curve follows directly from the linear model for the log odds.
+
+**This is where the probability statement in our simulation came from**:
+
+```{webr-r}
+dd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]
+```
+
+where $\large \beta_0 = -5.5$ and $\large \beta_1 = 0.075$.
+
+
+
+## Fitting the logistic regression model
+
+
+We can use the `glm()` function in *R* to estimate the logistic regression model using our simulated data.
+
+```{webr-r}
+fit_logistic <- glm(hypertension ~ age, family = binomial, data = dd)
+
+tidy(fit_logistic)
+```
+
+Recall that the population values we used to generate the data were
+
+$$\Large
+\beta_0 = -5.5
+\qquad\text{and}\qquad
+\beta_1 = 0.075$$
+
+Our estimates will not be exactly equal to these values because we are estimating them from a random sample.
+
+We can obtain the fitted values on the probability scale and compare them with the true population probabilities.
+
+```{webr-r}
+#| classes: webr-plot
+
+dd[, p_logistic := predict(fit_logistic, type = "response")]
+
+ggplot(dd, aes(x = age, y = hypertension)) +
+  geom_point(alpha = 0.35, size = 0.5) +
+  geom_line(
+    aes(y = p),
+    data = dd[order(age)],
+    linewidth = 1
+  ) +
+  geom_line(
+    aes(y = p_logistic),
+    data = dd[order(age)],
+    linewidth = 1,
+    linetype = 2,
+    color = "darkred"
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 1, by = 0.2)
+  ) +
+  labs(
+    x = "Age",
+    y = "Hypertension outcome / probability"
+  )
+```
+
+The fitted logistic regression model recovers the underlying probability relationship quite well.
+
+
+
+## Interpreting the coefficients
+
+
+Our logistic regression model has the form $$\Large
+\log\left(\frac{p}{1-p}\right)
+=
+\beta_0+\beta_1X$$
+
+Just as in linear regression, $\large \beta_1$ describes the change in the left-hand side associated with a one-unit increase in $\large X$.
+
+But now the left-hand side is the **log odds** of the outcome.
+
+> $\large \beta_1$ is the change in the log odds of the outcome associated with a one-unit increase in $\large X$.
+
+For our simulated population, $$\Large
+\beta_1 = 0.075$$
+
+so a one-year increase in age is associated with an increase of 0.075 in the log odds of hypertension.
+
+*Log odds are difficult to interpret directly, so we usually transform the coefficient to the **odds scale***.
+
+
+
+## From coefficients to odds ratios
+
+
+At age $\large x$, the odds of hypertension are
+
+$$\Large
+\text{odds}(x)
+=
+\exp(\beta_0+\beta_1x)$$
+
+At age $\large x+1$, the odds are
+
+$$\Large
+\text{odds}(x+1)
+=
+\exp[\beta_0+\beta_1(x+1)]$$
+
+The ratio of these two odds is
+
+$$\Large
+\begin{aligned}
+\frac{\text{odds}(x+1)}{\text{odds}(x)}
+&=
+\frac{\exp[\beta_0+\beta_1(x+1)]}
+{\exp(\beta_0+\beta_1x)}\\
+\\
+&=
+\exp(\beta_1)
+\end{aligned}$$
+
+> **Exponentiating a logistic regression coefficient gives an odds ratio.**
+
+In our population,
+
+$$\Large
+\exp(0.075) = 1.078$$
+
+So each additional year of age multiplies the odds of hypertension by about 1.08.
+
+Equivalently, each additional year of age is associated with about an **8% increase in the odds of hypertension**.
+
+
+### Estimated odds ratio
+
+Our sample will not give us exactly the population value of 1.078.
+
+We can exponentiate the coefficients directly when using `tidy()`:
+
+```{webr-r}
+tidy(fit_logistic, exponentiate = TRUE)
+```
+
+The exponentiated coefficient for age is our estimated **odds ratio**.
+
+Exponentiating the coefficient directly gives the same estimate:
+
+```{webr-r}
+exp(coef(fit_logistic)["age"])
+```
+
+
+
+## What does an odds ratio tell us about probability?
+
+
+In our population model, each one-year increase in age has the same effect on the **log odds** of hypertension:
+
+$$\Large
+\beta_1 = 0.075$$
+
+and therefore the same odds ratio:
+
+$$\Large
+\text{OR} = \exp(0.075) = 1.078$$
+
+But does this mean that the **probability** of hypertension increases by the same amount at every age?
+
+For a binary outcome, we often use the term **risk** to refer to the probability that the outcome occurs.
+
+Let's compare the probability of hypertension at ages 30, 50, and 70 with the probability one year later:
+
+```{webr-r}
+ages <- c(30, 50, 70)
+
+compare <- data.table(
+  age = ages
+)
+
+compare[, p_age :=
+  1 / (1 + exp(-(-5.5 + 0.075 * age)))]
+
+compare[, p_next :=
+  1 / (1 + exp(-(-5.5 + 0.075 * (age + 1))))]
+
+compare[, RD := p_next - p_age]
+compare[, RR := p_next / p_age]
+
+compare[, OR :=
+  (p_next / (1 - p_next)) /
+  (p_age / (1 - p_age))
+]
+
+compare[, log_OR := log(OR)]
+
+compare |>
+  gt() |>
+  cols_label(
+    age = "Age",
+    p_age = "P(age)",
+    p_next = "P(age + 1)",
+    RD = "RD",
+    RR = "RR",
+    OR = "OR",
+    log_OR = "Log OR"
+  ) |>
+  fmt_number(
+    columns = c(p_age, p_next, RD, RR, OR, log_OR),
+    decimals = 3
+  )
+```
+
+**The different measures tell us different things:**
+
+- **Risk difference (RD):** the absolute change in probability
+- **Risk ratio (RR):** the relative change in probability
+- **Odds ratio (OR):** the relative change in odds
+- **Log odds ratio:** the absolute change in log odds
+
+The **risk difference** and **risk ratio** change depending on where we are on the probability curve.
+
+But the **odds ratio** and **log odds ratio** remain constant.
+
+> **Logistic regression assumes a constant effect on the log-odds scale — and therefore a constant odds ratio — not a constant risk difference or risk ratio.**
+
+
+
+## Uncertainty in the estimated odds ratio
+
+
+As with linear regression, there is uncertainty in our estimated coefficient.
+
+We can approximate a 95% confidence interval for $\large \beta_1$ using
+
+$$\Large
+\hat{\beta}_1 \pm 1.96 \times SE(\hat{\beta}_1)$$
+
+Let's calculate this interval for the age coefficient.
+
+```{webr-r}
+tt <- tidy(fit_logistic)
+
+b <- tt$estimate[tt$term == "age"]
+se <- tt$std.error[tt$term == "age"]
+
+ci_log <- c(
+  b - 1.96 * se,
+  b + 1.96 * se
+)
+
+ci_log
+```
+
+This confidence interval is on the **log-odds scale**.
+
+Since exponentiating $\large \hat{\beta}_1$ gives us the odds ratio, we can exponentiate both endpoints to get a confidence interval for the odds ratio:
+
+```{webr-r}
+exp(ci_log)
+```
+
+So the same uncertainty can be expressed either on the log-odds scale or on the odds-ratio scale.
+
+
+### Confidence intervals using `tidy()`
+
+In practice, we can ask `tidy()` to report the odds ratio and its confidence interval directly:
+
+```{webr-r}
+tidy(
+  fit_logistic,
+  exponentiate = TRUE,
+  conf.int = TRUE
+)
+```
+
+> For logistic regression, tidy() obtains confidence intervals using a likelihood-based method, which can differ slightly from the method based on the estimated coefficient and standard error.
+
+
+### Hypothesis testing in logistic regression
+
+The null hypothesis for the age coefficient is
+
+$$\Large H_0: \beta_1 = 0$$
+
+On the odds-ratio scale, this is equivalent to
+
+$$\Large H_0: OR = 1$$
+
+So a confidence interval for $\large \beta_1$ that excludes 0 corresponds to a confidence interval for the odds ratio that excludes 1.
+
+The p-value reported by `tidy()` tests this null hypothesis.
+
+
+
+## Predicted probabilities
+
+
+Odds ratios summarize the association between a predictor and a binary outcome, but probabilities are often easier to interpret.
+
+For example:
+
+> **According to our fitted model, what is the probability of hypertension at age 50?**
+
+Recall that the fitted logistic regression model is
+
+$$\Large
+\log\left(\frac{p}{1-p}\right)
+=
+\hat{\beta}_0+\hat{\beta}_1\text{age}$$
+
+and that we can transform from log odds back to probability using
+
+$$\Large
+p =
+\frac{1}
+{1+\exp[-(\beta_0+\beta_1X)]}$$
+
+We can therefore substitute our estimated coefficients and an age of 50 into this expression.
+
+```{webr-r}
+b0 <- coef(fit_logistic)["(Intercept)"]
+b1 <- coef(fit_logistic)["age"]
+
+1 / (1 + exp(-(b0 + b1 * 50)))
+```
+
+This gives us the **estimated probability of hypertension at age 50**.
+
+
+### Letting R do the transformation
+
+We usually don't need to perform this calculation ourselves.
+
+```{webr-r}
+predict(fit_logistic, newdata = data.frame(age = 50), type = "response")
+```
+
+The argument `type = "response"` asks **R** to return the prediction on the **probability scale**.
+
+Without `type = "response"`, `predict()` returns the prediction on the scale of the linear predictor:
+
+$$\Large
+\hat{\beta}_0+\hat{\beta}_1X$$
+
+which, for logistic regression, is the log-odds scale.
+
+
+### Probabilities at different ages
+
+We can calculate predicted probabilities for any values of age that interest us.
+
+```{webr-r}
+newdata <- data.table(
+  age = c(30, 40, 50, 60, 70)
+)
+
+newdata[, p_hat :=
+  predict(
+    fit_logistic,
+    newdata = newdata,
+    type = "response"
+  )
+]
+
+newdata
+```
+
+Notice that the probability does not increase by the same amount for each 10-year increase in age.
+
+The logistic regression model is linear on the **log-odds scale**, not on the probability scale.
+
+
+### The fitted probability curve
+
+Rather than calculating probabilities at just a few selected ages, we can calculate them across the full range of ages.
+
+```{webr-r}
+#| classes: webr-plot
+
+pred <- data.table(
+  age = seq(20, 80, by = 0.1)
+)
+
+pred[, p_hat :=
+  predict(
+    fit_logistic,
+    newdata = pred,
+    type = "response"
+  )
+]
+
+ggplot(dd, aes(x = age, y = hypertension)) +
+  geom_point(alpha = 0.35, size = 0.5) +
+  geom_line(
+    data = pred,
+    aes(x = age, y = p_hat),
+    linewidth = 1
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 1, by = 0.2)
+  ) +
+  labs(
+    x = "Age",
+    y = "Hypertension outcome / probability"
+  )
+```
+
+The fitted logistic regression model gives us an estimated probability of hypertension at every age while ensuring that those probabilities remain between 0 and 1.
+
+> **Although logistic regression is fit on the log-odds scale, we can always transform the results back to the probability scale.**
+
+
+
+## Multiple logistic regression and adjustment
+
+
+Just as with linear regression, logistic regression can include more than one predictor:
+
+$$\Large
+\log\left(\frac{p}{1-p}\right)
+=
+\beta_0+\beta_1X_1+\beta_2X_2$$
+
+The interpretation of each coefficient is **conditional on the other variables in the model**.
+
+For example, suppose we are interested in the association between **physical activity** and hypertension, but age is associated with both:
+
+- older people tend to be less physically active
+- older people are more likely to have hypertension
+
+Age is a potential **confounder**: it is associated with physical activity, predicts hypertension, and is not a consequence of physical activity.
+
+As with linear regression, adjustment allows us to compare people who differ in the predictor of interest but are similar with respect to the confounder.
+
+> **The purpose of adjustment has not changed. What has changed is how we model the outcome.**
+
+
+
+## A simulated example of confounding
+
+
+Let's simulate a population in which age is associated with both physical activity and hypertension.
+
+```{webr-r}
+set.seed(1234)
+
+n <- 1000
+
+dd2 <- data.table(
+  age = runif(n, 30, 80)
+)
+
+# older people tend to be less physically active
+dd2[, activity :=
+  8 - 0.06 * age + rnorm(.N, 0, 1)
+]
+
+# hypertension depends on both age and physical activity
+dd2[, p :=
+  1 / (1 + exp(-(-4 + 0.06 * age - 0.35 * activity)))
+]
+
+dd2[, hypertension :=
+  rbinom(.N, size = 1, prob = p)
+]
+```
+
+First, let's look at the relationship between age and physical activity.
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(dd2, aes(x = age, y = activity)) +
+  geom_point(alpha = 0.35, size = 0.7) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  labs(
+    x = "Age",
+    y = "Physical activity"
+  )
+```
+
+Older people tend to be less physically active.
+
+But age also directly affects the probability of hypertension in our simulated population.
+
+So if we simply compare people with different levels of physical activity, we are also comparing groups that tend to differ in age.
+
+
+### Ignoring the confounder
+
+First, fit a logistic regression model using physical activity alone:
+
+```{webr-r}
+fit_crude <- glm(
+  hypertension ~ activity,
+  family = binomial,
+  data = dd2
+)
+
+tidy(
+  fit_crude,
+  exponentiate = TRUE,
+  conf.int = TRUE
+)
+```
+
+This estimates the association between physical activity and hypertension **without accounting for age**.
+
+
+### Adjusting for age
+
+Now include age in the model:
+
+```{webr-r}
+fit_adjusted <- glm(
+  hypertension ~ activity + age,
+  family = binomial,
+  data = dd2
+)
+
+tidy(
+  fit_adjusted,
+  exponentiate = TRUE,
+  conf.int = TRUE
+)
+```
+
+The coefficient for physical activity now describes its association with the odds of hypertension **holding age constant**.
+
+Because we generated the population ourselves, we know the true conditional effect of physical activity:
+
+$$\Large
+\beta_{\text{activity}}=-0.35$$
+
+or, on the odds-ratio scale,
+
+$$\Large
+OR_{\text{activity}}
+=
+\exp(-0.35)
+\approx 0.70$$
+
+The adjusted model recovers this underlying association much better than the model that ignores age.
+
+> When we ignore age, physical activity appears to be very strongly associated with lower odds of hypertension (OR = 0.47). But older people tend to be less active and are also more likely to have hypertension. After adjusting for age, the estimated association is attenuated (OR = 0.75), much closer to the true conditional OR of 0.70 used to generate the data.
+
+
+### Seeing adjustment on the probability scale
+
+We can make the idea of "holding age constant" more concrete by looking at predicted probabilities.
+
+Let's estimate the relationship between physical activity and hypertension at several fixed ages.
+
+```{webr-r}
+pred_adj <- CJ(
+  age = c(40, 55, 70),
+  activity = seq(2, 7, by = 0.1)
+)
+
+pred_adj[, p_hat :=
+  predict(
+    fit_adjusted,
+    newdata = pred_adj,
+    type = "response"
+  )
+]
+
+pred_adj[, age_group := factor(
+  age,
+  levels = c(40, 55, 70),
+  labels = c("Age 40", "Age 55", "Age 70")
+)]
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(
+  pred_adj,
+  aes(
+    x = activity,
+    y = p_hat,
+    linetype = age_group
+  )
+) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "Physical activity",
+    y = "Predicted probability of hypertension",
+    linetype = NULL
+  )
+```
+
+Each curve shows the estimated relationship between physical activity and hypertension **at a fixed age**.
+
+At any given age, higher physical activity is associated with a lower probability of hypertension.
+
+At any given level of physical activity, older people have a higher probability of hypertension.
+
+> The adjusted model separates these two relationships rather than mixing them together.
+
+
+
+## Checking the fit of the model
+
+
+Our fitted model gives us a smooth relationship between the predictors and the probability of hypertension.
+
+But the curves show us **what the model predicts**. We should also ask whether those predictions are consistent with what we actually observe in the data.
+
+One simple way to do this is to group people with similar predicted probabilities and compare:
+
+- the **average probability predicted by the model**
+- the **proportion who actually had hypertension**
+
+```{webr-r}
+dd2[, p_hat :=
+  predict(
+    fit_adjusted,
+    type = "response"
+  )
+]
+
+dd2[, risk_group :=
+  cut(
+    p_hat,
+    breaks = quantile(
+      p_hat,
+      probs = seq(0, 1, by = 0.1)
+    ),
+    include.lowest = TRUE
+  )
+]
+
+gof <- dd2[,
+  .(
+    predicted = mean(p_hat),
+    observed = mean(hypertension)
+  ),
+  by = risk_group
+]
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+lims <- range(c(gof$observed, gof$predicted))
+
+ggplot(gof, aes(x = observed, y = predicted)) +
+  geom_point(size = 2) +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linetype = 2
+  ) +
+  coord_equal(xlim = lims, ylim = lims) +
+  labs(
+    x = "Observed proportion with hypertension",
+    y = "Mean predicted probability"
+  )
+```
+
+If the model describes the data well, the observed proportions should be reasonably close to the predicted probabilities.
+
+For example, among people for whom the model predicts probabilities around 0.20, we would expect roughly 20% to have hypertension.
+
+> **A fitted model should not only produce sensible predictions — those predictions should also be reasonably consistent with the observed data.**
+
+
+### Deviance
+
+Another measure of model fit that appears in logistic regression output is the **deviance**.
+
+Deviance measures how far the fitted model is from a hypothetical model that fits the observed data as closely as possible. For the same data, **smaller deviance indicates better fit**.
+
+In the `glm()` output, you will see two deviances:
+
+- **Null deviance:** deviance for a model containing only an intercept
+- **Residual deviance:** deviance after including the predictors in our model
+
+```{webr-r}
+summary(fit_adjusted)
+```
+
+The reduction from the null deviance to the residual deviance tells us how much the fit improves when we include our predictors.
+
+> Here, the deviance decreases from 827.9 for the intercept-only model to 668.7 after including physical activity and age. This tells us that including these predictors improves the fit of the model. The residual deviance by itself, however, does not tell us whether the model provides an adequate description of the data.
+
+
+### Is the improvement larger than we would expect by chance?
+
+The reduction in deviance can be used to formally compare **nested models**.
+
+For our model,
+
+$$\Large
+827.9 - 668.7 = 159.2$$
+
+Under the null hypothesis that the additional predictors do not improve the model, this difference is ***approximately chi-square distributed***.
+
+```{webr-r}
+fit_null <- glm(
+  hypertension ~ 1,
+  data = dd2,
+  family = binomial
+)
+
+anova(fit_null, fit_adjusted, test = "Chisq")
+```
+
+This is called a **likelihood-ratio test**.
+
+> **The likelihood-ratio test asks whether adding the predictors improves model fit compared with the simpler model.**
+
+For the comparison above, the very small p-value indicates that adding physical activity and age improves model fit beyond what we would expect if neither predictor were associated with the outcome.
+
+The residual deviance by itself, however, does **not** tell us whether the model provides an adequate description of the data.
+
+
+
+## An example: CK and heart attack
+
+
+A study of 360 patients admitted to the hospital with a suspected heart attack measured their **creatine kinase (CK)** level at admission.
+
+We will use these data to ask:
+
+> **How is CK level associated with the probability that a patient has had a heart attack?**
+
+```{webr-r}
+heart <- fread("data/heart.csv")
+heart[, ck50 := ck / 50]
+```
+
+Let's first look at the observed proportion of patients who had a heart attack at each CK level.
+
+```{webr-r}
+#| classes: webr-plot
+
+heart_prop <- heart[,.(proportion = mean(heart_attack), n = .N),by = ck]
+
+ggplot(heart_prop, aes(x = ck, y = proportion)) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_y_continuous(
+    breaks = seq(0, 1, by = 0.2)
+  ) +
+  labs(
+    x = "CK level",
+    y = "Proportion with heart attack"
+  )
+```
+
+The observed proportion with heart attack increases substantially with CK level.
+
+
+### Fitting the logistic regression model
+
+We can model the probability of heart attack as a function of CK using logistic regression:
+
+```{webr-r}
+fit_glm <- glm(heart_attack ~ ck50, family = binomial, data = heart)
+```
+
+```{webr-r}
+tidy(fit_glm, exponentiate = TRUE, conf.int = TRUE)
+```
+
+Because CK is expressed in units of 50, the odds ratio for `ck50` compares patients whose CK levels differ by 50 units.
+
+The estimated odds ratio is
+
+$$\Large
+OR = 5.78$$
+
+with a 95% confidence interval from 4.00 to 8.92.
+
+> **For every 50-unit increase in CK, the estimated odds of heart attack are about 5.8 times as high (95% CI: 4.0 to 8.9).**
+
+```{webr-r}
+summary(fit_glm)
+```
+
+The reduction in deviance tells us that including CK substantially improves model fit compared with the intercept-only model. But it doesn't show us how well the fitted probabilities describe the observed pattern. We can see that more directly by comparing the fitted model with the observed data.
+
+
+### Comparing the model with the observed data
+
+We can compare the fitted probabilities with the proportions actually observed at each CK level.
+
+```{webr-r}
+#| classes: webr-plot
+
+pred <- data.table(ck = seq(min(heart$ck), max(heart$ck), length.out = 200))
+pred[, ck50 := ck / 50]
+
+pred[, p_hat := predict(fit_glm, newdata = pred, type = "response")]
+
+ggplot() +
+  geom_line(
+    data = pred,
+    aes(x = ck, y = p_hat),
+    linewidth = 1
+  ) +
+  geom_point(
+    data = heart_prop,
+    aes(x = ck, y = proportion, size = n)
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 1, by = 0.2)
+  ) +
+  labs(
+    x = "CK level",
+    y = "Probability of heart attack",
+    size = "Number of patients"
+  )
+
+performance::check_collinearity(fit_glm)
+
+tidy(fit_glm, conf.int = TRUE)
+
+confint(fit_glm)          # profile likelihood
+confint.default(fit_glm)  # Wald
+```
+
+The points show the **observed proportion** of patients who had a heart attack at each CK level. The curve shows the **probability predicted by the logistic regression model**.
+
+The model captures the strong increase in the probability of heart attack as CK increases and provides a reasonable description of the observed pattern.
