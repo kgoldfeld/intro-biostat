@@ -1966,13 +1966,13 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <blockquote class="blockquote">
 <p><strong>Does treatment affect this outcome?</strong></p>
 </blockquote>
-<p>For each outcome <span class="math inline">\(\large j\)</span>:</p>
-<p><span class="math display">\[\Large
+<p>For each outcome <span class="math inline">\(j\)</span>:</p>
+<p><span class="math display">\[\large
 H_{0j}: \mu_{j1} - \mu_{j0} = 0,
 \qquad j=1,\ldots,20\]</span></p>
-<p>where <span class="math inline">\(\large \mu_{j1}\)</span> and <span class="math inline">\(\large \mu_{j0}\)</span> are the population means for outcome <span class="math inline">\(j\)</span> in the treatment and control groups.</p>
+<p>where <span class="math inline">\(\mu_{j1}\)</span> and <span class="math inline">\(\mu_{j0}\)</span> are the population means for outcome <span class="math inline">\(j\)</span> in the treatment and control groups.</p>
 <p>Suppose <strong>all 20 null hypotheses are true</strong> — treatment has no effect on any of the outcomes.</p>
-<p>For any one test with <span class="math inline">\(\large \alpha=0.05\)</span>, the probability of a <strong>Type I error</strong> is 5%.</p>
+<p>For any one test with <span class="math inline">\(\alpha=0.05\)</span>, the probability of a <strong>Type I error</strong> is 5%.</p>
 <p>But we are conducting <strong>20 tests</strong>.</p>
 <blockquote class="blockquote">
 <p><strong>How likely are we to find at least one statistically significant effect and conclude that the treatment “works”?</strong></p>
@@ -1981,7 +1981,7 @@ H_{0j}: \mu_{j1} - \mu_{j0} = 0,
 <h3 class="anchored" data-anchor-id="simulating-the-study">Simulating the study</h3>
 <p>Let’s simulate this study under the assumption that <strong>all 20 null hypotheses are true</strong>.</p>
 <p>For each outcome, we will generate data from the same population distribution for the treatment and control groups:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 Y_{j1},Y_{j0} \sim N(45,3)\]</span></p>
 <p>We will then test for a treatment effect separately for each of the 20 outcomes.</p>
 <div id="qwebr-insertion-location-2"></div>
@@ -1997,7 +1997,7 @@ Y_{j1},Y_{j0} \sim N(45,3)\]</span></p>
 <p>In every simulated study:</p>
 <ul>
 <li>all 20 null hypotheses are true</li>
-<li>we test each outcome using <span class="math inline">\(\large \alpha=0.05\)</span></li>
+<li>we test each outcome using <span class="math inline">\(\alpha=0.05\)</span></li>
 <li>we record how many null hypotheses are rejected</li>
 </ul>
 <div id="qwebr-insertion-location-4"></div>
@@ -2010,13 +2010,13 @@ Y_{j1},Y_{j0} \sim N(45,3)\]</span></p>
 <li><p>But across the <strong>family of 20 tests</strong>, the probability of making at least one Type I error is much larger than 5%.</p></li>
 <li><p>The probability of making at least one Type I error across the family is called the <strong>family-wise error rate (FWER)</strong>:</p></li>
 </ul>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \text{FWER} = P(\text{at least one Type I error})\]</span></p>
 <p>For 20 independent tests, the probability that we make <strong>no</strong> Type I errors is</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 (1-0.05)^{20}=0.95^{20}\approx0.36\]</span></p>
 <p>so</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 P(\text{at least one Type I error})
 =1-0.95^{20}
 \approx0.64.\]</span></p>
@@ -2043,27 +2043,27 @@ P(\text{at least one Type I error})
 <p><strong>Can we change the significance level for each individual test so that the FWER is controlled at 5%?</strong></p>
 </blockquote>
 <p>One simple approach is the <strong>Bonferroni correction</strong>.</p>
-<p>Instead of testing each hypothesis using <span class="math inline">\(\large \alpha=0.05\)</span>, divide <span class="math inline">\(\large \alpha\)</span> by the number of tests:</p>
-<p><span class="math display">\[\Large
+<p>Instead of testing each hypothesis using <span class="math inline">\(\alpha=0.05\)</span>, divide <span class="math inline">\(\alpha\)</span> by the number of tests:</p>
+<p><span class="math display">\[\large
 \alpha^*=\frac{\alpha}{m}\]</span></p>
-<p>where <span class="math inline">\(\large m\)</span> is the number of tests.</p>
+<p>where <span class="math inline">\(m\)</span> is the number of tests.</p>
 <p>For our 20 outcomes:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \alpha^*=\frac{0.05}{20}=0.0025\]</span></p>
-<p>We now reject an individual null hypothesis only when <span class="math inline">\(\large p &lt; 0.0025\)</span>:</p>
+<p>We now reject an individual null hypothesis only when <span class="math inline">\(p &lt; 0.0025\)</span>:</p>
 <div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The Bonferroni correction controls the FWER because each individual test now has a Type I error probability of only 0.0025:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \text{FWER}
 \leq
 20(0.0025)
 =
 0.05\]</span></p>
-<p>The <span class="math inline">\(\large \leq\)</span> is important:</p>
+<p>The <span class="math inline">\(\leq\)</span> is important:</p>
 <ul>
 <li>Bonferroni guarantees that the FWER is <strong>no greater than 5%</strong> — it does not have to be exactly 5%.</li>
-<li>Unlike <span class="math inline">\(\large 1-(0.95)^{20}\)</span>, Bonferroni <strong>does not require the tests to be independent</strong>.</li>
+<li>Unlike <span class="math inline">\(1-(0.95)^{20}\)</span>, Bonferroni <strong>does not require the tests to be independent</strong>.</li>
 <li>This is useful because outcomes in the same study are often correlated.</li>
 </ul>
 <p>But there is a tradeoff:</p>
@@ -2074,16 +2074,16 @@ P(\text{at least one Type I error})
 <section id="the-holm-procedure" class="level3">
 <h3 class="anchored" data-anchor-id="the-holm-procedure">The Holm procedure</h3>
 <p>Suppose we conduct five tests and obtain these ordered p-values:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 0.003,\quad 0.009,\quad 0.015,\quad 0.031,\quad 0.20\]</span></p>
 <p>With Bonferroni, every p-value is compared with</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \frac{0.05}{5}=0.01.\]</span></p>
 <p>Only the first two null hypotheses would be rejected.</p>
 <p>Holm starts with the same threshold, but becomes progressively less stringent:</p>
 <ul>
-<li>compare the smallest p-value with <span class="math inline">\(\large 0.05/5\)</span></li>
-<li>if rejected, compare the next with <span class="math inline">\(\large 0.05/4\)</span></li>
+<li>compare the smallest p-value with <span class="math inline">\(0.05/5\)</span></li>
+<li>if rejected, compare the next with <span class="math inline">\(0.05/4\)</span></li>
 <li>continue until a p-value fails to meet its threshold</li>
 </ul>
 <table class="caption-top table">
@@ -2142,7 +2142,7 @@ P(\text{at least one Type I error})
 <h3 class="anchored" data-anchor-id="connecting-back-to-anova">Connecting back to ANOVA</h3>
 <p>In ANOVA, we may want to compare <strong>all pairs of group means</strong>.</p>
 <p>With four groups, there are six pairwise comparisons:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \mu_1-\mu_2,\quad
 \mu_1-\mu_3,\quad
 \mu_1-\mu_4,\quad
@@ -2177,7 +2177,7 @@ P(\text{at least one Type I error})
 <p>Suppose we are testing <strong>10,000 genes</strong> to identify genes that may be associated with a disease.</p>
 <p>Controlling the FWER means trying to keep the probability of making <strong>even one false discovery among the 10,000 tests</strong> below 5%.</p>
 <p>Using Bonferroni, we would require</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 p &lt; \frac{0.05}{10{,}000}=0.000005.\]</span></p>
 <p>That is an extremely stringent threshold — and may be more stringent than we need.</p>
 <p>Instead, we might be willing to tolerate some false discoveries, as long as they represent only a small proportion of all the discoveries we make.</p>
@@ -2189,17 +2189,17 @@ p &lt; \frac{0.05}{10{,}000}=0.000005.\]</span></p>
 <li><strong>false discoveries</strong> — Type I errors</li>
 </ul>
 <p>For a particular study, the <strong>false discovery proportion (FDP)</strong> is</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \text{FDP}
 =
 \frac{\text{number of false discoveries}}
 {\text{total number of discoveries}}.\]</span></p>
 <p>For example, if 8 of 100 discoveries are false:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \text{FDP}=\frac{8}{100}=0.08.\]</span></p>
 <p>But FDP describes what happened in <strong>one particular study</strong>.</p>
 <p>The <strong>false discovery rate (FDR)</strong> is the expected FDP across repeated studies:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \text{FDR}=E(\text{FDP}).\]</span></p>
 <p>This gives us two different ways of controlling errors across repeated studies:</p>
 <ul>
@@ -2224,7 +2224,7 @@ p &lt; \frac{0.05}{10{,}000}=0.000005.\]</span></p>
 <div id="qwebr-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The <strong>false discovery rate</strong> is the expected FDP across repeated studies:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \text{FDR}=E(\text{FDP})\]</span></p>
 <div id="qwebr-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
@@ -2251,18 +2251,18 @@ p &lt; \frac{0.05}{10{,}000}=0.000005.\]</span></p>
 <h3 class="anchored" data-anchor-id="the-benjamini-hochberg-procedure">The Benjamini-Hochberg procedure</h3>
 <p>The <strong>Benjamini-Hochberg (BH) procedure</strong> controls the false discovery rate.</p>
 <p>Like Holm, BH begins by ordering the p-values from smallest to largest:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 p_{(1)} \leq p_{(2)} \leq \cdots \leq p_{(m)}.\]</span></p>
 <p>Suppose we have five tests and want to control the FDR at 5%.</p>
 <p>BH compares each ordered p-value with</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \frac{i}{m}(0.05),\]</span></p>
-<p>where <span class="math inline">\(\large i\)</span> is the position of the p-value in the ordered list.</p>
+<p>where <span class="math inline">\(i\)</span> is the position of the p-value in the ordered list.</p>
 <p>For five tests, the thresholds are:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th style="text-align: right;"><span class="math inline">\(\large i\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(i\)</span></th>
 <th style="text-align: right;">BH threshold</th>
 </tr>
 </thead>
@@ -2290,12 +2290,12 @@ p_{(1)} \leq p_{(2)} \leq \cdots \leq p_{(m)}.\]</span></p>
 </tbody>
 </table>
 <p>BH finds the <strong>largest</strong> p-value that satisfies its threshold:</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 p_{(i)} \leq \frac{i}{m}(0.05).\]</span></p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th style="text-align: right;"><span class="math inline">\(\large i\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(i\)</span></th>
 <th style="text-align: right;">p-value</th>
 <th style="text-align: right;">BH threshold</th>
 <th style="text-align: left;"></th>
@@ -2334,13 +2334,13 @@ p_{(i)} \leq \frac{i}{m}(0.05).\]</span></p>
 </tr>
 </tbody>
 </table>
-<p>The largest p-value satisfying the criterion is <span class="math inline">\(\large p_{(3)}=0.027\)</span>, so BH rejects the first <strong>three</strong> null hypotheses.</p>
+<p>The largest p-value satisfying the criterion is <span class="math inline">\(p_{(3)}=0.027\)</span>, so BH rejects the first <strong>three</strong> null hypotheses.</p>
 <blockquote class="blockquote">
 <p>Unlike Holm, BH does <strong>not</strong> stop when an individual p-value fails its threshold.</p>
 </blockquote>
 <p>The idea behind the increasing thresholds is that <strong>BH permits a larger p-value cutoff because FDR allows some false discoveries when there are more discoveries overall</strong>.</p>
 <p>Here, BH supports three discoveries, so the cutoff is</p>
-<p><span class="math display">\[\Large
+<p><span class="math display">\[\large
 \frac{3}{5}(0.05)=0.03.\]</span></p>
 <p>All three smallest p-values are below 0.03, so all three null hypotheses are rejected.</p>
 <p>More generally, BH searches for the <strong>largest set of discoveries</strong> that satisfies the FDR criterion.</p>
@@ -2370,13 +2370,14 @@ p_{(i)} \leq \frac{i}{m}(0.05).\]</span></p>
 <p>Let’s start with a simple sampling process in which the outcome is missing for some participants.</p>
 <p>We will simulate 1,000 participants:</p>
 <ul>
-<li>a baseline health score <span class="math inline">\(\large X\)</span>, observed for everyone</li>
-<li>mean outcome of 50 for a participant with <span class="math inline">\(\large X=0\)</span></li>
+<li>a baseline health score <span class="math inline">\(X\)</span>, observed for everyone</li>
+<li>mean outcome of 50 for a participant with <span class="math inline">\(X=0\)</span></li>
 <li>outcome standard deviation of 10</li>
 </ul>
 <p>The baseline health score is related to the outcome:</p>
-<p><span class="math display">\[\Large
-X_i \sim N(0,1)\]</span> <span class="math display">\[\Large
+<p><span class="math display">\[\large
+X_i \sim N(0,1)\]</span></p>
+<p><span class="math display">\[\large
 Y_i = 50 + 5X_i + \epsilon_i,
 \qquad
 \epsilon_i \sim N(0,10)\]</span></p>

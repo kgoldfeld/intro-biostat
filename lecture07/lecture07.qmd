@@ -41,17 +41,17 @@ We have **20 different outcomes** and a separate research question for each:
 
 > **Does treatment affect this outcome?**
 
-For each outcome $\large j$:
+For each outcome $j$:
 
-$$\Large
+$$\large
 H_{0j}: \mu_{j1} - \mu_{j0} = 0,
 \qquad j=1,\ldots,20$$
 
-where $\large \mu_{j1}$ and $\large \mu_{j0}$ are the population means for outcome $j$ in the treatment and control groups.
+where $\mu_{j1}$ and $\mu_{j0}$ are the population means for outcome $j$ in the treatment and control groups.
 
 Suppose **all 20 null hypotheses are true** — treatment has no effect on any of the outcomes.
 
-For any one test with $\large \alpha=0.05$, the probability of a **Type I error** is 5%.
+For any one test with $\alpha=0.05$, the probability of a **Type I error** is 5%.
 
 But we are conducting **20 tests**.
 
@@ -64,7 +64,7 @@ Let's simulate this study under the assumption that **all 20 null hypotheses are
 
 For each outcome, we will generate data from the same population distribution for the treatment and control groups:
 
-$$\Large
+$$\large
 Y_{j1},Y_{j0} \sim N(45,3)$$
 
 We will then test for a treatment effect separately for each of the 20 outcomes.
@@ -97,7 +97,7 @@ sum(reject_null)
 In every simulated study:
 
 - all 20 null hypotheses are true
-- we test each outcome using $\large \alpha=0.05$
+- we test each outcome using $\alpha=0.05$
 - we record how many null hypotheses are rejected
 
 ```{webr-r}
@@ -134,17 +134,17 @@ mean(sim_results > 0)
 
 - The probability of making at least one Type I error across the family is called the **family-wise error rate (FWER)**:
 
-$$\Large
+$$\large
 \text{FWER} = P(\text{at least one Type I error})$$
 
 For 20 independent tests, the probability that we make **no** Type I errors is
 
-$$\Large
+$$\large
 (1-0.05)^{20}=0.95^{20}\approx0.36$$
 
 so
 
-$$\Large
+$$\large
 P(\text{at least one Type I error})
 =1-0.95^{20}
 \approx0.64.$$
@@ -178,19 +178,19 @@ We would like the probability of making **at least one Type I error across all 2
 
 One simple approach is the **Bonferroni correction**.
 
-Instead of testing each hypothesis using $\large \alpha=0.05$, divide $\large \alpha$ by the number of tests:
+Instead of testing each hypothesis using $\alpha=0.05$, divide $\alpha$ by the number of tests:
 
-$$\Large
+$$\large
 \alpha^*=\frac{\alpha}{m}$$
 
-where $\large m$ is the number of tests.
+where $m$ is the number of tests.
 
 For our 20 outcomes:
 
-$$\Large
+$$\large
 \alpha^*=\frac{0.05}{20}=0.0025$$
 
-We now reject an individual null hypothesis only when $\large p < 0.0025$:
+We now reject an individual null hypothesis only when $p < 0.0025$:
 
 ```{webr-r}
 set.seed(123)
@@ -216,17 +216,17 @@ mean(sim_results_bonf > 0)
 
 The Bonferroni correction controls the FWER because each individual test now has a Type I error probability of only 0.0025:
 
-$$\Large
+$$\large
 \text{FWER}
 \leq
 20(0.0025)
 =
 0.05$$
 
-The $\large \leq$ is important:
+The $\leq$ is important:
 
 - Bonferroni guarantees that the FWER is **no greater than 5%** — it does not have to be exactly 5%.
-- Unlike $\large 1-(0.95)^{20}$, Bonferroni **does not require the tests to be independent**.
+- Unlike $1-(0.95)^{20}$, Bonferroni **does not require the tests to be independent**.
 - This is useful because outcomes in the same study are often correlated.
 
 But there is a tradeoff:
@@ -238,20 +238,20 @@ But there is a tradeoff:
 
 Suppose we conduct five tests and obtain these ordered p-values:
 
-$$\Large
+$$\large
 0.003,\quad 0.009,\quad 0.015,\quad 0.031,\quad 0.20$$
 
 With Bonferroni, every p-value is compared with
 
-$$\Large
+$$\large
 \frac{0.05}{5}=0.01.$$
 
 Only the first two null hypotheses would be rejected.
 
 Holm starts with the same threshold, but becomes progressively less stringent:
 
-- compare the smallest p-value with $\large 0.05/5$
-- if rejected, compare the next with $\large 0.05/4$
+- compare the smallest p-value with $0.05/5$
+- if rejected, compare the next with $0.05/4$
 - continue until a p-value fails to meet its threshold
 
 | p-value |  Holm threshold | Decision      |
@@ -290,7 +290,7 @@ In ANOVA, we may want to compare **all pairs of group means**.
 
 With four groups, there are six pairwise comparisons:
 
-$$\Large
+$$\large
 \mu_1-\mu_2,\quad
 \mu_1-\mu_3,\quad
 \mu_1-\mu_4,\quad
@@ -331,7 +331,7 @@ Controlling the FWER means trying to keep the probability of making **even one f
 
 Using Bonferroni, we would require
 
-$$\Large
+$$\large
 p < \frac{0.05}{10{,}000}=0.000005.$$
 
 That is an extremely stringent threshold — and may be more stringent than we need.
@@ -348,7 +348,7 @@ Among the results we call statistically significant — our **discoveries** — 
 
 For a particular study, the **false discovery proportion (FDP)** is
 
-$$\Large
+$$\large
 \text{FDP}
 =
 \frac{\text{number of false discoveries}}
@@ -356,14 +356,14 @@ $$\Large
 
 For example, if 8 of 100 discoveries are false:
 
-$$\Large
+$$\large
 \text{FDP}=\frac{8}{100}=0.08.$$
 
 But FDP describes what happened in **one particular study**.
 
 The **false discovery rate (FDR)** is the expected FDP across repeated studies:
 
-$$\Large
+$$\large
 \text{FDR}=E(\text{FDP}).$$
 
 This gives us two different ways of controlling errors across repeated studies:
@@ -444,7 +444,7 @@ head(sim_FDP)
 
 The **false discovery rate** is the expected FDP across repeated studies:
 
-$$\Large
+$$\large
 \text{FDR}=E(\text{FDP})$$
 
 ```{webr-r}
@@ -535,21 +535,21 @@ The **Benjamini-Hochberg (BH) procedure** controls the false discovery rate.
 
 Like Holm, BH begins by ordering the p-values from smallest to largest:
 
-$$\Large
+$$\large
 p_{(1)} \leq p_{(2)} \leq \cdots \leq p_{(m)}.$$
 
 Suppose we have five tests and want to control the FDR at 5%.
 
 BH compares each ordered p-value with
 
-$$\Large
+$$\large
 \frac{i}{m}(0.05),$$
 
-where $\large i$ is the position of the p-value in the ordered list.
+where $i$ is the position of the p-value in the ordered list.
 
 For five tests, the thresholds are:
 
-| $\large i$ |       BH threshold |
+| $i$ |       BH threshold |
 |-----------:|-------------------:|
 |          1 | $(1/5)(0.05)=0.01$ |
 |          2 | $(2/5)(0.05)=0.02$ |
@@ -559,10 +559,10 @@ For five tests, the thresholds are:
 
 BH finds the **largest** p-value that satisfies its threshold:
 
-$$\Large
+$$\large
 p_{(i)} \leq \frac{i}{m}(0.05).$$
 
-| $\large i$ | p-value | BH threshold |     |
+| $i$ | p-value | BH threshold |     |
 |-----------:|--------:|-------------:|:----|
 |          1 |   0.008 |        0.010 | ✓   |
 |          2 |   0.021 |        0.020 |     |
@@ -570,7 +570,7 @@ p_{(i)} \leq \frac{i}{m}(0.05).$$
 |          4 |   0.046 |        0.040 |     |
 |          5 |   0.200 |        0.050 |     |
 
-The largest p-value satisfying the criterion is $\large p_{(3)}=0.027$, so BH rejects the first **three** null hypotheses.
+The largest p-value satisfying the criterion is $p_{(3)}=0.027$, so BH rejects the first **three** null hypotheses.
 
 > Unlike Holm, BH does **not** stop when an individual p-value fails its threshold.
 
@@ -578,7 +578,7 @@ The idea behind the increasing thresholds is that **BH permits a larger p-value 
 
 Here, BH supports three discoveries, so the cutoff is
 
-$$\Large
+$$\large
 \frac{3}{5}(0.05)=0.03.$$
 
 All three smallest p-values are below 0.03, so all three null hypotheses are rejected.
@@ -614,14 +614,16 @@ Let's start with a simple sampling process in which the outcome is missing for s
 
 We will simulate 1,000 participants:
 
-- a baseline health score $\large X$, observed for everyone
-- mean outcome of 50 for a participant with $\large X=0$
+- a baseline health score $X$, observed for everyone
+- mean outcome of 50 for a participant with $X=0$
 - outcome standard deviation of 10
 
 The baseline health score is related to the outcome:
 
-$$\Large
-X_i \sim N(0,1)$$ $$\Large
+$$\large
+X_i \sim N(0,1)$$ 
+
+$$\large
 Y_i = 50 + 5X_i + \epsilon_i,
 \qquad
 \epsilon_i \sim N(0,10)$$
