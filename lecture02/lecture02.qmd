@@ -836,6 +836,8 @@ H_A: \mu_D &\ne 0
 
 > In a paired t-test, we convert the two measurements into a single sample of within-person differences. We then conduct a one-sample t-test on those differences.
 
+> Pairing can improve precision because differences between individuals that affect both measurements are removed when we calculate the within-person change.
+
 
 ### Simulate a data set
 
@@ -872,10 +874,14 @@ grip_after <-
   rnorm(sample_size, 0, sd_change)
 
 dd <- data.table(grip_before, grip_after)
+dd[, grip_change := grip_after - grip_before]
+
 dd[, id := .I]
+
+head(dd)
 ```
 
-Visualizing the data:
+### Visualizing the data
 
 ```{webr-r}
 #| classes: webr-plot
@@ -906,14 +912,24 @@ ggplot(
   )
 ```
 
+### Advantage of the paired analysis
+
+If we inspect the standard deviation of the individual *before* and *after* measurements and the standard deviation of the *change*, we can see the advantage of this design:
+
+
+```{webr-r}
+sd(dd$grip_before)
+sd(dd$grip_after)
+sd(dd$grip_change)
+```
+
+> In our simulation, each person's baseline grip strength contributes to both measurements. When we calculate the within-person difference, that between-person variability cancels out. The resulting reduction in variability allows us to estimate the average change more precisely.
 
 ### Assessing if the average change is different from 0
 
 We calculate each individual's change in grip strength, and then conduct a *t* test. By default `t.test()` conducts a two-sided test:
 
 ```{webr-r}
-dd[, grip_change := grip_after - grip_before]
-
 t.test(x = dd$grip_change)
 ```
 
