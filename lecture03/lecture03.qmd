@@ -942,9 +942,7 @@ prop.test(
 
 `prop.test()` applies a **continuity correction** by default. We turn it off here so that the R calculation corresponds directly to the z-test described above.
 
-
 ## Contingency tables
-
 
 The same data can also be represented using a **contingency table**:
 
@@ -962,6 +960,23 @@ The observed success rates are$$\hat{p}_1 = \frac{35}{48} = 0.729
 \qquad\text{and}\qquad
 \hat{p}_2 = \frac{27}{52} = 0.519.$$The success rates differ in our sample. The question is whether this difference is larger than we would expect from sampling variability if **group and outcome were not associated**.
 
+We can calculate the proportions in **R** using `prop.table()`:
+
+```{webr-r}
+tab_rats <- matrix(
+  c(35, 13,
+    27, 25),
+  nrow = 2,
+  byrow = TRUE
+)
+
+prop.table(tab_rats, margin = 1)
+```
+
+`margin = 1` calculates proportions within each row. Each row therefore sums to 1. Here, the rows represent groups, so these are the outcome proportions within each group.
+
+### Visualize the data
+
 ```{webr-r}
 #| classes: webr-plot
 
@@ -977,7 +992,7 @@ dd <- data.table(
 ggplot(dd, aes(
     x = group, 
     y = count, 
-    fill = outcome\
+    fill = outcome
   )
 ) +
   geom_col(
@@ -1003,7 +1018,11 @@ labs(
 
 ### Expected counts under no association
 
-In total, 62 of the 100 rats were successful, giving an overall success rate of$$\hat{p} = \frac{62}{100} = 0.62.$$If group and outcome were not associated, we would expect this same success rate of 62% in both groups.
+In total, 62 of the 100 rats were successful, giving an overall success rate of
+
+$$\large \hat{p} = \frac{62}{100} = 0.62.$$
+
+If group and outcome were not associated, we would expect this same success rate of 62% in both groups.
 
 For Group 1, we would therefore expect
 
@@ -1031,14 +1050,6 @@ $$\large
 $$
 failures.
 
-This gives the **expected counts**:
-
-| | Success | Failure | Total |
-|:----------|:-------:|:-------:|:-------:|
-| Group 1 | 29.76 | 18.24 | 48 |
-| Group 2 | 32.24 | 19.76 | 52 |
-| **Total** | **62** | **38** | **100** |
-
 More generally, the expected count for each cell can be calculated as
 
 $$
@@ -1051,7 +1062,31 @@ E_{ij}
 \text{grand total}
 }.
 $$
-Under no association, the expected outcome distribution is the same in both groups:
+
+### The summary of expected counts
+
+| | Success | Failure | Total |
+|:----------|:-------:|:-------:|:-------:|
+| Group 1 | 29.76 | 18.24 | 48 |
+| Group 2 | 32.24 | 19.76 | 52 |
+| **Total** | **62** | **38** | **100** |
+
+<div style="height: 100px;"></div>
+
+```{webr-r}
+tab_no_assoc <- matrix(
+  c(29.76, 18.24, 
+    32.24, 19.76),
+  nrow = 2,
+  byrow = TRUE
+)
+
+prop.table(tab_no_assoc, margin = 1)
+```
+
+> Under no association, the outcome proportions are the same in the two groups.
+
+### Visualizing no association
 
 ```{webr-r}
 #| classes: webr-plot
@@ -1092,8 +1127,6 @@ ggplot(
     title = "Expected outcome distributions"
   )
 ```
-
-
 ### Comparing observed and expected counts
 
 We now compare what we **observed** with what we would **expect** if group and outcome were not associated.
@@ -1109,7 +1142,7 @@ where $O_{ij}$is the observed count and $E_{ij}$ is the expected count.
 - Squaring ensures that deviations in either direction contribute positively.
 - Dividing by the expected count scales the discrepancy relative to the size of the expected count.
 
-For our data:
+### For our data:
 
 | | Success | Failure |
 |:---|:--:|:--:|
@@ -1204,21 +1237,10 @@ pchisq(4.669, df = 1, lower.tail = FALSE)
 Or we can perform the entire analysis directly from the contingency table using the **R** function `chisq.test()`:
 
 ```{webr-r}
-tab <- matrix(
-  c(35, 13,
-    27, 25),
-  nrow = 2,
-  byrow = TRUE
-)
-
-tab
+chisq.test(tab_rats, correct = FALSE)
 ```
 
-```{webr-r}
-chisq.test(tab, correct = FALSE)
-```
-
-> **Continuity correction**: For a$\large 2 \times 2$table, **R** applies Yates' continuity correction by default. We omit it here so that the chi-square test corresponds directly to the two-proportion$\large z$-test described above.
+> **Continuity correction**: For a $2 \times 2$ table, **R** applies Yates' continuity correction by default. We omit it here so that the chi-square test corresponds directly to the two-proportion$\large z$-test described above.
 
 
 ### Connection to the two-sample test of proportions
@@ -1232,14 +1254,14 @@ $$\large (2.161)^2 \approx 4.669.$$
 
 Therefore, the two-sample $z$-test and the Pearson chi-square test give the **same p-value** when the continuity correction is not used.
 
-> **For a binary outcome and two groups, the two-proportion**$z$-test and the$\large 2\times2$chi-square test are two ways of looking at the same comparison.
+> **For a binary outcome and two groups, the two-proportion**$z$-test and the $2 \times 2$ chi-square test are two ways of looking at the same comparison.
 
 
 ### Fisher's exact test
 
 The chi-square test compares observed and expected counts using an approximate chi-square distribution. This approximation may not work well when expected cell counts are small.
 
-**Fisher's exact test** takes a different approach.
+**Fisher's exact test** takes a different approach: it is particularly useful for small samples, where the chi-square approximation may be unreliable. For large samples, the chi-square approximation generally works well, and the two approaches often give very similar results.
 
 Consider a small study with the following results:
 
