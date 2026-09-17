@@ -2,6 +2,7 @@ project:
   type: website
   resources:
     - "_headers"
+    - "_redirects"
     - "lecture*/data/*"
     - "lecture*/images/*"
 
