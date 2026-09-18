@@ -76,20 +76,29 @@ dd <- data.table(
   x = seq(-4, 4, length.out = 1000)
 )
 
-dd[, density := dt(x, df = 29)]
+sample_size <- 30
 
-ggplot(dd, aes(x, density)) +
+dd[, t_density := dt(x, df = sample_size -1)]
+dd[, normal_density := dnorm(x,0, 1)]
+
+ggplot(dd, aes(x, t_density)) +
   geom_line(linewidth = 1) +
+  geom_line(
+    aes(y = normal_density),
+    color = "red"
+  ) +
   labs(
     x = expression(
       t == frac(bar(x) - mu, s / sqrt(n))
     ),
     y = "Density",
-    title = "t-distribution with df = 29"
+    title = paste0(
+      "t-distribution with df = ", sample_size-1
+    )
   )
 ```
 
-Find the **critical value** $t_{crit}$ that captures the central 95%:
+### The **critical value** $t_{crit}$ that captures the central 95%:
 
 $$\large
 \Pr\left( -t_{crit}
@@ -102,29 +111,36 @@ t_{crit} \right)
 Calculate $t_{crit}$ in base **R**:
 
 ```{webr-r}
-t_crit <- qt(0.975, df = 29)
+t_crit <- qt(0.975, df = sample_size - 1)
 t_crit
+```
+
+```{r, include=FALSE}
+t_crit_r <- qt(0.975, df = 30 - 1)
+t_crit_r
 ```
 
 So we now have
 
 $$\large
-\Pr\left( -2.045
+\Pr
+\left(
+`r -round(t_crit_r, 3)`
 \leq
 \frac{\bar{X} - \mu}{S/\sqrt{n}}
 \leq 
-2.045 \right)
-= 0.95$$
+`r round(t_crit_r, 3)` 
+\right) = 0.95$$
 
-And here it is visually:
+### And here it is visually:
 
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(dd, aes(x, density)) +
+ggplot(dd, aes(x, t_density)) +
   geom_area(
     data = dd[x >= -t_crit & x <= t_crit],
-    aes(y = density),
+    aes(y = t_density),
     fill = "steelblue",
     alpha = 0.4
   ) +
@@ -138,12 +154,26 @@ ggplot(dd, aes(x, density)) +
       t == frac(bar(x) - mu, s / sqrt(n))
     ),
     y = "Density",
-    title = 
-      "Central 95% region for t-distribution with df = 29"
+    title = paste0(
+      "Central 95% region for t-dist with df = ",
+      sample_size - 1
+    )
+      
+    
   )
 ```
 
-Rearranging gives the **95% confidence interval**:
+### Rearranging gives the **95% confidence interval**:
+
+$$\large
+\Pr\left( -2.045
+\leq
+\frac{\bar{X} - \mu}{S/\sqrt{n}}
+\leq 
+2.045 \right)
+= 0.95$$
+
+becomes
 
 $$\large
 \Pr\left(
@@ -169,7 +199,6 @@ sample_size = 30
 mu <- 120
 sigma <- 24
 
-
 birth_weight <- rnorm(sample_size, mean = mu, sd = sigma)
 ```
 
@@ -178,7 +207,6 @@ x_bar <- mean(birth_weight)
 s <- sd(birth_weight)
 se <-  s / sqrt(length(birth_weight))
 t.975 <- qt(0.975, df = length(birth_weight) - 1)
-
 lower <- x_bar - t.975 * se
 upper <- x_bar + t.975 * se
  
@@ -189,10 +217,11 @@ data.table(
 )
 ```
 
+The **R** function `t.test()` can calculate the 95% CI for you:
+
 ```{webr-r}
 t.test(birth_weight)$conf.int
 ```
-
 
 ### What happens if we repeat many times?
 
@@ -216,16 +245,14 @@ gen_CI <- function(sample_size, mu, sigma) {
     covers = lower <= mu & upper >= mu
   )
 }
-```
 
-```{webr-r}
 set.seed(12345)
 
 sample_size <- 30
 mu <- 120
 sigma <- 24
 
-replications <- 100 # 100 or 50000
+replications <- 100 # 100 or 10000
 
 bw_CI <- lapply(
   1:replications,
@@ -233,7 +260,11 @@ bw_CI <- lapply(
 )
 
 bw_CI_dd <- rbindlist(bw_CI, idcol = "rep")
+
+head(bw_CI_dd)
 ```
+
+### Here is what it looks like:
 
 ```{webr-r}
 #| classes: webr-plot
