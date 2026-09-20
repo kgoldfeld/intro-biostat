@@ -26,6 +26,10 @@ webr:
 - By appointment
 - Email: [Keith.Goldfeld\@nyulangone.org](mailto:Keith.Goldfeld@nyulangone.org){.email}
 
+##### Lectures available
+
+To access all the lecures, you find can find them at: [statclasses.rdatagen.net](statclasses.rdatagen.net)
+
 ##### Acknowledgments
 
 With thanks to Ting-Fang Lee, PhD, Hayley Belli, PhD, and Andrea Troxel, PhD, for notes and materials.

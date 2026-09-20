@@ -264,8 +264,7 @@ gen_data_and_plot <- function(
     geom_point() +
     labs(
       title = bquote(
-        beta[1] == .(beta_1) ~ "," ~~
-        sigma == .(sigma)
+        beta[1]==.(beta_1)~","~sigma==.(sigma)
       ),
       x = "Age (years)",
       y = "Systolic blood pressure (mm Hg)"
@@ -274,15 +273,15 @@ gen_data_and_plot <- function(
 ```
 
 ```{webr-r}
-gen_data_and_plot(beta_1 = 1)
-gen_data_and_plot(beta_1 = 0.5)
-gen_data_and_plot(beta_1 = 0)
+#| classes: webr-plot
+
+gen_data_and_plot(beta_1 = 0) # 0, 0.5, 1
 ```
 
 ```{webr-r}
-gen_data_and_plot(beta_1 = 0.5, sigma = 25)
-gen_data_and_plot(beta_1 = 0.5, sigma = 12)
-gen_data_and_plot(beta_1 = 0.5, sigma = 5)
+#| classes: webr-plot
+
+gen_data_and_plot(sigma = 5)   # 5, 12, 25
 ```
 
 These parameters describe different features of the population:
@@ -436,10 +435,11 @@ try_line <- function(b0, b1) {
 ```
 
 ```{webr-r}
-try_line(95, 0.7)
-try_line(93, 0.7)
-try_line(94, 0.5)
-try_line(96, 0.5)
+#| classes: webr-plot
+
+# try (95, 0.7), (93, 0.7), (94, 0.5), (96, 0.5)
+
+try_line(95, 0.7) 
 ```
 
 *Can we do better?*
@@ -850,7 +850,7 @@ dd_group[, y := rnorm(
   sd = 10
 )]
 
-dd_group
+head(dd_group)
 ```
 
 We already know how to compare these groups using a two-sample t-test:
