@@ -28,7 +28,8 @@ webr:
 
 ##### Lectures available
 
-To access all the lecures, you find can find them at: [statclasses.rdatagen.net](https:\statclasses.rdatagen.net)
+To access all the lectures, you can find them at: [statclasses.rdatagen.net](https://statclasses.rdatagen.net)
+
 
 ##### Acknowledgments
 
