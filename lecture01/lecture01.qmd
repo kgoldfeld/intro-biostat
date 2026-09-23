@@ -54,6 +54,52 @@ theme_set(
 )
 ```
 
+## Where are we going?
+
+Over the next eight sessions, we will move from **describing data** to **using data** to answer scientific questions.
+
+- **Variability:** How do observations and samples vary?
+- **Inference:** What can a sample tell us about a larger population?
+- **Comparisons:** How do we quantify differences between groups?
+- **Modeling:** How can we describe relationships among multiple variables?
+- **Practical complications:** What happens with multiple testing and missing data?
+- **Prediction:** How well can what we learn from one set of data predict what happens in new data?
+
+> **A central theme of statistics is understanding variation — and how that variation creates uncertainty about the conclusions we draw from data.**
+
+## How will we get there?
+
+We will learn statistical ideas by **seeing them in action**.
+
+- We will use **simulation** to explore statistical concepts and see how methods behave 
+when we know how the data were generated.
+
+- We will use **real data** to see how these ideas are applied to scientific questions.
+
+- We will use **R throughout the course**. When we use R to analyze data, I will walk
+  through the code, and you will be expected to know how to use those functions.
+
+- I will also show **simulation and visualization code** so that you can see what I am
+  doing, but you will not be expected to master that code.
+
+- We will see **equations**, but you will not be expected to memorize them or calculate
+  things by hand. We will use equations to provide insight into what statistical
+  methods are actually doing.
+
+> **The emphasis is on understanding statistical ideas and knowing how to apply them
+> to data using R.**
+
+## Today
+
+We'll start by asking what it means for data to **vary**.
+
+- Populations and samples
+- Describing the center and variability of a sample
+- Probability distributions as models for variability
+- Relationships between variables
+
+> These ideas will provide the foundation for statistical inference in the next several lectures.
+
 ## A note about `data.table`
 
 Throughout the course, we will use the `data.table` package to work with data in *R*.
@@ -92,87 +138,84 @@ We will learn additional `data.table` syntax as we need it rather than learning 
 
 ## From a population to a sample to a population
 
-Suppose we want to answer a question:
+We always start with a motivating research question. For example:
 
 > **What is the average systolic blood pressure among adult women living in New York City?**
 
-- We start with a ***population***, the group we want to learn about.
+- We start with a ***population***, the larger collection of individuals or 
+  experimental units we want to learn about.
 
-- In this case, the population is **all adult women living in New York City**.
+  - Here, the population is *adult women living in New York City*.
+  - In other studies, the population might be animals, cells, tissue samples,
+  or other experimental units.
 
-> The population is defined by the question we want to answer.
+- We are interested in estimating a quantity in that population.
 
-- In principle, we could measure the systolic blood pressure of everyone in the population.
+  - Here, we are interested in the average systolic blood pressure in the population.
+  - In other studies, it could be a treatment response, a proportion, or a difference between experimental conditions.
 
-- In practice, we can't.
+- If we could measure the systolic blood pressure of everyone in the population,
+  we could calculate the population average directly. In practice, that is usually
+  impossible.
 
-Instead, we measure blood pressure in a **sample** of women from the population.
+- Instead, we *can* measure blood pressure in a **sample** of women drawn from the population.
 
-- Suppose we randomly select **100 women** and measure their systolic blood pressure.
+> **Suppose we randomly select 100 women and measure their systolic blood pressure. Much of this course is about a fundamental question: What can those 100 measurements tell us about the larger population?**
 
-- What can those 100 measurements tell us about the larger population?
+### Population mean and sample mean
 
-### Population and sample
-
-The quantity we really want to know is the **population mean**:
+The quantity we want to know is the **population mean**:
 
 $$\large \mu = \text{mean systolic blood pressure in the population}$$
 
-But we don't observe $\mu$.
-
-Instead, we calculate the **sample mean**:
+We don't observe $\mu$. Instead, from our sample we calculate the **sample mean**:
 
 $$\large \bar{x} = \text{mean systolic blood pressure in our sample}$$
 
 We use $\bar{x}$ to learn about $\mu$.
 
-### Imagine we have a population
+### With simulation, we can know the population
 
-With real data, we never get to see the entire population.
+In the real world, we don't get to observe the entire population.
 
-But with simulation, we can create a population where we **know the truth**.
+With simulation, we can create a population where we **know the population mean**.
 
 ```{webr-r}
 set.seed(1203)
-
-population <- rnorm(2000000, mean = 125, sd = 18)
-
-mean(population)
+sbp_population <- rnorm(2000000, mean = 125, sd = 18)
+mean(sbp_population)
 ```
 
-### We can take a sample from that population
+### We can draw samples from that population
 
 ```{webr-r}
-sample <- sample(population, size = 100)
-
-mean(sample)
+sbp_sample <- sample(sbp_population, size = 100)
+mean(sbp_sample)
 ```
 
 <br>
 
-#### What did we see?
-
-Different samples from the **same population** gave us different sample means.
-
-> **Key idea:** A sample is a noisy reflection of the population.
-
-We use what we observe in the **sample** to learn about what we cannot observe in the **population**.
+> **Key idea:** Different samples from the same population will generally give us different results.
 
 ## Describing our sample
 
-We now have systolic blood pressure measurements for **100 women**.
-
-What do our data look like?
+First, what does our sample of 100 women look like?
 
 ```{webr-r}
 #| classes: webr-plot
-#| fig-height: 4
 
-ggplot(data.table(sbp = sample), aes(x = sbp)) +
+set.seed(789)
+
+sbp_sample <- sample(sbp_population, size = 100)
+
+ggplot(
+  data = data.table(sbp = sbp_sample), 
+  aes(x = sbp)
+) +
   geom_histogram(
     bins = 50, 
-    color = "grey85", 
-    fill = "grey70"
+    color = "white", 
+    fill = "grey50"
   ) +
   labs(
     x = "Systolic blood pressure",
@@ -180,17 +223,15 @@ ggplot(data.table(sbp = sample), aes(x = sbp)) +
   )
 ```
 
-#### How can we summarize these data?
+### How can we summarize these data quantitatively?
 
-A graph shows us the entire distribution.
-
-But we often want a few numbers that summarize important features of the data.
+A graph shows us the entire distribution, but we often want a few numbers that summarize important features of the data.
 
 Two things we often want to describe are:
 
-- **Where are the observations centered?**
+  - **Where are the observations centered?**
 
-- **How much do the observations vary?**
+  - **How much do the observations vary?**
 
 ### Where are the observations centered?
 
@@ -204,8 +245,8 @@ $$\large
 The **median** is the value that divides the ordered observations in half.
 
 ```{webr-r}
-mean(sample)
-median(sample)
+mean(sbp_sample)
+median(sbp_sample)
 ```
 
 ### Do the mean and median always tell us the same thing?
@@ -213,7 +254,7 @@ median(sample)
 Let's change one observation in our sample:
 
 ```{webr-r}
-sample_outlier <- sample
+sample_outlier <- sbp_sample
 sample_outlier[1] <- 500
 
 mean(sample_outlier)
@@ -228,39 +269,37 @@ The **median** depends primarily on the ordering of the observations, so it is m
 
 Knowing the center does not tell us everything about a distribution.
 
-Consider two sets of observations:
+Consider two sets of observations with the same mean:
 
 ```{webr-r}
 x1 <- c(98, 99, 100, 101, 102)
 x2 <- c(80, 90, 100, 110, 120)
+```
 
+```{webr-r}
 mean(x1)
 mean(x2)
 ```
-
-Both have the same mean.
-
-But are these data really similar?
-
-### Measuring variability
 
 One way to describe variability is to look at how far each observation is from the mean:
 
 $$\large x_i - \bar{x}$$
 
 ```{webr-r}
-x1
 x1 - mean(x1)
-
-x2
 x2 - mean(x2)
 ```
 
 The observations in `x2` are much farther from their mean.
 
-### Variance
+### Variability
 
-If we simply add the deviations from the mean, positive and negative deviations cancel out.
+If we simply average the deviations from the mean, positive and negative deviations cancel out.
+
+```{webr-r}
+mean(x1 - mean(x1))
+mean(x2 - mean(x2))
+```
 
 Instead, variance is based on the **squared deviations from the mean**.
 
@@ -274,54 +313,28 @@ var(x1)
 var(x2)
 ```
 
-### Why do we divide by $n-1$?
-
-When we calculate variability in a sample, we first compute the sample mean. But once the sample mean is fixed, the deviations from that mean must add up to zero.
-
-For example, if three observations have deviations:
-
-$$\large -2,\quad -1,\quad ?$$
-
-the final deviation must be:
-
-$$\large3$$
-
-so that the total is zero.
-
-Once we estimate the sample mean, only $n-1$ of the deviations are free to vary.
-
-We say that there are $n-1$ degrees of freedom for estimating the variability.
-
-This is why sample variance uses $n-1$ rather than $n$.
-
-### Standard deviation
-
-Variance is expressed in **squared units**.
-
-The **standard deviation** is the square root of the variance:
+Variance is expressed in **squared units**. The **standard deviation** is the square root of the variance, which is expressed in the **same units as the original observations**:
 
 $$\large
-s = \sqrt{\frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1}}$$
+s = \sqrt{s^2}$$
 
 ```{webr-r}
 sd(x1)
 sd(x2)
 ```
 
-The standard deviation is expressed in the **same units as the original observations**.
-
 ### Back to our blood pressure data
 
 ```{webr-r}
-mean(sample)
-sd(sample)
+mean(sbp_sample)
+sd(sbp_sample)
 ```
 
 The **mean** describes where the observed blood pressures are centered.
 
 The **standard deviation** describes how much the observed blood pressures vary around that center.
 
-### Another way to describe variability
+### Is there a measure of variability that is less affected by extreme values?
 
 Just as the **median** is less affected by extreme observations than the mean, we can use a measure of variability that is less affected by extreme observations.
 
@@ -333,10 +346,10 @@ IQR = Q_{0.75} - Q_{0.25}$$
 It describes the spread of the **middle 50%** of the observations.
 
 ```{webr-r}
-sd(sample)
+sd(sbp_sample)
 sd(sample_outlier)
 
-IQR(sample)
+IQR(sbp_sample)
 IQR(sample_outlier)
 ```
 
@@ -1110,7 +1123,10 @@ binomial_prob <- data.frame(
   probability = dbinom(x, size = n, prob = p)
 )
 
-ggplot(binomial_prob, aes(x = x, y = probability)) +
+ggplot(
+  data = binomial_prob, 
+  aes(x = x, y = probability)
+) +
   geom_col(width = .8, fill = "grey80") +
   scale_x_continuous(breaks = 0:n) +
   labs(
@@ -1217,7 +1233,10 @@ poisson_prob <- data.frame(
   probability = dpois(x, lambda = lambda)
 )
 
-ggplot(poisson_prob, aes(x = x, y = probability)) +
+ggplot(
+  data = poisson_prob, 
+  aes(x = x, y = probability)
+) +
   geom_col(width = .8, fill = "grey80") +
   scale_x_continuous(
     breaks = x, 
@@ -1377,7 +1396,10 @@ Let's plot these deviations from the means.
 x_dev <- x - mean(x)
 y_dev <- y - mean(y)
 
-ggplot(data.frame(x_dev, y_dev), aes(x_dev, y_dev)) +
+ggplot(
+  data = data.frame(x_dev, y_dev), 
+  aes(x_dev, y_dev)
+) +
   geom_hline(yintercept = 0, linewidth = .4) +
   geom_vline(xintercept = 0, linewidth = .4) +
   geom_point(size = 2) +
@@ -1428,6 +1450,9 @@ But does its magnitude tell us how **strongly** they are associated?
 Let's look at three examples.
 
 ```{webr-r}
+#| classes: webr-plot
+#| fig-height: 2
+#| fig-width: 6
 x <- 1:10
 
 y1 <- c(
@@ -1444,13 +1469,6 @@ y3 <- c(
   16.0,  25.8,  35.7,  44.8,  54.0,
   69.2,  94.2,  97.3, 104.9, 137.6
 )
-```
-
-
-```{webr-r}
-#| classes: webr-plot
-#| fig-height: 2
-#| fig-width: 6
 
 plot_association <- function(x, y, label) {
   
