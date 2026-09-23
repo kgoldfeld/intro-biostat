@@ -31,9 +31,20 @@ theme_set(
 )
 ```
 
+## Today
+
+We'll move from **describing variability in a sample** to asking what a sample
+can tell us about a population.
+
+- How would our results vary if we took another sample?
+- How can we determine whether an observed result is unexpected given ordinary
+  sampling variation?
+- How do hypothesis tests use this idea to quantify uncertainty?
+- How can we compare means in several common study designs?
+
+These ideas provide the foundation for statistical inference.
 
 ## From samples to inference
-
 
 In the last lecture, we distinguished between a **population** and a **sample**.
 
