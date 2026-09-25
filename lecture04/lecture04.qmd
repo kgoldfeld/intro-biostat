@@ -37,6 +37,16 @@ theme_set(
 )
 ```
 
+## Today
+
+We'll extend our ideas about **comparison and variability** to study designs with **more than two groups**, and then consider how study design affects what we can learn.
+
+- How can we compare means across more than two groups?
+- If groups differ, how can we determine where those differences are?
+- What determines our ability to detect a difference when one really exists?
+- How can simulation help us understand **power** and **sample size**?
+
+These ideas connect how we **analyze** a study with how we **design** one.
 
 ## Comparing more than two groups
 
@@ -74,7 +84,9 @@ dd <- data.table(
   )
 )
 
-head(dd)
+head(dd[group == "A"]) # A, B, and C
+head(dd[group == "B"]) # A, B, and C
+head(dd[group == "C"]) # A, B, and C
 ```
 
 ```{webr-r}
@@ -95,7 +107,7 @@ ggplot(data = dd, aes(x = group, y = y)) +
   ylim(-15, 40)
 ```
 
-**Two things to note:**
+### Two things to note
 
 - Even when the population means are equal, the sample means will differ because of sampling variability.
 

@@ -29,7 +29,18 @@ theme_set(
 )
 ```
 
-<div style="margin-top: 18rem;"></div>
+## Today
+
+We'll shift the focus from **hypothesis testing** to **estimation and uncertainty**.
+
+- How can we use a sample to estimate a population quantity?
+- How do confidence intervals describe the uncertainty in an estimate?
+- What happens when assumptions are not met?
+- How can we estimate and compare proportions for binary outcomes?
+- How can we analyze categorical data when observations are independent or paired?
+- The same ideas of sampling variability and uncertainty will connect these different settings.
+
+<div style="margin-top: 30rem;"></div>
 
 ![](images/ASA.png)
 

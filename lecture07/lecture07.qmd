@@ -32,6 +32,16 @@ theme_set(
 )
 ```
 
+## Today
+
+We'll consider two common problems that complicate the interpretation of statistical analyses.
+
+- What happens when we ask many statistical questions using the same data?
+- How can we limit the number of misleading findings that result from repeated testing?
+- What can go wrong when some of the data we intended to observe are missing?
+- How does the reason data are missing affect what we can learn from the observed data?
+
+These issues require us to think carefully about what our data can—and cannot—tell us.
 
 ## Multiple testing
 

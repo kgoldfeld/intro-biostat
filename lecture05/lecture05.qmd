@@ -38,6 +38,16 @@ theme_set(
 )
 ```
 
+## Today
+
+We'll move from **comparing groups** to **modeling** how a continuous outcome varies with one or more characteristics.
+
+- How can we describe the relationship between a continuous outcome and another variable?
+- How can we account for other variables when describing a relationship?
+- How can we tell whether a model adequately describes the important structure in the data?
+
+**Regression** will give us a framework for addressing all of these questions.
+
 
 
 ## From comparing groups to modeling a relationship
@@ -51,7 +61,7 @@ But age is not naturally a group variable. It is quantitative.
 
 > **Can we describe how mean blood pressure changes continuously with age?**
 
-We will start with simulated data so that we know exactly how the population was generated.
+### We will start with simulated data so that we know exactly how the population was generated.
 
 ```{webr-r}
 set.seed(1205)

@@ -43,7 +43,15 @@ theme_set(
 )
 ```
 
+## Today
 
+We'll extend our approach to modeling relationships from **continuous outcomes** to **binary outcomes**.
+
+- How can we describe how the **probability of an outcome** varies with another variable?
+- How can we account for other variables when describing that relationship?
+- How can we tell whether a model adequately describes the important structure in the data?
+
+**Logistic regression** will give us a framework for addressing these questions.
 
 ## From continuous to binary outcomes
 
@@ -68,7 +76,6 @@ Can we use the same regression framework when the outcome takes only two possibl
 
 ## A simulated population
 
-
 Suppose we are interested in the relationship between **age and hypertension**.
 
 For each person, define
@@ -80,7 +87,7 @@ Y =
 0 & \text{if the person does not have hypertension}
 \end{cases}$$
 
-Let's simulate a population in which the probability of hypertension increases with age.
+### Let's simulate a population in which the probability of hypertension increases with age
 
 ```{webr-r}
 set.seed(1234)
@@ -115,9 +122,7 @@ ggplot(dd, aes(x = age, y = hypertension)) +
   )
 ```
 
-Each observed outcome is either **0 or 1**. But our scientific question is not really whether a particular individual has hypertension.
-
-We want to know:
+Each observed outcome is either **0 or 1**. But our scientific question is not really whether a particular individual has hypertension. Instead, we want to know:
 
 > **How does the probability of hypertension change with age?**
 

@@ -1977,6 +1977,16 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
+<section id="today" class="level2">
+<h2 class="anchored" data-anchor-id="today">Today</h2>
+<p>We’ll extend our approach to modeling relationships from <strong>continuous outcomes</strong> to <strong>binary outcomes</strong>.</p>
+<ul>
+<li>How can we describe how the <strong>probability of an outcome</strong> varies with another variable?</li>
+<li>How can we account for other variables when describing that relationship?</li>
+<li>How can we tell whether a model adequately describes the important structure in the data?</li>
+</ul>
+<p><strong>Logistic regression</strong> will give us a framework for addressing these questions.</p>
+</section>
 <section id="from-continuous-to-binary-outcomes" class="level2">
 <h2 class="anchored" data-anchor-id="from-continuous-to-binary-outcomes">From continuous to binary outcomes</h2>
 <p>In the last lecture, we used regression to describe how the <strong>mean of an outcome</strong> changes with a predictor.</p>
@@ -2002,17 +2012,18 @@ Y =
 1 &amp; \text{if the person has hypertension} \\
 0 &amp; \text{if the person does not have hypertension}
 \end{cases}\]</span></p>
-<p>Let’s simulate a population in which the probability of hypertension increases with age.</p>
+<section id="lets-simulate-a-population-in-which-the-probability-of-hypertension-increases-with-age" class="level3">
+<h3 class="anchored" data-anchor-id="lets-simulate-a-population-in-which-the-probability-of-hypertension-increases-with-age">Let’s simulate a population in which the probability of hypertension increases with age</h3>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>We know the probability used to generate each person’s outcome because we created the population ourselves.</p>
 <div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Each observed outcome is either <strong>0 or 1</strong>. But our scientific question is not really whether a particular individual has hypertension.</p>
-<p>We want to know:</p>
+<p>Each observed outcome is either <strong>0 or 1</strong>. But our scientific question is not really whether a particular individual has hypertension. Instead, we want to know:</p>
 <blockquote class="blockquote">
 <p><strong>How does the probability of hypertension change with age?</strong></p>
 </blockquote>
+</section>
 </section>
 <section id="the-mean-of-a-binary-outcome-is-a-probability" class="level2">
 <h2 class="anchored" data-anchor-id="the-mean-of-a-binary-outcome-is-a-probability">The mean of a binary outcome is a probability</h2>

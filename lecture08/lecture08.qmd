@@ -31,6 +31,17 @@ theme_set(
 )
 ```
 
+## Today
+
+We'll shift from using models to **describe relationships** to using them to **predict outcomes** for individuals.
+
+- How can we evaluate whether a model will predict well for new people?
+- What makes a predicted probability useful?
+- How can we use predicted probabilities to classify individuals?
+- What tradeoffs arise when we change the threshold used for classification?
+- Does a more flexible model necessarily make better predictions?
+
+These questions shift our focus from **explaining the data we have observed** to **how well a model performs on new data**.
 
 ## From modeling a relationship to making a prediction
 
@@ -112,6 +123,8 @@ dd <- DGP(500)
 ```{webr-r}
 dd[, .(age, hypertension_5yr)][1:10]
 ```
+
+### Fitting a model
 
 ```{webr-r}
 fit <- glm(

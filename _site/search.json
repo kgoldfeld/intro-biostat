@@ -123,7 +123,7 @@
     "href": "lecture08/lecture08.html#from-a-model-to-a-prediction",
     "title": "Lecture 8: Prediction and Classification",
     "section": "From a model to a prediction",
-    "text": "From a model to a prediction\nLet’s simulate data from a longitudinal study.\nFor each person, we observe their age at baseline and whether they develop hypertension during the next 5 years.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nThe model gives us an estimated probability for each person.\nFor example, a predicted risk of 0.30 means that the model estimates a 30% probability of developing hypertension within 5 years for a person of that age.\nNotice that the prediction is a probability, even though the outcome itself is binary.\n\nBut how do we know whether these predicted probabilities are any good?"
+    "text": "From a model to a prediction\nLet’s simulate data from a longitudinal study.\nFor each person, we observe their age at baseline and whether they develop hypertension during the next 5 years.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nFitting a model\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nThe model gives us an estimated probability for each person.\nFor example, a predicted risk of 0.30 means that the model estimates a 30% probability of developing hypertension within 5 years for a person of that age.\nNotice that the prediction is a probability, even though the outcome itself is binary.\n\nBut how do we know whether these predicted probabilities are any good?"
   },
   {
     "objectID": "lecture08/lecture08.html#how-well-does-our-model-predict",
@@ -291,7 +291,7 @@
     "href": "lecture04/lecture04.html#comparing-more-than-two-groups",
     "title": "Lecture 4: Designing and Analyzing Studies",
     "section": "Comparing more than two groups",
-    "text": "Comparing more than two groups\nSo far, we have considered comparisons between two population means.\nFor example, we might ask whether mean blood pressure differs between two treatment groups:\n\\[\\large\nH_0: \\mu_A = \\mu_B\\]\nBut many studies involve more than two groups. Suppose instead that we have three treatment groups, and we want to compare their population means:\n\\[\\large \\mu_A,\\quad \\mu_B,\\quad \\mu_C\\]\nHow should we make this comparison?\nLet’s start by considering what we might observe when the three population means are actually the same.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nTwo things to note:\n\nEven when the population means are equal, the sample means will differ because of sampling variability.\nWhen the population means differ, the observed differences among the sample means reflect both the population differences and sampling variability.\n\n\nThe question we need to answer is: are the observed differences among the sample means larger than we would expect from sampling variability alone?"
+    "text": "Comparing more than two groups\nSo far, we have considered comparisons between two population means.\nFor example, we might ask whether mean blood pressure differs between two treatment groups:\n\\[\\large\nH_0: \\mu_A = \\mu_B\\]\nBut many studies involve more than two groups. Suppose instead that we have three treatment groups, and we want to compare their population means:\n\\[\\large \\mu_A,\\quad \\mu_B,\\quad \\mu_C\\]\nHow should we make this comparison?\nLet’s start by considering what we might observe when the three population means are actually the same.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nTwo things to note\n\nEven when the population means are equal, the sample means will differ because of sampling variability.\nWhen the population means differ, the observed differences among the sample means reflect both the population differences and sampling variability.\n\n\nThe question we need to answer is: are the observed differences among the sample means larger than we would expect from sampling variability alone?"
   },
   {
     "objectID": "lecture04/lecture04.html#analysis-of-variance",
@@ -389,7 +389,7 @@
     "href": "lecture05/lecture05.html#from-comparing-groups-to-modeling-a-relationship",
     "title": "Lecture 5: Modeling Continuous Outcomes",
     "section": "From comparing groups to modeling a relationship",
-    "text": "From comparing groups to modeling a relationship\nCan we describe how mean blood pressure changes continuously with age?\nWe already know how to compare mean outcomes across groups. For example, we could divide people into age groups and compare mean blood pressure across those groups.\nBut age is not naturally a group variable. It is quantitative.\n\nCan we describe how mean blood pressure changes continuously with age?\n\nWe will start with simulated data so that we know exactly how the population was generated.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nWhat does the plot suggest?\n\nOlder people tend to have higher systolic blood pressure.\nBut there is substantial variation among people of the same or similar age.\n\n\nWe could create groups…\nOne approach would be to divide age into categories.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nWe could then compare mean systolic blood pressure across the three groups, perhaps using ANOVA.\nBut this throws away information.\nSomeone who is 40 and someone who is 59 are treated as belonging to the same age group, while someone who is 39 and someone who is 40 are treated as belonging to different groups.\nThe grouping is arbitrary: different cut points would give us different groups and different summaries.\n\nRather than asking how mean blood pressure differs across age groups, we would like to describe how mean blood pressure changes with age."
+    "text": "From comparing groups to modeling a relationship\nCan we describe how mean blood pressure changes continuously with age?\nWe already know how to compare mean outcomes across groups. For example, we could divide people into age groups and compare mean blood pressure across those groups.\nBut age is not naturally a group variable. It is quantitative.\n\nCan we describe how mean blood pressure changes continuously with age?\n\n\nWe will start with simulated data so that we know exactly how the population was generated.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nWhat does the plot suggest?\n\nOlder people tend to have higher systolic blood pressure.\nBut there is substantial variation among people of the same or similar age.\n\n\n\nWe could create groups…\nOne approach would be to divide age into categories.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nWe could then compare mean systolic blood pressure across the three groups, perhaps using ANOVA.\nBut this throws away information.\nSomeone who is 40 and someone who is 59 are treated as belonging to the same age group, while someone who is 39 and someone who is 40 are treated as belonging to different groups.\nThe grouping is arbitrary: different cut points would give us different groups and different summaries.\n\nRather than asking how mean blood pressure differs across age groups, we would like to describe how mean blood pressure changes with age."
   },
   {
     "objectID": "lecture05/lecture05.html#modeling-the-mean-outcome",
@@ -515,7 +515,7 @@
     "href": "lecture06/lecture06.html#a-simulated-population",
     "title": "Logistic regression",
     "section": "A simulated population",
-    "text": "A simulated population\nSuppose we are interested in the relationship between age and hypertension.\nFor each person, define\n\\[\\large\nY =\n\\begin{cases}\n1 & \\text{if the person has hypertension} \\\\\n0 & \\text{if the person does not have hypertension}\n\\end{cases}\\]\nLet’s simulate a population in which the probability of hypertension increases with age.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nWe know the probability used to generate each person’s outcome because we created the population ourselves.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nEach observed outcome is either 0 or 1. But our scientific question is not really whether a particular individual has hypertension.\nWe want to know:\n\nHow does the probability of hypertension change with age?"
+    "text": "A simulated population\nSuppose we are interested in the relationship between age and hypertension.\nFor each person, define\n\\[\\large\nY =\n\\begin{cases}\n1 & \\text{if the person has hypertension} \\\\\n0 & \\text{if the person does not have hypertension}\n\\end{cases}\\]\n\nLet’s simulate a population in which the probability of hypertension increases with age\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nWe know the probability used to generate each person’s outcome because we created the population ourselves.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nEach observed outcome is either 0 or 1. But our scientific question is not really whether a particular individual has hypertension. Instead, we want to know:\n\nHow does the probability of hypertension change with age?"
   },
   {
     "objectID": "lecture06/lecture06.html#the-mean-of-a-binary-outcome-is-a-probability",
@@ -635,5 +635,47 @@
     "title": "Lecture 2: Statistical Inference",
     "section": "Today",
     "text": "Today\nWe’ll move from describing variability in a sample to asking what a sample can tell us about a population.\n\nHow would our results vary if we took another sample?\nHow can we determine whether an observed result is unexpected given ordinary sampling variation?\nHow do hypothesis tests use this idea to quantify uncertainty?\nHow can we compare means in several common study designs?\n\nThese ideas provide the foundation for statistical inference."
+  },
+  {
+    "objectID": "lecture03/lecture03.html#today",
+    "href": "lecture03/lecture03.html#today",
+    "title": "Lecture 3: Estimation and Uncertainty",
+    "section": "Today",
+    "text": "Today\nWe’ll shift the focus from hypothesis testing to estimation and uncertainty.\n\nHow can we use a sample to estimate a population quantity?\nHow do confidence intervals describe the uncertainty in an estimate?\nWhat happens when assumptions are not met?\nHow can we estimate and compare proportions for binary outcomes?\nHow can we analyze categorical data when observations are independent or paired?\nThe same ideas of sampling variability and uncertainty will connect these different settings."
+  },
+  {
+    "objectID": "lecture04/lecture04.html#today",
+    "href": "lecture04/lecture04.html#today",
+    "title": "Lecture 4: Designing and Analyzing Studies",
+    "section": "Today",
+    "text": "Today\nWe’ll extend our ideas about comparison and variability to study designs with more than two groups, and then consider how study design affects what we can learn.\n\nHow can we compare means across more than two groups?\nIf groups differ, how can we determine where those differences are?\nWhat determines our ability to detect a difference when one really exists?\nHow can simulation help us understand power and sample size?\n\nThese ideas connect how we analyze a study with how we design one."
+  },
+  {
+    "objectID": "lecture05/lecture05.html#today",
+    "href": "lecture05/lecture05.html#today",
+    "title": "Lecture 5: Modeling Continuous Outcomes",
+    "section": "Today",
+    "text": "Today\nWe’ll move from comparing groups to modeling how a continuous outcome varies with one or more characteristics.\n\nHow can we describe the relationship between a continuous outcome and another variable?\nHow can we account for other variables when describing a relationship?\nHow can we tell whether a model adequately describes the important structure in the data?\n\nRegression will give us a framework for addressing all of these questions."
+  },
+  {
+    "objectID": "lecture06/lecture06.html#today",
+    "href": "lecture06/lecture06.html#today",
+    "title": "Logistic regression",
+    "section": "Today",
+    "text": "Today\nWe’ll extend our approach to modeling relationships from continuous outcomes to binary outcomes.\n\nHow can we describe how the probability of an outcome varies with another variable?\nHow can we account for other variables when describing that relationship?\nHow can we tell whether a model adequately describes the important structure in the data?\n\nLogistic regression will give us a framework for addressing these questions."
+  },
+  {
+    "objectID": "lecture07/lecture07.html#today",
+    "href": "lecture07/lecture07.html#today",
+    "title": "Lecture 7: Practical Issues in Data Analysis",
+    "section": "Today",
+    "text": "Today\nWe’ll consider two common problems that complicate the interpretation of statistical analyses.\n\nWhat happens when we ask many statistical questions using the same data?\nHow can we limit the number of misleading findings that result from repeated testing?\nWhat can go wrong when some of the data we intended to observe are missing?\nHow does the reason data are missing affect what we can learn from the observed data?\n\nThese issues require us to think carefully about what our data can—and cannot—tell us."
+  },
+  {
+    "objectID": "lecture08/lecture08.html#today",
+    "href": "lecture08/lecture08.html#today",
+    "title": "Lecture 8: Prediction and Classification",
+    "section": "Today",
+    "text": "Today\nWe’ll shift from using models to describe relationships to using them to predict outcomes for individuals.\n\nHow can we evaluate whether a model will predict well for new people?\nWhat makes a predicted probability useful?\nHow can we use predicted probabilities to classify individuals?\nWhat tradeoffs arise when we change the threshold used for classification?\nDoes a more flexible model necessarily make better predictions?\n\nThese questions shift our focus from explaining the data we have observed to how well a model performs on new data."
   }
 ]
