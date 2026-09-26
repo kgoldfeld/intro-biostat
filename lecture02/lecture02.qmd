@@ -33,10 +33,10 @@ theme_set(
 
 ## Today
 
-We'll move from **describing variability in a sample** to asking what a sample
-can tell us about a population.
+We'll move from **describing variability in a sample** to asking what a **sample
+can tell us about a population**.
 
-- How would our results vary if we took another sample?
+- How would our results vary if we were able to draw another sample?
 - How can we determine whether an observed result is unexpected given ordinary
   sampling variation?
 - How do hypothesis tests use this idea to quantify uncertainty?
@@ -60,7 +60,7 @@ That creates a fundamental statistical problem:
 
 The national average birth weight is 120 oz.
 
-You collect a sample of 100 babies from one community.
+You measure weights from a sample of 100 babies from one community.
 
 The average birth weight in the sample is 115 oz., with a standard deviation of 24 oz.
 
@@ -84,6 +84,7 @@ sigma <- 24
 # compare with larger sample size
 
 birth_weight <- rnorm(sample_size, mean = mu, sd = sigma) 
+head(birth_weight)
 ```
 
 We can visualize the data:
@@ -396,7 +397,7 @@ This probability is the **p-value**.
 ### Interpreting the p-value
 
 - Under the null hypothesis $\left( H_0: \mu = 120 \right)$, sample means as small as 115 ounces occur only rarely.
-- The p-value is the probability of observing data **this extreme, or more extreme**, given that the null hypothesis is true.
+- The p-value is the probability of observing data **this extreme, or more extreme**, given that the *null hypothesis is true*.
 - It is **not** the probability that the null hypothesis is true.
 
 
@@ -616,7 +617,7 @@ So we measure the difference relative to its standard error:
 $$\large
 \frac{\bar{x} - \mu}{\sigma / \sqrt{n}}$$
 
-In practice, we replace the unknown population standard deviation with its sample estimate:
+### In practice, we replace the unknown population standard deviation with its sample estimate:
 
 $$\large
 \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} \;\longrightarrow\; \frac{\bar{x} - \mu}{s / \sqrt{n}}$$
@@ -657,7 +658,7 @@ set.seed(3)
 gen_stats(sample_size = 5, mu = 120, sigma = 24)
 ```
 
-Now, let's look at the distribution of *z_stat* and *t_stat* if we generate 100,000 data sets:
+Now, let's look at the distribution of *z_stat* and *t_stat* if we generate *a lot of* data sets:
 
 ```{webr-r}
 set.seed(123)
@@ -716,7 +717,9 @@ p_zoom <-
   plot_layout(widths = c(1.5, 1))
 ```
 
-It turns out that the variable *t_stat* has a name - the **t-statistic**. And it follows a distribution called the ***Student's t*** distribution. As we've seen, the *Student's t* depends on the sample size. The shape of the Student’s t distribution depends on its degrees of freedom (df). For a one-sample analysis, $$\large df = n - 1$$
+### It turns out ... 
+
+that the variable *t_stat* has a name - the **t-statistic**. And it follows a distribution called the ***Student's t*** distribution. As we've seen, the *Student's t* depends on the sample size. The shape of the Student’s t distribution depends on its degrees of freedom (df). For a one-sample analysis, $$\large df = n - 1$$
 
 As the sample size increases, the Student’s *t* distribution becomes increasingly similar to the standard normal distribution.
 
@@ -738,7 +741,7 @@ Simulated distribution of t-statistic (assuming sigma is unknown):
 bw_stats_dd[, mean(abs(t_stat) > 1.96)]
 ```
 
-$P(X \lt -1.96 \text{ or } X > 1.96)$ in the heoretical standard normal and t-distributions: 
+$P(X \lt -1.96 \text{ or } X > 1.96)$ in the theoretical standard normal and t-distributions: 
 
 ```{webr-r}
 2 * pnorm(-1.96)
