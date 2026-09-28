@@ -58,21 +58,21 @@ That creates a fundamental statistical problem:
 ## Motivating example
 
 
-The national average birth weight is 120 oz.
+Let's say the national average birth weight ($\mu_{\text{pop}}$) is known to be 120 oz.
 
-You measure weights from a sample of 100 babies from one community.
+We measure weights from a sample of 100 babies from one community.
 
-The average birth weight in the sample is 115 oz., with a standard deviation of 24 oz.
+The observed average birth weight in the sample is 115 oz., with a standard deviation of 24 oz.
 
-**Does this mean that babies in this community have a lower average birth weight compared to the rest of the country?**
+**Does this mean that babies in this community have a lower average birth weight ($\mu_{\text{com}}$) compared to the rest of the country?**
 
 
 ## Drawing a single sample from a population
 
+Before we get to the question about the community, let's focus on what it means to 
+draw a single sample from a known population distribution. In this case we know that the national birth weight distribution is $N(\mu_{\text{pop}} = 120, \sigma_{\text{pop}}^2 = 24^2)$.
 
-Let's draw from the national population distribution, which is $N(\mu = 120, \sigma = 24)$
-
-We'll collect a **single** sample from the population:
+Let's take a **single** sample from that population:
 
 ```{webr-r}
 set.seed(123)
@@ -121,8 +121,7 @@ mean(birth_weight)
 
 Our sample mean is not exactly 120 oz.
 
-> **How much variation in the sample mean should we expect simply from taking a sample?**
-
+> **How much variation in the *sample mean* should we expect simply from taking a sample?**
 
 ## Repeated-sampling behavior
 
@@ -143,7 +142,7 @@ bw_means <- replicate(
 )
 ```
 
-Simulation lets us approximate what would happen if we could repeat the experiment thousands of times.
+We can look at the distribution of these means:
 
 ```{webr-r}
 #| classes: webr-plot
@@ -182,7 +181,7 @@ sd(bw_means)
 The standard deviation of a sampling distribution is called the **standard error**.
 
 
-#### Big takeaways
+### Big takeaways
 
 - Different samples from the same population produce different sample means.
 
@@ -236,7 +235,7 @@ Let's generate observations from a Poisson distribution:
 ```{webr-r}
 set.seed(101)
 
-sample_size <- 30
+sample_size <- 250
 lambda <- 4 # Poisson mean and variance
 
 x <- rpois(sample_size, lambda = lambda)
@@ -269,7 +268,7 @@ Now look at the distribution of the **sample mean** over repeated samples:
 
 set.seed(123)
 
-sample_size <- 30  # 30, 5, 10
+sample_size <- 100  # 100, 30, 5
 lambda <- 4 # 4 then 1
 replications <- 50000
 
@@ -281,9 +280,9 @@ means <- replicate(
 ggplot(data.table(means), aes(x = means)) +
   geom_histogram(
     aes(y = after_stat(density)),
-    binwidth = 1 / sample_size, 
+    binwidth = 1/sample_size, 
     color = "white", 
-    fill = "grey85"
+    fill = "grey45"
   ) +
   stat_function(
     fun = dnorm,
@@ -324,11 +323,11 @@ theoretical_se
 ## From sampling distributions to inference
 
 
-In our commmunity study, we had an observed mean birth weight of **115 oz.**, compared with a national mean of **120 oz.**
+Back to our commmunity study ... we had an observed mean birth weight of **115 oz.**, compared with a national mean of **120 oz.**
 
 We know that sample means vary from sample to sample.
 
-> **Is 115 unusually low if the true population mean is 120?**
+> **Is an observed mean of 115 unusually low if the true mean is 120?**
 
 
 ### Formalizing the question
@@ -337,9 +336,10 @@ Suppose we begin by assuming the community mean is the same as the national mean
 
 $$\large
 \begin{aligned}
-H_0: \mu &= 120 \\
-H_A: \mu &< 120
-\end{aligned}$$
+H_0: \mu_\text{com} &= 120 \\
+H_A: \mu_\text{com} &< 120
+\end{aligned}
+$$
 
 $H_0$ is the **null hypothesis**.
 
@@ -396,8 +396,8 @@ This probability is the **p-value**.
 
 ### Interpreting the p-value
 
-- Under the null hypothesis $\left( H_0: \mu = 120 \right)$, sample means as small as 115 ounces occur only rarely.
-- The p-value is the probability of observing data **this extreme, or more extreme**, given that the *null hypothesis is true*.
+- Under the null hypothesis $\left( H_0: \mu_{\text{com}} = 120 \right)$, sample means as small as 115 ounces occur only rarely.
+- The p-value is the probability, **assuming the null hypothesis is true**, of obtaining a result **this extreme, or more extreme**.
 - It is **not** the probability that the null hypothesis is true.
 
 
@@ -495,8 +495,8 @@ In some studies, however, we are interested in detecting **any** difference, reg
 
 $$\large
 \begin{aligned}
-H_0: \mu &= 120 \\
-H_A: \mu &\ne 120
+H_0: \mu_{\text{com}} &= 120 \\
+H_A: \mu_{\text{com}} &\ne 120
 \end{aligned}$$
 
 We use the 2.5% and 97.5% quantiles to define the extreme areas:
@@ -632,13 +632,9 @@ where $s$ is the estimated sample standard deviation.
 Let's go back to the original simulation for a single sample. This time we will use a function:
 
 ```{webr-r}
-gen_data <- function(sample_size, mu, sigma) {
-  rnorm(sample_size, mean = mu, sd = sigma)
-}
-
 gen_stats <- function(sample_size, mu, sigma) {
 
-  birth_weight <- gen_data(sample_size, mu, sigma)
+  birth_weight <- rnorm(sample_size, mean = mu, sd = sigma)
 
   x_bar <- mean(birth_weight)
   s <- sd(birth_weight)
@@ -703,13 +699,18 @@ p_zoom <-
   coord_cartesian(
     xlim = c(1.5, 4.0), 
     ylim = c(0, 0.2)
+  ) +
+   annotate(
+    "text", x = 2.9, y = .19, size = 3.5,
+    label = "Zooming in on right tail"
   )
 
 (p_full | p_zoom) +
   plot_annotation(
     title = 
-      "Simulated sampling distributions of the standardized statistics"
-  ) +
+      paste0("Simulated sampling distributions of the standardized statistics (n = ",
+      sample_size, ")")
+    ) +
   plot_layout(
     axes = "collect", 
     axis_titles = "collect"
@@ -719,38 +720,137 @@ p_zoom <-
 
 ### It turns out ... 
 
-that the variable *t_stat* has a name - the **t-statistic**. And it follows a distribution called the ***Student's t*** distribution. As we've seen, the *Student's t* depends on the sample size. The shape of the Student’s t distribution depends on its degrees of freedom (df). For a one-sample analysis, $$\large df = n - 1$$
+that the variable *t_stat* has a name - the **t-statistic**. And it follows a distribution called the ***Student's t*** distribution. As we've seen, the *Student's t* depends on the sample size. The shape of the Student’s t distribution depends on its degrees of freedom (df). For a one-sample analysis, $df = n - 1$.
+
+If the *t*-distribution has heavier tails, how far from zero does a statistic need to be before it falls in the most extreme 5%?
+
+```{webr-r}
+#| context: setup
+
+plot_t_and_z <- function(sample_size) {
+
+  df <- sample_size - 1
+
+  z_crit <- qnorm(.975)
+  t_crit <- qt(.975, df = df)
+
+  x <- seq(-5, 5, length.out = 1500)
+
+  dplot <- data.table(
+    x = x,
+    normal = dnorm(x),
+    t = dt(x, df = df)
+  )
+
+  normal_tail <- dplot[abs(x) >= z_crit]
+  normal_tail[, side := fifelse(x < 0, "left", "right")]
+
+  t_tail <- dplot[abs(x) >= t_crit]
+  t_tail[, side := fifelse(x < 0, "left", "right")]
+  
+  cutoffs <- data.table(
+    x = c(-z_crit, z_crit, -t_crit, t_crit),
+    yend = c(
+      dnorm(z_crit),
+      dnorm(z_crit),
+      dt(t_crit, df = df),
+      dt(t_crit, df = df)
+    ),
+    distribution = rep(c("Standard normal", "Student's t"), each = 2)
+  )
+
+  ggplot(dplot, aes(x = x)) +
+    
+    geom_ribbon(
+      data = t_tail,
+      aes(ymin = 0, ymax = t, group = side),
+      fill = "orange",
+      alpha = 1
+    ) +
+
+    geom_ribbon(
+      data = normal_tail,
+      aes(ymin = 0, ymax = normal, group = side),
+      fill = "lightblue",
+      alpha = 0.4
+    ) +
+
+    geom_line(
+      aes(y = normal, linetype = "Standard normal"),
+      linewidth = 0.5
+    ) +
+
+    geom_line(
+      aes(y = t, linetype = "Student's t"),
+      linewidth = 0.5
+    ) +
+
+    scale_linetype_manual(
+      values = c(
+        "Standard normal" = 2,
+        "Student's t" = 1
+      )
+    ) +
+
+  geom_segment(
+    data = cutoffs,
+      aes(
+        x = x,
+        xend = x,
+        y = 0,
+        yend = yend,
+        linetype = distribution
+    )
+  ) +
+
+    annotate(
+      "text",
+      x = -4.5,
+      y = 0.3,
+      hjust = 0,
+      size = 5,
+      label = "Two-sided 5% cutoffs",
+      fontface = "bold"
+    ) +
+    
+    annotate(
+      "text",
+      x = -4.5,
+      y = 0.25,
+      hjust = 0,
+      size = 5,
+      label = paste0(
+        "Standard normal: ±", sprintf("%.2f", z_crit),
+        "\nStudent's t (df = ", df, "): ±", sprintf("%.2f", t_crit)
+      )
+    ) +
+    
+    ggtitle(
+      paste0("Standard normal and t distributions (df = ", 
+      sample_size - 1, ")")
+    ) +
+
+    labs(
+      x = "Standardized statistic",
+      y = "Density",
+      linetype = NULL
+    ) +
+    
+    theme(plot.title = element_text(size = 15))
+}
+```
+
+```{webr-r}
+#| classes: webr-plot
+#| fig-width: 11
+
+sample_size <- 5
+plot_t_and_z(sample_size)
+```
 
 As the sample size increases, the Student’s *t* distribution becomes increasingly similar to the standard normal distribution.
 
-We can quantify the heavier tails by asking how often each standardized statistic falls more than 1.96 standard-error units from zero.
-
-```{webr-r}
-sample_size
-```
-
-Simulated distribution of z-statistic (assuming sigma is known):
-
-```{webr-r}
-bw_stats_dd[, mean(abs(z_stat) > 1.96)]
-```
-
-Simulated distribution of t-statistic (assuming sigma is unknown):
-
-```{webr-r}
-bw_stats_dd[, mean(abs(t_stat) > 1.96)]
-```
-
-$P(X \lt -1.96 \text{ or } X > 1.96)$ in the theoretical standard normal and t-distributions: 
-
-```{webr-r}
-2 * pnorm(-1.96)
-2 * pt(-1.96, df = sample_size - 1)
-```
-
-
 ## Performing a one-sample t-test
-
 
 So far we've used simulation to understand how the procedure works. In practice, statistical software performs these calculations for us.
 
@@ -763,15 +863,15 @@ sample_size = 30
 mu <- 120
 sigma <- 24
 
-birth_weight <- gen_data(sample_size, mu, sigma)
+birth_weight <- rnorm(sample_size, mean = mu, sd = sigma)
 ```
 
 We specify the null and alternative hypotheses:
 
 $$\large
 \begin{aligned}
-H_0&: \mu \ge 120 \\
-H_A&: \mu \lt 120
+H_0&: \mu_{\text{com}} = 120 \\
+H_A&: \mu_{\text{com}} \lt 120
 \end{aligned}$$
 
 Let's manually calculate the p-value for this one-sided test:
@@ -801,8 +901,8 @@ Suppose instead that our scientific question is whether the community birth weig
 
 $$\large
 \begin{aligned}
-H_0&: \mu = 120 \\
-H_A&: \mu \ne 120
+H_0&: \mu_{\text{com}} = 120 \\
+H_A&: \mu_{\text{com}} \ne 120
 \end{aligned}$$
 
 The t-statistic and degrees of freedom are unchanged. Only the calculation of the p-value changes:
@@ -833,7 +933,7 @@ A rehabilitation program enrolls 30 adults recovering from a wrist injury. Grip 
 
 - There is one sample of individuals measured twice
 - The measurements are **paired** because they come from the same individuals
-- We are interested in the average **within-person change** in grip strength is different from 0
+- We are interested in whether the average **within-person change** in grip strength is different from 0
 
 For each individual, define the change in grip strength as
 
@@ -926,19 +1026,6 @@ ggplot(
   )
 ```
 
-### Advantage of the paired analysis
-
-If we inspect the standard deviation of the individual *before* and *after* measurements and the standard deviation of the *change*, we can see the advantage of this design:
-
-
-```{webr-r}
-sd(dd$grip_before)
-sd(dd$grip_after)
-sd(dd$grip_change)
-```
-
-> In our simulation, each person's baseline grip strength contributes to both measurements. When we calculate the within-person difference, that between-person variability cancels out. The resulting reduction in variability allows us to estimate the average change more precisely.
-
 ### Assessing if the average change is different from 0
 
 We calculate each individual's change in grip strength, and then conduct a *t* test. By default `t.test()` conducts a two-sided test:
@@ -959,7 +1046,7 @@ These two analyses produce the same t-statistic, degrees of freedom, and p-value
 ## Two-sample comparison - independent samples
 
 
-A cardiologist conducts a randomized controlled trial comparing LDL cholesterol levels between individuals receiving **statin therapy** and individuals following a **healthy diet alone**. 46 individuals are randomized to the statin group and 31 individuals to the diet-only group.
+A cardiologist conducts a randomized controlled trial comparing LDL cholesterol levels between individuals receiving **statin therapy** and individuals following a **healthy diet alone**. 40 individuals are randomized to the statin group and 40 individuals to the diet-only group.
 
 **Key features of this analysis**:
 
@@ -990,7 +1077,7 @@ $$\large
 As before, the size of the observed difference needs to be considered relative to its **standard error**.
 
 
-### Two sample means means two sources of variability
+### Two sample means, two sources of variability
 
 With independent samples, both sample means vary from sample to sample.
 
@@ -1051,19 +1138,19 @@ We will simulate the data using these definitions:
 
 $$\large
 X_{\text{statin},i} \sim N(117, 22^2),
-\qquad i = 1,\ldots,46$$
+\qquad i = 1,\ldots,40$$
 
 $$\large
 X_{\text{diet},i} \sim N(130, 22^2),
-\qquad i = 1,\ldots,31$$
+\qquad i = 1,\ldots,40$$
 
 > The observations in the two groups are generated independently.
 
 ```{webr-r}
 set.seed(5211) # 5211 or 12112
 
-n_statin <- 46
-n_diet <- 31
+n_statin <- 40
+n_diet <- 40
 
 mu_diet <- 130
 mu_statin <- 117
@@ -1110,7 +1197,7 @@ ggplot(dd, aes(x = group, y = ldl)) +
 ```
 
 
-### Assessing whether the group means are different:
+#### Assessing whether the group means are different:
 
 ```{webr-r}
 t.test(ldl ~ group, data = dd)
