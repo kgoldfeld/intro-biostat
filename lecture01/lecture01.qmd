@@ -514,15 +514,140 @@ ggplot(normal_density, aes(x = x, y = density)) +
   )
 ```
 
-### How do we calculate that probability?
+### From density to cumulative probability
 
-To calculate the probability we are interested in, we use the **cumulative distribution function (CDF)**, which gives the probability of observing a value less than or equal to $x$:
+To calculate the area shown above, we use the fact that the area under the density curve to the left of a value $x$ is the probability of observing a value less than or equal to $x$.
 
-$$\large
-F(x) = P(X \le x)$$
+The **cumulative distribution function (CDF)** records this probability for every possible value of $x$:
 
-$P(X \le 140)$ is the entire area to the left of 140:
+$$
+F(x)=P(X\le x)
+$$
 
+```{webr-r}
+#| context: setup
+
+plot_normal_cdf <- function(x_value, mu = 125, sigma = 18) {
+
+  x <- seq(mu - 4 * sigma, mu + 4 * sigma, length.out = 1000)
+
+  dplot <- data.table(
+    x = x,
+    density = dnorm(x, mean = mu, sd = sigma),
+    cumulative = pnorm(x, mean = mu, sd = sigma)
+  )
+
+  prob <- pnorm(x_value, mean = mu, sd = sigma)
+
+  # Density plot
+  p_density <- ggplot(dplot, aes(x = x, y = density)) +
+    geom_segment(
+      x = x_value,
+      xend = x_value,
+      y = 0,
+      yend = dnorm(x_value, mean = mu, sd = sigma),
+      linewidth = 0.2,
+      color = "pink"
+    ) +
+    geom_area(
+      data = dplot[x <= x_value],
+      fill = "grey90",
+      alpha = 0.7
+    ) +
+    geom_line(linewidth = 1) +
+    annotate(
+      "text",
+      x = mu - 3.9 * sigma,
+      y = max(dplot$density) * 1.04,
+      hjust = 0,
+      label = paste0(
+        "Area = P(X <= ", x_value, ") = ", sprintf("%.3f", prob)
+      )
+    ) +
+    labs(
+      title = "Probability density",
+      x = "Systolic blood pressure",
+      y = "Density"
+    ) +
+    coord_cartesian(
+      xlim = range(dplot$x),
+      ylim = c(0, max(dplot$density) * 1.05)
+    )
+
+  # CDF plot
+  p_cdf <- ggplot(dplot, aes(x = x, y = cumulative)) +
+    geom_line(linewidth = 1) +
+    geom_segment(
+      x = x_value,
+      xend = x_value,
+      y = 0,
+      yend = prob,
+      linetype = 2,
+      linewidth = .5
+    ) +
+    geom_segment(
+      x = min(dplot$x),
+      xend = x_value,
+      y = prob,
+      yend = prob,
+      linetype = 2,
+      linewidth = .5
+    ) +
+    geom_point(
+      x = x_value,
+      y = prob,
+      size = 3
+    ) +
+    annotate(
+      "text",
+      x = x_value + 10,
+      y = 0.03,
+      label = x_value
+    ) +
+    annotate(
+      "text",
+      x = mu - 4 * sigma,
+      y = prob,
+      hjust = 0,
+      vjust = 2.2,
+      label = sprintf("%.3f", prob)
+    ) +
+    labs(
+      title = "Cumulative distribution function",
+      x = "Systolic blood pressure",
+      y = "Cumulative probability"
+    ) +
+    coord_cartesian(
+      xlim = range(dplot$x),
+      ylim = c(0, 1)
+    )
+
+  p_density + p_cdf
+}
+```
+
+```{webr-r}
+#| classes: webr-plot
+#| fig-width: 10
+
+x <- 140  # try 105, 125, 140, 160
+
+plot_normal_cdf(x)
+```
+
+Change $x$ above. As $x$ moves from left to right, the area under the density curve to the left of $x$ increases from 0 to 1. The height of the CDF gives that same probability.
+
+For the normal distribution, `pnorm()` takes a value on the **x-axis** and gives the corresponding cumulative probability on the **y-axis**.
+
+```{webr-r}
+pnorm(140, mean = 125, sd = 18)
+```
+
+### Returning to our original probability
+
+We want the area between 100 and 140. We can find it by subtracting two cumulative probabilities.
+
+As we just saw, $P(X \le 140)$ is the entire area to the left of 140:
 
 ```{webr-r}
 #| classes: webr-plot
@@ -593,7 +718,7 @@ P(100 < X < 140)
 =
 P(X \le 140) - P(X \le 100)$$
 
-For the normal distribution, `pnorm()` gives the cumulative probability to the left of a value:
+We can calculate these two cumulative probalities using `pnorm()`:
 
 ```{webr-r}
 pnorm(140, mean = mu, sd = sigma)
@@ -606,8 +731,6 @@ Therefore, the difference in the CDFs gives us the probability we are calculatin
 pnorm(140, mean = mu, sd = sigma) -
   pnorm(100, mean = mu, sd = sigma)
 ```
-
-> `pnorm()` gives cumulative area to the left, so subtracting two cumulative probabilities gives the probability over an interval.
 
 ### Comparing values from different distributions
 
@@ -812,16 +935,19 @@ ggplot(standard_normal, aes(x = z, y = density)) +
 
 We've now used several R functions for working with normal distributions:
 
-| Function  | What it does                                                  |
-|-------------------|-----------------------------------------------------|
-| `dnorm()` | Gives the **density** at a value                              |
-| `pnorm()` | Gives the **cumulative probability** to the left of a value   |
-| `qnorm()` | Gives the **value** corresponding to a cumulative probability |
-| `rnorm()` | Generates **random observations** from a normal distribution  |
+| Function  | What it does |
+|-----------|--------------|
+| `dnorm()` | Gives the **density** at a value |
+| `pnorm()` | Takes a **value** and gives its **cumulative probability** |
+| `qnorm()` | Takes a **cumulative probability** and gives the corresponding **value** |
+| `rnorm()` | Generates **random observations** from a normal distribution |
 
 We've already used `dnorm()`, `pnorm()`, and `rnorm()`.
 
-`qnorm()` answers the reverse of the question answered by `pnorm()`.
+`qnorm()` reverses the direction of `pnorm()`:
+
+- `pnorm()`: **value on the x-axis → cumulative probability on the y-axis**
+- `qnorm()`: **cumulative probability on the y-axis → value on the x-axis**
 
 For example:
 
