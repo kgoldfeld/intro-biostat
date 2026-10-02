@@ -1,0 +1,43 @@
+---
+title: "Binary variance"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+---
+
+<button onclick="window.close();" style="font-size: 1.1em; padding: 6px 14px;">
+  ← Return to lecture
+</button>
+
+```{webr-r}
+set.seed(123)
+
+p <- 0.30
+n <- 1000
+
+p_hat <- rbinom(n, size = 1, prob = p)
+```
+
+```{webr-r}
+var(p_hat)
+p * (1 - p)
+```
+
+```{webr-r}
+set.seed(123)
+
+p <- 0.30
+n <- 100
+
+p_hat <- replicate(
+  10000,
+  mean(rbinom(n, size = 1, prob = p))
+)
+
+var(p_hat)
+
+p * (1 - p) / n
+```

@@ -19,6 +19,7 @@ webr:
 library(data.table)
 library(ggplot2)
 library(patchwork)
+library(ratesci)
 
 theme_set(
   theme_bw(base_size = 14) +
@@ -44,6 +45,7 @@ We'll shift the focus from **hypothesis testing** to **estimation and uncertaint
 
 ![](images/ASA.png)
 
+[The ASA's Statement on *p*-Values: Context, Process, and Purpose](https://doi.org/10.1080/00031305.2016.1154108)
 
 ## What are we trying to learn?
 
@@ -52,7 +54,7 @@ Hypothesis testing is often used to make a **binary decision**:
 
 > Do we reject $H_0$ or fail to reject $H_0$?
 
-But often we care more about:
+But often the questions we are interested in are:
 
 - **How large** is the estimated difference or association?
 
@@ -341,7 +343,6 @@ $$
 
 **The confidence interval quantifies the uncertainty around our estimate and gives a range of parameter values that are reasonably consistent with the observed data.**
 
-
 ### Revisiting Scenario 1: grip strength
 
 In **Lecture 2**, we compared grip strength before and after rehabilitation by analyzing the **within-person changes**.
@@ -357,7 +358,7 @@ $$
 \frac{s_{\text{change}}}{\sqrt{n}}
 $$
 
-First recreate the data from **Lecture 2**:
+### First recreate the data from Lecture 2 ...
 
 ```{webr-r}
 set.seed(123)
@@ -384,7 +385,7 @@ dd <- data.table(grip_before, grip_after)
 dd[, grip_change := grip_after - grip_before]
 ```
 
-Next estimate the 95% confidence interval manually:
+### Next estimate the 95% confidence interval manually:
 
 ```{webr-r}
 estimate <- mean(dd$grip_change)
@@ -430,7 +431,7 @@ $$\large
 }
 $$
 
-First recreate the data from **Lecture 2**:
+### Now recreate the data from Lecture 2:
 
 ```{webr-r}
 set.seed(5211)
@@ -459,7 +460,7 @@ dd <- rbind(dd_statin, dd_diet)
 dd[, group := factor(group, levels = c("statin", "diet"))]
 ```
 
-Next estimate the 95% confidence interval manually:
+### Next estimate the 95% confidence interval manually:
 
 ```{webr-r}
 estimate <- 
@@ -495,7 +496,7 @@ The usual small-sample *t-test* results are exact when the populations are norma
 
 But how well does the *t-test* perform when the populations are not normal?
 
-We can use simulation to examine how the *t-test* behaves when the populations are not normally distributed.
+We can use simulation to examine how the *t-test* behaves when the populations are not normally distributed. Here are three different densities:
 
 ```{webr-r}
 #| classes: webr-plot
@@ -620,7 +621,7 @@ sample_size <- 100
 mu <- 10
 shape <- 1
 distribution <- "Gamma"
-replications <- 50000
+replications <- 5000
 
 sim_stats <- function(x) {
   gen_stats(
@@ -670,7 +671,7 @@ The **Wilcoxon rank-sum test** compares the relative ordering of observations:
 
 If observations from one population tend to be larger, they will tend to have **higher ranks**.
 
-> **The Wilcoxon rank-sum test is not simply a t-test for non-normal data—it provides a different way of comparing two populations.**
+> **The Wilcoxon rank-sum test is not really just a t-test for non-normal data, it is a different way of comparing two populations.**
 
 The test uses ranks to assess whether observations from one population tend to be larger or smaller than observations from the other.
 
@@ -723,7 +724,7 @@ wilcox.test(outcome ~ group, data = dd)
 The data suggest that observations from Group 2 tend to be larger than observations from Group 1.
 
 
-## Binary outcomes - estimating a population proportion
+## Binary outcomes - estimating a sample proportion
 
 For a binary outcome, each observation can take one of two values, such as:
 
@@ -739,21 +740,23 @@ E(X) = p
 \operatorname{Var}(X) = p(1-p).
 $$
 
-Since the sample proportion $\hat{p}$ is simply the mean of $n$ binary observations,
+Since the sample proportion $\hat{p}$ is simply the sample mean of $n$ binary observations,
 
-$$\large
-\hat{p} = \frac{1}{n}\sum_{i=1}^n X_i,$$
+$$
+\large
+\hat{p} = \frac{1}{n}\sum_{i=1}^n X_i.
+$$
 
-its variance is
+The **variance** of the sample proportion (over a hypothetical collection of repeated sample proportions) is
 
 $$\large
 \operatorname{Var}(\hat{p})
 =
 \frac{p(1-p)}{n}.$$
 
-> **A sample proportion is simply a sample mean when the outcome is coded 0/1.**
+[Extra simulation: confirming the variance](binary-variance.html){target="_blank"}
 
-Since $\hat{p}$ is a sample mean, the **Central Limit Theorem** applies.
+### Since $\hat{p}$ is a sample mean, the *Central Limit Theorem* applies...
 
 For sufficiently large samples, the sampling distribution of $\hat{p}$ is approximately normal, with estimated standard error
 
