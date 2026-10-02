@@ -8,15 +8,17 @@ filters:
   - webr
 ---
 
-<button onclick="window.close();" style="font-size: 1.1em; padding: 6px 14px;">
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
   ← Return to lecture
 </button>
+</div>
 
 ```{webr-r}
 set.seed(123)
 
 p <- 0.30
-n <- 1000
+n <- 80
 
 p_hat <- rbinom(n, size = 1, prob = p)
 ```
@@ -30,13 +32,15 @@ p * (1 - p)
 set.seed(123)
 
 p <- 0.30
-n <- 100
+n <- 80
 
 p_hat <- replicate(
   10000,
   mean(rbinom(n, size = 1, prob = p))
 )
+```
 
+```{webr-r}
 var(p_hat)
 
 p * (1 - p) / n

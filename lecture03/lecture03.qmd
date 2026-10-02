@@ -832,16 +832,14 @@ prop.test(x = 40, n = 100)$conf.int
 
 `prop.test()` uses a score-based approach rather than the simple interval calculated above. By default, it also applies a continuity correction.
 
-
-## Comparing two population proportions
-
+## Comparing two group proportions
 
 We are conducting a behavioral experiment on rats and want to compare trial success rates across two groups.
 
 - In Group 1, 35 of 48 rats complete the test successfully.
 - In Group 2, 27 of 52 rats complete the test successfully.
 
-*How much does the probability of success differ between the two populations?*
+*How much does the probability of success differ between the two groups?*
 
 The estimated success proportions are
 
@@ -862,8 +860,7 @@ $$
 
 So the observed success rate is about **21 percentage points higher in Group 1**.
 
-
-### Confidence interval for the difference
+### Confidence interval for the difference between groups
 
 The estimated standard error is
 
@@ -900,9 +897,10 @@ estimate + c(-1, 1) * qnorm(0.975) * se
 > We estimate that the success probability is about 21 percentage points higher in Group 1, with a 95% confidence interval ranging from 2.5 to 39.5 percentage points higher.
 
 
-### Testing equality of two population proportions
+### Testing equality of two group proportions
 
-We can also test
+We can also conduct a hypothesis test:
+
 $$
 \large 
 H_0:p_1=p_2
@@ -914,7 +912,7 @@ $$\large
 H_A:p_1\neq p_2.
 $$
 
-Under the null hypothesis, the two populations have a common proportion $p$.
+Under the null hypothesis, the two groups have a common proportion $p$.
 
 We estimate this common proportion by **pooling** the observations from the two groups: 
 
@@ -951,7 +949,11 @@ z
 (\hat{p}_1-\hat{p}_2)-0
 }{
 \widehat{\mathrm{SE}}_0
-}.$$> For the confidence interval, we estimate variability using the observed proportion in each group. For the hypothesis test, we estimate variability assuming the null hypothesis is true:$\large p_1=p_2$.
+}.$$
+
+> For the confidence interval, we estimate variability using the observed proportion in each group. For the hypothesis test, we estimate variability assuming the null hypothesis is true: $\large p_1=p_2$.
+
+### Conducting the hypothesis "by hand" and with R
 
 ```{webr-r}
 x1 <- 35
@@ -1172,9 +1174,10 @@ ggplot(
     title = "Expected outcome distributions"
   )
 ```
+
 ### Comparing observed and expected counts
 
-We now compare what we **observed** with what we would **expect** if group and outcome were not associated.
+We now compare what we **observed** with what we would **expect** if group and outcome were not associated, using a statistic called the chi-square statistic.
 
 For each cell, its contribution to the chi-square statistic is
 
@@ -1182,10 +1185,18 @@ $$
 \large
 \frac{(O_{ij}-E_{ij})^2}{E_{ij}},
 $$
-where $O_{ij}$is the observed count and $E_{ij}$ is the expected count.
+
+where $O_{ij}$ is the observed count and $E_{ij}$ is the expected count.
 
 - Squaring ensures that deviations in either direction contribute positively.
 - Dividing by the expected count scales the discrepancy relative to the size of the expected count.
+
+The **chi-square statistic** adds these contributions across all cells:
+
+$$
+\large
+\chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}.
+$$
 
 ### For our data:
 
@@ -1237,7 +1248,9 @@ $$
 >
 > Therefore, the p-value is the probability of observing a chi-square statistic at least as large as the one we observed, assuming the null hypothesis is true.
 
-The shape of the chi-square distribution depends on the degrees of freedom. For our $2 \times2$ table, $df=1$. The shaded upper-tail area beyond our observed $\chi^2 = 4.669$ is the p-value.
+### The shape of the chi-square distribution depends ...
+
+on the degrees of freedom. For our $2 \times2$ table, $df=1$. The shaded upper-tail area beyond our observed $\chi^2 = 4.669$ is the p-value.
 
 ```{webr-r}
 #| classes: webr-plot
@@ -1285,7 +1298,7 @@ Or we can perform the entire analysis directly from the contingency table using 
 chisq.test(tab_rats, correct = FALSE)
 ```
 
-> **Continuity correction**: For a $2 \times 2$ table, **R** applies Yates' continuity correction by default. We omit it here so that the chi-square test corresponds directly to the two-proportion$\large z$-test described above.
+> **Continuity correction**: For a $2 \times 2$ table, **R** applies Yates' continuity correction by default. We omit it here so that the chi-square test corresponds directly to the two-proportion $z$-test described above.
 
 
 ### Connection to the two-sample test of proportions
