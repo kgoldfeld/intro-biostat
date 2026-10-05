@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Lecture 3: Estimation and Uncertainty – Biostatistics Lectures</title>
+<title>From standardized deviations to chi-square – Biostatistics Lectures</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -347,7 +347,7 @@ iframe.qwebr-output-code-browse {
 // Document level settings ----
 
 // Determine if we need to install R packages
-globalThis.qwebrInstallRPackagesList = ['data.table', 'ggplot2', 'patchwork', 'ratesci'];
+globalThis.qwebrInstallRPackagesList = [''];
 
 // Specify possible locations to search for the repository
 globalThis.qwebrPackageRepoURLS = ['https://repo.r-wasm.org/'];
@@ -369,7 +369,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\nlibrary(ratesci)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12)\n  )\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd <- data.table(\n  x = seq(-4, 4, length.out = 1000)\n)\n\nsample_size <- 30\nt_crit <- qt(0.975, df = sample_size - 1)\n\ndd[, t_density := dt(x, df = sample_size -1)]\ndd[, normal_density := dnorm(x,0, 1)]\n\nggplot(dd, aes(x, t_density)) +\n  geom_segment(\n    x = t_crit,\n    xend = t_crit,\n    y = 0,\n    yend = dt(t_crit, df = sample_size - 1),\n    linewidth = 0.2,\n    color = \"pink\"\n  ) +\n  geom_segment(\n    x = -t_crit,\n    xend = -t_crit,\n    y = 0,\n    yend = dt(-t_crit, df = sample_size - 1),\n    linewidth = 0.2,\n    color = \"pink\"\n  ) +\n  geom_area(\n    data = dd[x >= -t_crit & x <= t_crit],\n    aes(y = t_density),\n    fill = \"grey60\",\n    alpha = 0.4\n  ) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = expression(\n      t == frac(bar(x) - mu, s / sqrt(n))\n    ),\n    y = \"Density\",\n    title = paste0(\n      \"Central 95% region for t-dist with df = \",\n      sample_size - 1\n    )\n  )","id":2,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"t_crit <- qt(0.975, df = sample_size - 1)\nt_crit","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(16986)\n\nsample_size = 30\nmu <- 120\nsigma <- 24\n\nbirth_weight <- rnorm(sample_size, mean = mu, sd = sigma)","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x_bar <- mean(birth_weight)\ns <- sd(birth_weight)\nse <-  s / sqrt(length(birth_weight))\nt.975 <- qt(0.975, df = length(birth_weight) - 1)\nlower <- x_bar - t.975 * se\nupper <- x_bar + t.975 * se\n \ndata.table(\n  x_bar = x_bar,\n  lower = lower,\n  upper = upper\n)","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"t.test(birth_weight)$conf.int","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"gen_CI <- function(sample_size, mu, sigma) {\n\n  birth_weight <- rnorm(sample_size, mean = mu, sd = sigma)\n\n  x_bar <- mean(birth_weight)\n  s <- sd(birth_weight)\n  se <- s / sqrt(sample_size)\n  t.975 <- qt(0.975, df = sample_size - 1)\n \n  lower <- x_bar - t.975 * se\n  upper <- x_bar + t.975 * se\n\n  data.table(\n    x_bar = x_bar,\n    lower = lower,\n    upper = upper,\n    covers = lower <= mu & upper >= mu\n  )\n}\n\nset.seed(12345)\n\nsample_size <- 30\nmu <- 120\nsigma <- 24\n\nreplications <- 100 # 100 or 10000\n\nbw_CI <- lapply(\n  1:replications,\n  function(x) gen_CI(sample_size, mu, sigma)\n)\n\nbw_CI_dd <- rbindlist(bw_CI, idcol = \"rep\")\n\nhead(bw_CI_dd)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(bw_CI_dd, \n    aes(y = rep, \n        x = x_bar, \n        xmin = lower, \n        xmax = upper, \n        color = covers\n    )) +\n  geom_errorbar(\n    aes(xmin = lower, xmax = upper), \n    orientation = \"y\", \n    width = 0, \n    linewidth = 0.4\n  ) +\n  geom_point(size = 0.33) +\n  geom_vline(\n    xintercept = mu, \n    linetype = 3, \n    linewidth = 0.6\n  ) +\n  scale_y_reverse() +\n  scale_color_manual(\n    values = c(\n      \"TRUE\" = \"grey60\", \"FALSE\" = \"firebrick\"\n    ),\n    guide = \"none\"\n  ) +\n  labs(\n    x = \"Birth Weight (ounces)\",\n    y = \"Sample\",\n    title = \n      \"95% confidence intervals from repeated samples\"\n  ) +\n theme(aspect.ratio = 0.9)","id":8,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"bw_CI_dd[, mean(covers)]","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nsample_size <- 30\nmu_before <- 25\nsd_before <- 6\nsd_change <- 3\n\neffect_size <- 4\n\ngrip_before <- rnorm(\n  sample_size, \n  mean = mu_before, \n  sd = sd_before\n)\n\ngrip_after <- \n  grip_before + \n  effect_size + \n  rnorm(sample_size, 0, sd_change)\n\ndd <- data.table(grip_before, grip_after)\ndd[, grip_change := grip_after - grip_before]","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate <- mean(dd$grip_change)\nn <- nrow(dd)\ndf <- n - 1\nse <- sd(dd$grip_change) / sqrt(n)\nt_crit <- qt(0.975, df)\n\nestimate\nc(estimate - t_crit*se, estimate + t_crit*se) # 95% CI","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"t.test(x = dd$grip_change)$estimate\nt.test(x = dd$grip_change)$conf.int","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(5211)\n\nn_statin <- 40\nn_diet <- 40\n\nmu_diet <- 130\nmu_statin <- 117\n\nsd_diet <- 22\nsd_statin <- 22\n\ndd_statin <- data.table(\n group = \"statin\",\n ldl = rnorm(n_statin, mu_statin, sd_statin)\n)\n\ndd_diet <- data.table(\n group = \"diet\",\n ldl = rnorm(n_diet, mu_diet, sd_diet)\n)\n\ndd <- rbind(dd_statin, dd_diet)\n\ndd[, group := factor(group, levels = c(\"statin\", \"diet\"))]","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"estimate <- \n  dd[group == \"statin\", mean(ldl)] - \n  dd[group == \"diet\", mean(ldl)]\n\nse <- sqrt(\n dd[group == \"statin\", var(ldl) / .N] +\n dd[group == \"diet\", var(ldl) / .N]\n)\n\ndf <- unname(t.test(ldl ~ group, data = dd)$parameter)\nt_crit <- qt(0.975, df)\n\nestimate\nc(estimate - t_crit * se, estimate + t_crit * se)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"t.test(ldl ~ group, data = dd)$estimate\nt.test(ldl ~ group, data = dd)$conf.int","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mu <- 10\n\ndensity_dt <- data.table(\n  x = seq(-10, 40, length.out = 1000)\n)\n\ndensity_dt[, `:=`(\n  Normal = \n    dnorm(x, mean = mu, sd = 5),\n  `Moderate skew` = \n    dgamma(x, shape = 4, rate = 4 / mu),\n  `Strong skew` = \n    dgamma(x, shape = 1, rate = 1 / mu)\n)]\n\ndensity_dt <- melt(\n  density_dt,\n  id.vars = \"x\",\n  variable.name = \"distribution\",\n  value.name = \"density\"\n)\n\ndensity_dt[, distribution := factor(\n  distribution,\n  levels = c(\n    \"Normal\", \"Moderate skew\", \"Strong skew\"\n  )\n)]\n\nggplot(density_dt, aes(x = x, y = density)) +\n  geom_line(linewidth = 0.8) +\n  geom_vline(\n    xintercept = 10, \n    linetype = 3, \n    linewidth = 0.5, \n    color = \"grey80\"\n  ) +\n  labs(\n    x = \"Outcome\",\n    y = \"Density\",\n    color = NULL,\n    title = \n      \"Populations with increasing right skew\"\n  ) +\n  facet_grid(~ distribution) +\n  theme(aspect.ratio = 0.8)","id":16,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"gen_data <- function(\n    sample_size, mu, sigma = NULL, \n    shape = NULL, distribution = \"Normal\") {\n\n  if (distribution == \"Normal\") {\n    x <- rnorm(sample_size, mean = mu, sd = sigma)\n  } else if (distribution == \"Gamma\") {\n    x <- rgamma(sample_size, shape = shape, rate = shape/mu)\n  }\n  \n  return(x)\n}\n\ngen_stats <- function(\n    sample_size, mu,\n    sigma = NULL, shape = NULL,\n    distribution = \"Normal\") {\n\n  x1 <- gen_data(\n    sample_size = sample_size,\n    mu = mu,\n    sigma = sigma,\n    shape = shape,\n    distribution = distribution\n  )\n\n  x2 <- gen_data(\n    sample_size = sample_size,\n    mu = mu,\n    sigma = sigma,\n    shape = shape,\n    distribution = distribution\n  )\n\n  test <- t.test(x1, x2)\n\n  data.table(\n    mean_1 = mean(x1),\n    mean_2 = mean(x2),\n    estimate = mean(x1) - mean(x2),\n    p_value = test$p.value,\n    reject = test$p.value < 0.05\n  )\n}","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(7612)\n\nsample_size <- 100\nmu <- 10\nshape <- 1\ndistribution <- \"Gamma\"\nreplications <- 5000\n\nsim_stats <- function(x) {\n  gen_stats(\n    sample_size, mu,\n    shape = shape,\n    distribution = distribution\n  )\n}\n\nresults <- rbindlist(\n  lapply(1:replications, sim_stats)\n)\n\nresults[, mean(reject)]","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd <- data.table(\n  group = c(\n    rep(\"Group 1\", 6),\n    rep(\"Group 2\", 6)\n  ),\n  outcome = c(\n    2, 4, 6, 8, 10, 15,\n    7, 11, 14, 18, 22, 27\n  )\n  # outcome = c(\n  #  1, 4, 9, 13, 18, 20,\n  #  3, 5, 7, 15, 16, 27\n  #)\n)\n\ndd[, rank := rank(outcome)]\ndd[order(outcome)]","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, .(\n  rank_sum = sum(rank),\n  mean_rank = mean(rank)\n), by = group]","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"wilcox.test(outcome ~ group, data = dd)","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- 40\nn <- 100\n\np_hat <- x / n\nse <- sqrt(p_hat * (1 - p_hat) / n)\n\np_hat + c(-1, 1) * qnorm(0.975) * se","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"prop.test(x = 40, n = 100)$conf.int","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x1 <- 35\nn1 <- 48\n\nx2 <- 27\nn2 <- 52\n\np1 <- x1 / n1\np2 <- x2 / n2\n\nestimate <- p1 - p2\n\nse <- sqrt(\n p1 * (1 - p1) / n1 +\n p2 * (1 - p2) / n2\n)\n\nestimate + c(-1, 1) * qnorm(0.975) * se","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x1 <- 35\nn1 <- 48\n\nx2 <- 27\nn2 <- 52\n\np1 <- x1 / n1\np2 <- x2 / n2\n\np_pool <- (x1 + x2)/(n1 + n2)\n\nse <- sqrt(\n p_pool*(1 - p_pool) * ( (1/n1) + (1/n2) )\n)\n\nz <- (p1 - p2)/se\np_val <- 2 * pnorm(-abs(z))\n\nc(est_diff = p1 - p2, z_score = z, p_val = p_val)","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"prop.test(\n x = c(x1, x2),\n n = c(n1, n2),\n correct = FALSE\n)","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tab_rats <- matrix(\n  c(35, 13,\n    27, 25),\n  nrow = 2,\n  byrow = TRUE\n)\n\nprop.table(tab_rats, margin = 1)","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd <- data.table(\n  group = rep(paste(\"Group\", 1:2), each = 2),\n  outcome = rep(\n    c(\"Completed\", \"Did not complete\"),\n    times = 2\n  ),\n  count = c(35, 13, 27, 25)\n)\n\nggplot(dd, aes(\n    x = group, \n    y = count, \n    fill = outcome\n  )\n) +\n  geom_col(\n    position = \"fill\", \n    linewidth = 0.4, \n    alpha = 0.95\n  ) +\n  scale_y_continuous(labels = scales::percent) +\n  scale_fill_manual(\n    values = c(\n      \"Completed\" = \"steelblue\",\n      \"Did not complete\" = \"goldenrod2\"\n    )\n  ) +\nlabs(\n  x = NULL,\n  y = \"Proportion\",\n  fill = \"Outcome\",\n  title = \"Observed outcome distributions\"\n)","id":28,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tab_no_assoc <- matrix(\n  c(29.76, 18.24, \n    32.24, 19.76),\n  nrow = 2,\n  byrow = TRUE\n)\n\nprop.table(tab_no_assoc, margin = 1)","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd <- data.table(\n  group = rep(paste(\"Group\", 1:2), each = 2),\n  outcome = rep(\n    c(\"Completed\", \"Did not complete\"),\n    times = 2\n  ),\n  count = c(29.76, 18.24, 32.24, 19.76)\n)\n\nggplot(\n  dd, \n  aes(\n    x = group, \n    y = count, \n    fill = outcome\n  )\n) +\n  geom_col(\n    position = \"fill\", \n    linewidth = 0.4, \n    alpha = 0.95\n  ) +\n  scale_y_continuous(labels = scales::percent) +\n  scale_fill_manual(\n    values = c(\n      \"Completed\" = \"steelblue\",\n      \"Did not complete\" = \"goldenrod2\"\n    )\n  ) +\n  labs(\n    x = NULL,\n    y = \"Proportion\",\n    fill = \"Outcome\",\n    title = \"Expected outcome distributions\"\n  )","id":30,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"density_chisq <- data.table(x = seq(0.001, 15, length.out = 1000))\n\ndensity_chisq[, density := dchisq(x, df = 1)]\ndensity_chisq <- density_chisq[density <= 0.3]\n\nggplot(density_chisq, aes(x = x, y = density)) +\n  geom_area(\n    data = density_chisq[x >= 4.669],\n    fill = \"grey60\",\n    alpha = 0.4\n  ) +\n  geom_line(linewidth = 0.8) +\n  geom_segment(\n    x = 4.669,\n    xend = 4.669,\n    y = 0,\n    yend = dchisq(4.669, df = 1),\n    linewidth = 0.2,\n    color = \"pink\"\n  ) +\n  labs(\n    x = expression(chi^2),\n    y = \"Density\",\n    title = \"Chi-square distribution with df = 1\"\n  ) +\n  scale_y_continuous(\n    limits = c(0, 0.3),\n    expand = expansion(mult = c(0, 0.05))\n  )","id":31,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pchisq(4.669, df = 1, lower.tail = FALSE)","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"chisq.test(tab_rats, correct = FALSE)","id":33,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tab_small <- matrix(\n  c(5, 0,\n    1, 4\n  ),\n  nrow = 2,\n  byrow = TRUE\n)\n\nfisher.test(tab_small)","id":34,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tab <- matrix(\n  c(30, 20,\n     8, 42),\n  nrow = 2,\n  byrow = TRUE\n)\n\nmcnemar.test(tab)","id":35,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(ratesci)\n\n# webR currently uses an older version of ratesci;\n# current versions use rdpairci()\n\nci <- pairbinci(\n  c(30, 20, 8, 42)\n)$estimates\n\nci[, c(\"lower\", \"est\", \"upper\")]","id":36,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-36","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"set.seed(123)\n\nx <- rnorm(\n  10000,\n  mean = 100,\n  sd = 15\n)\n\nmean(x)\nsd(x)","id":1,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"d <- x - 100\n\nmean(d)\nsd(d)","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"par(mfrow = c(1, 2))\n\nhist(\n  x,\n  breaks = 40,\n  main = \"Observations\",\n  xlab = \"X\"\n)\n\nhist(\n  d,\n  breaks = 40,\n  main = \"Deviations\",\n  xlab = \"X - 100\"\n)\n\npar(mfrow = c(1, 1))","id":3,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z <- d / 15\n\nmean(z)\nsd(z)","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nsample_means <- replicate(\n  10000,\n  mean(rnorm(25, mean = 100, sd = 15))\n)\n\nd_mean <- sample_means - 100\n\nmean(d_mean)\nsd(d_mean)","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sd(d_mean)\n\n15 / sqrt(25)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z_mean <- d_mean / 3\n\nmean(z_mean)\nsd(z_mean)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nx_binom <- rbinom(\n  10000,\n  size = 60,\n  prob = 0.25\n)\n\nmean(x_binom)\nvar(x_binom)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nx_binom <- rbinom(\n  10000,\n  size = 60,\n  prob = 0.25\n)\n\nx_hyper <- rhyper(\n  10000,\n  m = 45,\n  n = 135,\n  k = 60\n)\n\nmean(x_binom)\nmean(x_hyper)\n\nvar(x_binom)\nvar(x_hyper)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"par(mfrow = c(1, 2))\n\nhist(\n  x_binom,\n  breaks = seq(-0.5, 30.5, by = 1),\n  probability = TRUE,\n  ylim = c(0, 0.16),\n  main = \"Binomial\",\n  xlab = \"Number of successes\"\n)\n\nhist(\n  x_hyper,\n  breaks = seq(-0.5, 30.5, by = 1),\n  probability = TRUE,\n  ylim = c(0, 0.16),\n  main = \"Hypergeometric\",\n  xlab = \"Number of successes\"\n)\n\npar(mfrow = c(1, 1))","id":10,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\no11 <- rhyper(\n  10000,\n  m = 45,\n  n = 135,\n  k = 60\n)\n\nd <- o11 - 15\n\nmean(d)\nvar(d)\nsd(d)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"hist(\n  d,\n  breaks = seq(-15.5, 15.5, by = 1),\n  probability = TRUE,\n  main = \"Deviations under the null\",\n  xlab = \"O - E\"\n)","id":12,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"var_d <- 60 * 0.25 * 0.75 * (120 / 179)\n\nz <- d / sqrt(var_d)\n\nmean(z)\nsd(z)","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"hist(\n  z,\n  breaks = 30,\n  probability = TRUE,\n  main = \"Standardized deviations\",\n  xlab = \"Z\"\n)\n\ncurve(\n  dnorm(x),\n  from = -4,\n  to = 4,\n  add = TRUE,\n  lwd = 2\n)","id":14,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"z2 <- z^2","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"hist(\n  z2,\n  breaks = 50,\n  probability = TRUE,\n  xlim = c(0, 10),\n  main = \"Squared standardized deviations\",\n  xlab = expression(Z^2)\n)\n\ncurve(\n  dchisq(x, df = 1),\n  from = 0,\n  to = 10,\n  add = TRUE,\n  lwd = 2\n)","id":16,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x2 <- d^2 / 15 +\n      d^2 / 45 +\n      d^2 / 30 +\n      d^2 / 90","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"hist(\n  x2,\n  breaks = 50,\n  probability = TRUE,\n  xlim = c(0, 10),\n  main = \"Pearson chi-square statistics under the null\",\n  xlab = expression(X^2)\n)\n\ncurve(\n  dchisq(x, df = 1),\n  from = 0,\n  to = 10,\n  add = TRUE,\n  lwd = 2\n)","id":18,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1953,7 +1953,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lecture 3: Estimation and Uncertainty</h1>
+<h1 class="title">From standardized deviations to chi-square</h1>
 </div>
 
 
@@ -1970,479 +1970,183 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </header>
 
 
-<section id="initial-setup" class="level2">
-<h2 class="anchored" data-anchor-id="initial-setup">Initial setup</h2>
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 1.1em; padding: 6px 14px; cursor: pointer;">
+← Return to lecture
+</button>
+</div>
+<section id="a-different-way-to-think-about-standardization" class="level2">
+<h2 class="anchored" data-anchor-id="a-different-way-to-think-about-standardization">A different way to think about standardization</h2>
+<p>We often write</p>
+<p><span class="math display">\[
+\large
+Z_i = \frac{X_i-\mu}{\sigma}
+\]</span></p>
+<p>and describe this as <strong>standardizing <span class="math inline">\(X_i\)</span></strong>:</p>
+<ul>
+<li>subtract <span class="math inline">\(\mu\)</span> to center the distribution at 0</li>
+<li>divide by <span class="math inline">\(\sigma\)</span> to give the distribution a standard deviation of 1</li>
+</ul>
+<p>There is another way to think about exactly the same calculation.</p>
+<p>Define the <strong>deviation</strong></p>
+<p><span class="math display">\[
+\large
+D_i = X_i-\mu.
+\]</span></p>
+<p>Then</p>
+<p><span class="math display">\[
+E(D_i)=0
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+SD(D_i)=\sigma.
+\]</span></p>
+<p>So</p>
+<p><span class="math display">\[
+\large
+Z_i
+=
+\frac{D_i}{SD(D_i)}
+\]</span></p>
+<p>is the <strong>standardized deviation</strong>.</p>
+</section>
+<section id="looking-at-the-deviations" class="level2">
+<h2 class="anchored" data-anchor-id="looking-at-the-deviations">Looking at the deviations</h2>
+<p>Suppose</p>
+<p><span class="math display">\[
+X\sim N(100,15^2).
+\]</span></p>
+<p>Generate many observations:</p>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="today" class="level2">
-<h2 class="anchored" data-anchor-id="today">Today</h2>
-<p>We’ll shift the focus from <strong>hypothesis testing</strong> to <strong>estimation and uncertainty</strong>.</p>
-<ul>
-<li>How can we use a sample to estimate a population quantity?</li>
-<li>How do confidence intervals describe the uncertainty in an estimate?</li>
-<li>What happens when assumptions are not met?</li>
-<li>How can we estimate and compare proportions for binary outcomes?</li>
-<li>How can we analyze categorical data when observations are independent or paired?</li>
-<li>The same ideas of sampling variability and uncertainty will connect these different settings.</li>
-</ul>
-<div style="margin-top: 30rem;">
-
-</div>
-<p><img src="images/ASA.png" class="img-fluid"></p>
-<p><a href="https://doi.org/10.1080/00031305.2016.1154108">The ASA’s Statement on <em>p</em>-Values: Context, Process, and Purpose</a></p>
-</section>
-<section id="what-are-we-trying-to-learn" class="level2">
-<h2 class="anchored" data-anchor-id="what-are-we-trying-to-learn">What are we trying to learn?</h2>
-<p>Hypothesis testing is often used to make a <strong>binary decision</strong>:</p>
-<blockquote class="blockquote">
-<p>Do we reject <span class="math inline">\(H_0\)</span> or fail to reject <span class="math inline">\(H_0\)</span>?</p>
-</blockquote>
-<p>But often the questions we are interested in are:</p>
-<ul>
-<li><p><strong>How large</strong> is the estimated difference or association?</p></li>
-<li><p><strong>How uncertain</strong> are we about that estimate?</p></li>
-</ul>
-<p>Reducing the scientific finding to p&lt;0.05 can obscure both.</p>
-<blockquote class="blockquote">
-<p><strong>Shift the focus from testing to estimation.</strong></p>
-</blockquote>
-</section>
-<section id="revisiting-our-birth-weight-analysis-with-a-focus-on-estimation-of-mean" class="level2">
-<h2 class="anchored" data-anchor-id="revisiting-our-birth-weight-analysis-with-a-focus-on-estimation-of-mean">Revisiting our birth weight analysis with a focus on estimation of mean</h2>
-<ul>
-<li><p>A sample mean <span class="math inline">\(\bar{x}\)</span> is our point estimate of the community mean <span class="math inline">\(\mu_{\text{com}}\)</span>.</p></li>
-<li><p>But another random sample would give us a different estimate.</p></li>
-<li><p>The standard error tells us how much <span class="math inline">\(\bar{x}\)</span> varies from sample to sample.</p></li>
-<li><p>A <strong><em>confidence interval</em></strong> uses this sampling variability to quantify the uncertainty in our estimate of <span class="math inline">\(\mu_{\text{com}}\)</span>.</p></li>
-</ul>
-<section id="constructing-a-95-confidence-interval" class="level3">
-<h3 class="anchored" data-anchor-id="constructing-a-95-confidence-interval">Constructing a 95% confidence interval</h3>
-<p>From Lecture 2, we know that when <span class="math inline">\(\sigma\)</span> is unknown, the standardized sample mean follows a <em>t-distribution</em>.</p>
-<p>Let’s start by looking again at the <em>t-distribution</em> with <span class="math inline">\(df = n - 1\)</span>, which in our example is <span class="math inline">\(30 - 1 = 29\)</span>.</p>
+<p>Now calculate each observation’s deviation from the population mean:</p>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="the-critical-value-t_crit-that-captures-the-central-95" class="level3">
-<h3 class="anchored" data-anchor-id="the-critical-value-t_crit-that-captures-the-central-95">The <strong>critical value</strong> <span class="math inline">\(t_{crit}\)</span> that captures the central 95%:</h3>
-<p><span class="math display">\[\large
-\Pr\left( -t_{crit}
-\leq
-\frac{\bar{X} - \mu}{S/\sqrt{n}}
-\leq
-t_{crit} \right)
-= 0.95\]</span></p>
-<p>Calculate <span class="math inline">\(t_{crit}\)</span> in base <strong>R</strong>:</p>
+<p>The distribution has simply shifted.</p>
+<p>The observations are centered around 100.</p>
+<p>The deviations are centered around 0.</p>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>So we now have</p>
-<p><span class="math display">\[\large
-\Pr
-\left(
--2.045
-\leq
-\frac{\bar{X} - \mu}{S/\sqrt{n}}
-\leq
-2.045
-\right) = 0.95\]</span></p>
+<p>The variability has not changed:</p>
+<p><span class="math display">\[
+SD(D_i). =SD(X_i-\mu)=SD(X_i) = \sigma.
+\]</span></p>
 </section>
-<section id="rearranging-gives-the-95-confidence-interval" class="level3">
-<h3 class="anchored" data-anchor-id="rearranging-gives-the-95-confidence-interval">Rearranging gives the <strong>95% confidence interval</strong>:</h3>
-<p><span class="math display">\[\large
-\Pr\left( -2.045
-\leq
-\frac{\bar{X} - \mu}{S/\sqrt{n}}
-\leq
-2.045 \right)
-= 0.95\]</span></p>
-<p>becomes</p>
-<p><span class="math display">\[\large
-\Pr\left(
-\bar{X} - 2.045\frac{S}{\sqrt{n}}
-\leq
-\mu
-\leq
-\bar{X} + 2.045\frac{S}{\sqrt{n}}
-\right) = 0.95\]</span></p>
-<ul>
-<li><span class="math inline">\(\mu\)</span> is fixed.</li>
-<li><span class="math inline">\(\bar{X}\)</span> and <span class="math inline">\(S\)</span> vary from sample to sample.</li>
-<li>Therefore the <strong>confidence interval</strong> varies from sample to sample.</li>
-</ul>
-</section>
-<section id="calculating-a-95-ci-from-a-single-data-set" class="level3">
-<h3 class="anchored" data-anchor-id="calculating-a-95-ci-from-a-single-data-set">Calculating a 95% CI from a single data set</h3>
+<section id="standardizing-the-deviations" class="level2">
+<h2 class="anchored" data-anchor-id="standardizing-the-deviations">Standardizing the deviations</h2>
+<p>Now divide each deviation by its standard deviation:</p>
 <div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>We can now interpret a value such as</p>
+<p><span class="math display">\[
+Z=2
+\]</span></p>
+<p>as a deviation that is <strong>two standard deviations larger than expected</strong>.</p>
+<p>Nothing new has happened mathematically.</p>
+<p>But thinking in terms of deviations emphasizes a question that becomes important for statistical inference:</p>
+<blockquote class="blockquote">
+<p><strong>How large is the observed deviation compared with the deviations we would ordinarily expect?</strong></p>
+</blockquote>
+</section>
+<section id="from-observations-to-sample-means" class="level2">
+<h2 class="anchored" data-anchor-id="from-observations-to-sample-means">From observations to sample means</h2>
+<p>Now suppose we take a random sample of 25 observations from the same population.</p>
+<p>For each sample, calculate</p>
+<p><span class="math display">\[
+\bar X-\mu.
+\]</span></p>
+<p>Let’s repeat this many times.</p>
 <div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The <strong>R</strong> function <code>t.test()</code> can calculate the 95% CI for you:</p>
+<p>These deviations are still centered around 0.</p>
+<p>But they vary much less than the individual observations.</p>
+<p>Why?</p>
+<p>Because</p>
+<p><span class="math display">\[
+SD(\bar X-\mu)
+=
+SD(\bar X)
+=
+\frac{\sigma}{\sqrt n}.
+\]</span></p>
+<p>Here,</p>
+<p><span class="math display">\[
+\frac{15}{\sqrt{25}}=3.
+\]</span></p>
+<p>So the sampling deviations have a standard deviation of about 3.</p>
 <div id="qwebr-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
-<section id="what-happens-if-we-repeat-many-times" class="level3">
-<h3 class="anchored" data-anchor-id="what-happens-if-we-repeat-many-times">What happens if we repeat many times?</h3>
+<section id="standardizing-a-sampling-deviation" class="level2">
+<h2 class="anchored" data-anchor-id="standardizing-a-sampling-deviation">Standardizing a sampling deviation</h2>
+<p>We can therefore write</p>
+<p><span class="math display">\[
+\large
+Z
+=
+\frac{\bar X-\mu}
+{\sigma/\sqrt n}.
+\]</span></p>
+<p>Again, we can think of this as standardizing <span class="math inline">\(\bar X\)</span>.</p>
+<p>But we can also think of it as standardizing the deviation</p>
+<p><span class="math display">\[
+\bar D = \bar X-\mu.
+\]</span></p>
+<p>The denominator tells us <strong>how much these deviations naturally vary across repeated samples</strong>.</p>
 <div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="here-is-what-it-looks-like" class="level3">
-<h3 class="anchored" data-anchor-id="here-is-what-it-looks-like">Here is what it looks like:</h3>
-<div id="qwebr-insertion-location-8"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-9"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="what-does-95-confidence-mean" class="level3">
-<h3 class="anchored" data-anchor-id="what-does-95-confidence-mean">What does 95% confidence mean?</h3>
-<p>The general formulation of the 95% confidence interval is</p>
+<p>And because the population is Normal,</p>
 <p><span class="math display">\[
 \large
-\text{estimate}
-\ \pm\
-\text{critical value}
-\times
-\widehat{\mathrm{SE}}
+\frac{\bar D}{\sigma/\sqrt n}
+\sim N(0,1).
 \]</span></p>
+<p>This is the familiar <span class="math inline">\(Z\)</span>-statistic—but viewed as a standardized deviation, rather than simply as a standardized sample mean.</p>
+</section>
+<section id="this-is-the-basis-of-statistical-inference" class="level2">
+<h2 class="anchored" data-anchor-id="this-is-the-basis-of-statistical-inference">This is the basis of statistical inference</h2>
+<p>Suppose the null hypothesis says</p>
+<p><span class="math display">\[
+H_0:\mu=100.
+\]</span></p>
+<p>We observe a sample mean <span class="math inline">\(\bar X\)</span>.</p>
+<p>The relevant deviation is now</p>
+<p><span class="math display">\[
+\large
+\bar D = \bar X-100.
+\]</span></p>
+<p>The size of that deviation alone doesn’t tell us very much.</p>
+<p>A deviation of 3 could be quite ordinary if</p>
+<p><span class="math display">\[
+SE(\bar X)=5,
+\]</span></p>
+<p>but quite unusual if</p>
+<p><span class="math display">\[
+SE(\bar X)=0.5.
+\]</span></p>
+<p>What matters is the observed deviation <strong>relative to the distribution of deviations we expect when the null hypothesis is true</strong>.</p>
+<p>That is exactly what</p>
+<p><span class="math display">\[
+\large
+Z=
+\frac{\bar X-\mu_0}{SE(\bar X)}
+\]</span></p>
+<p>does.</p>
+<blockquote class="blockquote">
+<p><strong>Inference depends not only on how far the observed result is from what the null model predicts, but on how much such deviations would naturally vary if the null model were true.</strong></p>
+</blockquote>
+</section>
+<section id="what-does-this-have-to-do-with-a-contingency-table" class="level2">
+<h2 class="anchored" data-anchor-id="what-does-this-have-to-do-with-a-contingency-table">What does this have to do with a contingency table?</h2>
+<p>Consider a population of 180 individuals.</p>
+<p>Exactly 45 experience a particular outcome (“success”) and 135 do not.</p>
+<p>The 180 individuals are divided into two groups:</p>
 <ul>
-<li>About 95% of intervals constructed this way contain <span class="math inline">\(\mu\)</span>.</li>
-<li>A particular interval either contains <span class="math inline">\(\mu\)</span> or it does not.</li>
+<li>60 individuals in Group 1</li>
+<li>120 individuals in Group 2</li>
 </ul>
-<blockquote class="blockquote">
-<p>95% confidence describes the long-run performance of the procedure, <strong>not</strong> a 95% probability that <span class="math inline">\(\mu\)</span> lies in this particular interval.</p>
-</blockquote>
-<p><strong>The confidence interval quantifies the uncertainty around our estimate and gives a range of parameter values that are reasonably consistent with the observed data.</strong></p>
-</section>
-<section id="revisiting-scenario-1-grip-strength" class="level3">
-<h3 class="anchored" data-anchor-id="revisiting-scenario-1-grip-strength">Revisiting Scenario 1: grip strength</h3>
-<p>In <strong>Lecture 2</strong>, we compared grip strength before and after rehabilitation by analyzing the <strong>within-person changes</strong>.</p>
-<p>Now, rather than testing whether the mean change differs from 0, we want to <strong>estimate the mean change and quantify its uncertainty</strong>.</p>
-<p><span class="math display">\[
-\large
-\text{estimate} = \bar{x}_{\text{change}},
-\qquad
-\widehat{\mathrm{SE}}
-=
-\frac{s_{\text{change}}}{\sqrt{n}}
-\]</span></p>
-</section>
-<section id="first-recreate-the-data-from-lecture-2" class="level3">
-<h3 class="anchored" data-anchor-id="first-recreate-the-data-from-lecture-2">First recreate the data from Lecture 2 …</h3>
-<div id="qwebr-insertion-location-10"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="next-estimate-the-95-confidence-interval-manually" class="level3">
-<h3 class="anchored" data-anchor-id="next-estimate-the-95-confidence-interval-manually">Next estimate the 95% confidence interval manually:</h3>
-<div id="qwebr-insertion-location-11"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-12"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<blockquote class="blockquote">
-<p>We estimate that grip strength increased by 4.54 kg, with a 95% CI ranging from a 3.60 to a 5.47 kg increase.</p>
-</blockquote>
-</section>
-<section id="revisiting-scenario-2-ldl-cholesterol" class="level3">
-<h3 class="anchored" data-anchor-id="revisiting-scenario-2-ldl-cholesterol">Revisiting Scenario 2: LDL cholesterol</h3>
-<p>In <strong>Lecture 2</strong>, we compared LDL cholesterol between individuals randomized to <strong>statin therapy</strong> and those randomized to a <strong>healthy diet alone</strong>.</p>
-<p>Now, rather than testing whether the population means differ, we want to <strong>estimate the difference and quantify its uncertainty</strong>.</p>
-<p><span class="math display">\[
-\large
-\text{estimate}
-=
-\bar{x}_{\text{statin}}-\bar{x}_{\text{diet}}
-\]</span></p>
-<p>The estimated standard error is</p>
-<p><span class="math display">\[\large
-\widehat{\mathrm{SE}}
-=
-\sqrt{
-\frac{s_{\text{statin}}^2}{n_{\text{statin}}}
-+
-\frac{s_{\text{diet}}^2}{n_{\text{diet}}}
-}
-\]</span></p>
-</section>
-<section id="now-recreate-the-data-from-lecture-2" class="level3">
-<h3 class="anchored" data-anchor-id="now-recreate-the-data-from-lecture-2">Now recreate the data from Lecture 2:</h3>
-<div id="qwebr-insertion-location-13"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="next-estimate-the-95-confidence-interval-manually-1" class="level3">
-<h3 class="anchored" data-anchor-id="next-estimate-the-95-confidence-interval-manually-1">Next estimate the 95% confidence interval manually:</h3>
-<div id="qwebr-insertion-location-14"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>And compare with <strong>R</strong>:</p>
-<div id="qwebr-insertion-location-15"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<blockquote class="blockquote">
-<p>The estimated mean difference (statin − diet) was −21.2 mg/dL (95% CI: −31.0 to −11.3 mg/dL).</p>
-</blockquote>
-</section>
-</section>
-<section id="relaxing-the-assumption-of-normality" class="level2">
-<h2 class="anchored" data-anchor-id="relaxing-the-assumption-of-normality">Relaxing the assumption of normality</h2>
-<p>The usual small-sample <em>t-test</em> results are exact when the populations are normally distributed.</p>
-<p>But how well does the <em>t-test</em> perform when the populations are not normal?</p>
-<p>We can use simulation to examine how the <em>t-test</em> behaves when the populations are not normally distributed. Here are three different densities:</p>
-<div id="qwebr-insertion-location-16"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<section id="how-robust-is-the-two-sample-t-test" class="level3">
-<h3 class="anchored" data-anchor-id="how-robust-is-the-two-sample-t-test">How robust is the two-sample t-test?</h3>
-<p>We can use simulation to examine how the t-test behaves when its normality assumption is violated.</p>
-<p>For each simulation:</p>
-<ul>
-<li>Generate two independent samples from the same population.</li>
-<li>Conduct a two-sample Welch t-test at <span class="math inline">\(\alpha = 0.05\)</span>.</li>
-<li>Record whether the null hypothesis is rejected.</li>
-<li>Repeat the process many times.</li>
-</ul>
-<p>Because the two samples come from the same population, the null hypothesis is true.</p>
-<blockquote class="blockquote">
-<p>If the test is performing as expected, it should incorrectly reject the null hypothesis about 5% of the time</p>
-</blockquote>
-<div id="qwebr-insertion-location-17"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>We repeat this across different population distributions and sample sizes:</p>
-<div id="qwebr-insertion-location-18"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="running-the-experiment-with-different-sample-sizes" class="level3">
-<h3 class="anchored" data-anchor-id="running-the-experiment-with-different-sample-sizes">Running the experiment with different sample sizes</h3>
-<p><img src="images/type1.png" class="img-fluid"></p>
-<blockquote class="blockquote">
-<p>What do we see?</p>
-</blockquote>
-<ul>
-<li>When the population data are normally distributed, the Type I error rate is close to the intended 5%.</li>
-<li>Moderate skew has relatively little effect on the performance of the test.</li>
-<li>With the strongly skewed population used here, the test is conservative at very small sample sizes.</li>
-<li>As the sample size increases, the Type I error rate approaches 5%.</li>
-</ul>
-<blockquote class="blockquote">
-<p><strong>The two-sample t-test can be quite robust to non-normality. Non-normality alone is not necessarily a reason to abandon t-based methods.</strong></p>
-</blockquote>
-</section>
-</section>
-<section id="rank-based-methods" class="level2">
-<h2 class="anchored" data-anchor-id="rank-based-methods">Rank-based methods</h2>
-<p><em>An alternative way to compare two populations</em></p>
-<p>The t-test compares <strong>population means</strong> using the actual outcome values.</p>
-<p>An alternative is to compare the relative ordering of observations between groups without allowing a few extreme values to dominate the comparison.</p>
-<p>The <strong>Wilcoxon rank-sum test</strong> compares the relative ordering of observations:</p>
-<ul>
-<li>Combine the observations from the two groups.</li>
-<li>Rank them from smallest to largest.</li>
-<li>Keep track of which group each observation came from.</li>
-<li>Compare the ranks between the two groups.</li>
-</ul>
-<p>If observations from one population tend to be larger, they will tend to have <strong>higher ranks</strong>.</p>
-<blockquote class="blockquote">
-<p><strong>The Wilcoxon rank-sum test is not really just a t-test for non-normal data, it is a different way of comparing two populations.</strong></p>
-</blockquote>
-<p>The test uses ranks to assess whether observations from one population tend to be larger or smaller than observations from the other.</p>
-<p>When the distributions have the same shape, the comparison can be interpreted as a test of a location shift.</p>
-<section id="in-many-settings-the-t-test-and-wilcoxon-rank-sum-test" class="level3">
-<h3 class="anchored" data-anchor-id="in-many-settings-the-t-test-and-wilcoxon-rank-sum-test">In many settings, the t-test and Wilcoxon rank-sum test …</h3>
-<p>will lead to the same practical conclusion. For example, if a treatment generally shifts outcomes upward, it will usually increase both the <strong>population mean</strong> and the tendency for treated observations to be <strong>higher</strong> than control observations.</p>
-<p>But the two comparisons can diverge when treatment changes the distribution in more complicated ways:</p>
-<ul>
-<li>A treatment might produce <strong>very large improvements in a small number of patients</strong>, substantially increasing the mean without making outcomes better for most patients.</li>
-<li>A treatment might primarily change the <strong>variability</strong> of the outcome, without substantially changing either the mean or the tendency for observations in one group to be higher.</li>
-</ul>
-<blockquote class="blockquote">
-<p>The scientific question should determine what <strong><em>kind</em></strong> of difference between the populations we care about; the observed shape of the data should not simply determine which test we use.</p>
-</blockquote>
-</section>
-<section id="a-simple-data-example" class="level3">
-<h3 class="anchored" data-anchor-id="a-simple-data-example">A simple data example</h3>
-<p>Here is a simple data example that gives a little insight into the ranking, and analyzes the data using <code>wilcox.test</code>:</p>
-<div id="qwebr-insertion-location-19"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-20"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-21"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The data suggest that observations from Group 2 tend to be larger than observations from Group 1.</p>
-</section>
-</section>
-<section id="binary-outcomes---estimating-a-sample-proportion" class="level2">
-<h2 class="anchored" data-anchor-id="binary-outcomes---estimating-a-sample-proportion">Binary outcomes - estimating a sample proportion</h2>
-<p>For a binary outcome, each observation can take one of two values, such as:</p>
-<ul>
-<li>Yes / No</li>
-<li>Success / Failure</li>
-<li>Event / No event</li>
-</ul>
-<p>For a binary outcome <span class="math inline">\(X\)</span>,</p>
-<p><span class="math display">\[\large
-E(X) = p
-\qquad\text{and}\qquad
-\operatorname{Var}(X) = p(1-p).
-\]</span></p>
-<p>Since the sample proportion <span class="math inline">\(\hat{p}\)</span> is simply the sample mean of <span class="math inline">\(n\)</span> binary observations,</p>
-<p><span class="math display">\[
-\large
-\hat{p} = \frac{1}{n}\sum_{i=1}^n X_i.
-\]</span></p>
-<p>The <strong>variance</strong> of the sample proportion (over a hypothetical collection of repeated sample proportions) is</p>
-<p><span class="math display">\[\large
-\operatorname{Var}(\hat{p})
-=
-\frac{p(1-p)}{n}.\]</span></p>
-<p><a href="binary-variance.html" target="_blank">Extra simulation: confirming the variance</a></p>
-<section id="since-hatp-is-a-sample-mean-the-central-limit-theorem-applies" class="level3">
-<h3 class="anchored" data-anchor-id="since-hatp-is-a-sample-mean-the-central-limit-theorem-applies">Since <span class="math inline">\(\hat{p}\)</span> is a sample mean, the <em>Central Limit Theorem</em> applies…</h3>
-<p>For sufficiently large samples, the sampling distribution of <span class="math inline">\(\hat{p}\)</span> is approximately normal, with estimated standard error</p>
-<p><span class="math display">\[\large
-\widehat{\mathrm{SE}}(\hat{p})
-=
-\sqrt{
-\frac{\hat{p}(1-\hat{p})}{n}
-}.\]</span></p>
-<p>This gives us the familiar form for a 95% confidence interval:</p>
-<p><span class="math display">\[\large
-\text{estimate}
-\ \pm\
-\text{critical value}
-\times
-\widehat{\mathrm{SE}}\]</span></p>
-<p>or, using the normal approximation,</p>
-<p><span class="math display">\[\large
-\hat{p}
-\ \pm\
-1.96
-\sqrt{
-\frac{\hat{p}(1-\hat{p})}{n}
-}\]</span></p>
-<blockquote class="blockquote">
-<p><strong>The confidence interval quantifies the uncertainty around our estimate of the population proportion.</strong></p>
-</blockquote>
-</section>
-<section id="when-is-the-normal-approximation-reasonable" class="level3">
-<h3 class="anchored" data-anchor-id="when-is-the-normal-approximation-reasonable">When is the normal approximation reasonable?</h3>
-<p>The normal approximation works best when there are sufficient numbers of <strong>both possible outcomes</strong>.</p>
-<p>A common rule of thumb is to have at least 10 observed events and 10 observed non-events:</p>
-<p><span class="math display">\[\large
-n\hat{p} \geq 10
-\qquad\text{and}\qquad
-n(1-\hat{p}) \geq 10.\]</span></p>
-<blockquote class="blockquote">
-<p><strong>This is a guideline, not a threshold.</strong> The quality of the approximation changes gradually and depends on both the sample size and the population proportion.</p>
-</blockquote>
-<p>When one of the outcomes is rare, a much larger sample may therefore be needed for the normal approximation to work well.</p>
-</section>
-<section id="a-simple-example" class="level3">
-<h3 class="anchored" data-anchor-id="a-simple-example">A simple example</h3>
-<p>Suppose 40 of 100 patients experience an outcome.</p>
-<div id="qwebr-insertion-location-22"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>This is the 95% confidence interval using the normal approximation described above.</p>
-<blockquote class="blockquote">
-<p>Based on this sample, we estimate that 40% of the population experiences the outcome, with a 95% confidence interval of approximately 30% to 50%.</p>
-</blockquote>
-<p>In practice, we can use <code>prop.test()</code> in <strong>R</strong>:</p>
-<div id="qwebr-insertion-location-23"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p><code>prop.test()</code> uses a score-based approach rather than the simple interval calculated above. By default, it also applies a continuity correction.</p>
-</section>
-</section>
-<section id="comparing-two-group-proportions" class="level2">
-<h2 class="anchored" data-anchor-id="comparing-two-group-proportions">Comparing two group proportions</h2>
-<p>We are conducting a behavioral experiment on rats and want to compare trial success rates across two groups.</p>
-<ul>
-<li>In Group 1, 35 of 48 rats complete the test successfully.</li>
-<li>In Group 2, 27 of 52 rats complete the test successfully.</li>
-</ul>
-<p><em>How much does the probability of success differ between the two groups?</em></p>
-<p>The estimated success proportions are</p>
-<p><span class="math display">\[\large \hat{p}_1 = \frac{35}{48} = 0.729\]</span> and</p>
-<p><span class="math display">\[\large \hat{p}_2 = \frac{27}{52} = 0.519.\]</span></p>
-<p>The estimated difference in proportions is</p>
-<p><span class="math display">\[\large
-\hat{p}_1-\hat{p}_2
-=
-0.729-0.519
-=
-0.210.
-\]</span></p>
-<p>So the observed success rate is about <strong>21 percentage points higher in Group 1</strong>.</p>
-<section id="confidence-interval-for-the-difference-between-groups" class="level3">
-<h3 class="anchored" data-anchor-id="confidence-interval-for-the-difference-between-groups">Confidence interval for the difference between groups</h3>
-<p>The estimated standard error is</p>
-<p><span class="math display">\[
-\widehat{\mathrm{SE}}(\hat{p}_1-\hat{p}_2)
-=
-\sqrt{
-\frac{\hat{p}_1(1-\hat{p}_1)}{n_1}
-+
-\frac{\hat{p}_2(1-\hat{p}_2)}{n_2}
-}.
-\]</span></p>
-<div id="qwebr-insertion-location-24"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<blockquote class="blockquote">
-<p>We estimate that the success probability is about 21 percentage points higher in Group 1, with a 95% confidence interval ranging from 2.5 to 39.5 percentage points higher.</p>
-</blockquote>
-</section>
-<section id="testing-equality-of-two-group-proportions" class="level3">
-<h3 class="anchored" data-anchor-id="testing-equality-of-two-group-proportions">Testing equality of two group proportions</h3>
-<p>We can also conduct a hypothesis test:</p>
-<p><span class="math display">\[
-\large
-H_0:p_1=p_2
-\]</span></p>
-<p>against</p>
-<p><span class="math display">\[\large
-H_A:p_1\neq p_2.
-\]</span></p>
-<p>Under the null hypothesis, the two groups have a common proportion <span class="math inline">\(p\)</span>.</p>
-<p>We estimate this common proportion by <strong>pooling</strong> the observations from the two groups:</p>
-<p><span class="math display">\[
-\large
-\hat{p}
-=
-\frac{x_1+x_2}{n_1+n_2}.
-\]</span></p>
-<p>The standard error <strong>under the null hypothesis</strong> is</p>
-<p><span class="math display">\[
-\large
-\widehat{\mathrm{SE}}_0
-=
-\sqrt{
-\hat{p}(1-\hat{p})
-\left(
-\frac{1}{n_1}
-+
-\frac{1}{n_2}
-\right)
-}.
-\]</span></p>
-<p>The test statistic is therefore</p>
-<p><span class="math display">\[
-\large
-z
-=
-\frac{
-(\hat{p}_1-\hat{p}_2)-0
-}{
-\widehat{\mathrm{SE}}_0
-}.\]</span></p>
-<blockquote class="blockquote">
-<p>For the confidence interval, we estimate variability using the observed proportion in each group. For the hypothesis test, we estimate variability assuming the null hypothesis is true: <span class="math inline">\(\large p_1=p_2\)</span>.</p>
-</blockquote>
-</section>
-<section id="conducting-the-hypothesis-by-hand-and-with-r" class="level3">
-<h3 class="anchored" data-anchor-id="conducting-the-hypothesis-by-hand-and-with-r">Conducting the hypothesis “by hand” and with R</h3>
-<div id="qwebr-insertion-location-25"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The comparison can be conducted using <code>prop.test()</code>:</p>
-<div id="qwebr-insertion-location-26"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p><code>prop.test()</code> applies a <strong>continuity correction</strong> by default. We turn it off here so that the R calculation corresponds directly to the z-test described above.</p>
-</section>
-</section>
-<section id="contingency-tables" class="level2">
-<h2 class="anchored" data-anchor-id="contingency-tables">Contingency tables</h2>
-<p>The same data can also be represented using a <strong>contingency table</strong>:</p>
+<p>We want to ask whether outcome is associated with group.</p>
+<p>The margins of the table are therefore fixed:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2455,62 +2159,25 @@ z
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Group 1</td>
-<td style="text-align: center;">35</td>
-<td style="text-align: center;">13</td>
-<td style="text-align: center;">48</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">60</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Group 2</td>
-<td style="text-align: center;">27</td>
-<td style="text-align: center;">25</td>
-<td style="text-align: center;">52</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">120</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>Total</strong></td>
-<td style="text-align: center;"><strong>62</strong></td>
-<td style="text-align: center;"><strong>38</strong></td>
-<td style="text-align: center;"><strong>100</strong></td>
+<td style="text-align: center;"><strong>45</strong></td>
+<td style="text-align: center;"><strong>135</strong></td>
+<td style="text-align: center;"><strong>180</strong></td>
 </tr>
 </tbody>
 </table>
-<p><em>The question remains exactly the same:</em></p>
-<blockquote class="blockquote">
-<p><strong>Is success associated with group?</strong></p>
-</blockquote>
-<p>The observed success rates are<span class="math display">\[\hat{p}_1 = \frac{35}{48} = 0.729
-\qquad\text{and}\qquad
-\hat{p}_2 = \frac{27}{52} = 0.519.\]</span>The success rates differ in our sample. The question is whether this difference is larger than we would expect from sampling variability if <strong>group and outcome were not associated</strong>.</p>
-<p>We can calculate the proportions in <strong>R</strong> using <code>prop.table()</code>:</p>
-<div id="qwebr-insertion-location-27"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p><code>margin = 1</code> calculates proportions within each row. Each row therefore sums to 1. Here, the rows represent groups, so these are the outcome proportions within each group.</p>
-<section id="visualize-the-data" class="level3">
-<h3 class="anchored" data-anchor-id="visualize-the-data">Visualize the data</h3>
-<div id="qwebr-insertion-location-28"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="expected-counts-under-no-association" class="level3">
-<h3 class="anchored" data-anchor-id="expected-counts-under-no-association">Expected counts under no association</h3>
-<p>In total, 62 of the 100 rats were successful, giving an overall success rate of</p>
-<p><span class="math display">\[\large \hat{p} = \frac{62}{100} = 0.62.\]</span></p>
-<p>If group and outcome were not associated, we would expect this same success rate of 62% in both groups.</p>
-<p>For Group 1, we would therefore expect</p>
-<p><span class="math display">\[
-\large
-48(0.62) = 29.76
-\]</span> successes and</p>
-<p><span class="math display">\[
-\large
-48(0.38) = 18.24
-\]</span> failures.</p>
-<p>For Group 2, we would expect</p>
-<p><span class="math display">\[ \large
-52(0.62) = 32.24
-\]</span> successes and</p>
-<p><span class="math display">\[\large
-52(0.38) = 19.76
-\]</span> failures.</p>
-<p>More generally, the expected count for each cell can be calculated as</p>
+<p>Under the null hypothesis of <strong>no association between group and outcome</strong>, the expected count in each cell is</p>
 <p><span class="math display">\[
 \large
 E_{ij}
@@ -2521,9 +2188,15 @@ E_{ij}
 \text{grand total}
 }.
 \]</span></p>
-</section>
-<section id="the-summary-of-expected-counts" class="level3">
-<h3 class="anchored" data-anchor-id="the-summary-of-expected-counts">The summary of expected counts</h3>
+<p>For Group 1 successes,</p>
+<p><span class="math display">\[
+E_{11}
+=
+\frac{60(45)}{180}
+=
+15.
+\]</span></p>
+<p>The complete expected table is therefore</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2536,162 +2209,42 @@ E_{ij}
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Group 1</td>
-<td style="text-align: center;">29.76</td>
-<td style="text-align: center;">18.24</td>
-<td style="text-align: center;">48</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">45</td>
+<td style="text-align: center;">60</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Group 2</td>
-<td style="text-align: center;">32.24</td>
-<td style="text-align: center;">19.76</td>
-<td style="text-align: center;">52</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">90</td>
+<td style="text-align: center;">120</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>Total</strong></td>
-<td style="text-align: center;"><strong>62</strong></td>
-<td style="text-align: center;"><strong>38</strong></td>
-<td style="text-align: center;"><strong>100</strong></td>
+<td style="text-align: center;"><strong>45</strong></td>
+<td style="text-align: center;"><strong>135</strong></td>
+<td style="text-align: center;"><strong>180</strong></td>
 </tr>
 </tbody>
 </table>
-<div style="height: 100px;">
-
-</div>
-<div id="qwebr-insertion-location-29"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<blockquote class="blockquote">
-<p>Under no association, the outcome proportions are the same in the two groups.</p>
-</blockquote>
-</section>
-<section id="visualizing-no-association" class="level3">
-<h3 class="anchored" data-anchor-id="visualizing-no-association">Visualizing no association</h3>
-<div id="qwebr-insertion-location-30"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="comparing-observed-and-expected-counts" class="level3">
-<h3 class="anchored" data-anchor-id="comparing-observed-and-expected-counts">Comparing observed and expected counts</h3>
-<p>We now compare what we <strong>observed</strong> with what we would <strong>expect</strong> if group and outcome were not associated, using a statistic called the chi-square statistic.</p>
-<p>For each cell, its contribution to the chi-square statistic is</p>
+<p>Pearson’s chi-square statistic is based on the deviations</p>
 <p><span class="math display">\[
 \large
-\frac{(O_{ij}-E_{ij})^2}{E_{ij}},
+O-E.
 \]</span></p>
-<p>where <span class="math inline">\(O_{ij}\)</span> is the observed count and <span class="math inline">\(E_{ij}\)</span> is the expected count.</p>
-<ul>
-<li>Squaring ensures that deviations in either direction contribute positively.</li>
-<li>Dividing by the expected count scales the discrepancy relative to the size of the expected count.</li>
-</ul>
-<p>The Pearson <strong>chi-square statistic</strong> adds these contributions across all cells:</p>
-<p><span class="math display">\[
-\large
-\chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}.
-\]</span> <a href="pearson-chi-square-thoughts.html" target="_blank">Additional details: from standardized deviations to chi-square</a></p>
+<p>So once again, the key question is:</p>
+<blockquote class="blockquote">
+<p><strong>How do the deviations between observed and expected counts behave when the null hypothesis is true?</strong></p>
+</blockquote>
 </section>
-<section id="for-our-data" class="level3">
-<h3 class="anchored" data-anchor-id="for-our-data">For our data:</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: center;">Success</th>
-<th style="text-align: center;">Failure</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Group 1</td>
-<td style="text-align: center;"><span class="math inline">\(\frac{(35-29.76)^2}{29.76}\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(\frac{(13-18.24)^2}{18.24}\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Group 2</td>
-<td style="text-align: center;"><span class="math inline">\(\frac{(27-32.24)^2}{32.24}\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(\frac{(25-19.76)^2}{19.76}\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>which gives</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: center;">Success</th>
-<th style="text-align: center;">Failure</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Group 1</td>
-<td style="text-align: center;">0.923</td>
-<td style="text-align: center;">1.505</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Group 2</td>
-<td style="text-align: center;">0.852</td>
-<td style="text-align: center;">1.390</td>
-</tr>
-</tbody>
-</table>
-<p>The <strong>chi-square statistic</strong> adds these contributions across all cells:</p>
+<section id="there-is-only-one-random-deviation" class="level2">
+<h2 class="anchored" data-anchor-id="there-is-only-one-random-deviation">There is only one random deviation</h2>
+<p>Suppose the observed number of successes in Group 1 is</p>
 <p><span class="math display">\[
-\large
-\chi^2
-=
-\sum_{i,j}
-\frac{(O_{ij}-E_{ij})^2}{E_{ij}}
-=
-4.669.
-\]</span> &gt; <strong>The larger the differences between the observed and expected counts, the larger the chi-square statistic.</strong></p>
-</section>
-<section id="from-the-chi-square-statistic-to-a-p-value" class="level3">
-<h3 class="anchored" data-anchor-id="from-the-chi-square-statistic-to-a-p-value">From the chi-square statistic to a p-value</h3>
-<p>If group and outcome are not associated, the chi-square statistic has approximately a <strong>chi-square distribution</strong>.</p>
-<p>The degrees of freedom for an <span class="math inline">\(r\times c\)</span> contingency table are</p>
-<p><span class="math display">\[
-\large
-df=(r-1)(c-1).
+O_{11}=15+d.
 \]</span></p>
-<p>For our <span class="math inline">\(2\times2\)</span> table,</p>
-<p><span class="math display">\[
-\large
-df=(2-1)(2-1)=1.
-\]</span></p>
-<blockquote class="blockquote">
-<p>Larger values of<span class="math inline">\(\large \chi^2\)</span>indicate greater disagreement between the observed and expected counts.</p>
-<p>Therefore, the p-value is the probability of observing a chi-square statistic at least as large as the one we observed, assuming the null hypothesis is true.</p>
-</blockquote>
-</section>
-<section id="the-shape-of-the-chi-square-distribution-depends-on" class="level3">
-<h3 class="anchored" data-anchor-id="the-shape-of-the-chi-square-distribution-depends-on">The shape of the chi-square distribution depends on …</h3>
-<p>the degrees of freedom. For our <span class="math inline">\(2 \times2\)</span> table, <span class="math inline">\(df=1\)</span>. The shaded upper-tail area beyond our observed <span class="math inline">\(\chi^2 = 4.669\)</span> is the p-value.</p>
-<div id="qwebr-insertion-location-31"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>We can calculate the p-value in R:</p>
-<div id="qwebr-insertion-location-32"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Or we can perform the entire analysis directly from the contingency table using the <strong>R</strong> function <code>chisq.test()</code>:</p>
-<div id="qwebr-insertion-location-33"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<blockquote class="blockquote">
-<p><strong>Continuity correction</strong>: For a <span class="math inline">\(2 \times 2\)</span> table, <strong>R</strong> applies Yates’ continuity correction by default. We omit it here so that the chi-square test corresponds directly to the two-proportion <span class="math inline">\(z\)</span>-test described above.</p>
-</blockquote>
-<!-- This would be a good place for a link to r x c contingency table (4x3) -->
-</section>
-<section id="connection-to-the-two-sample-test-of-proportions" class="level3">
-<h3 class="anchored" data-anchor-id="connection-to-the-two-sample-test-of-proportions">Connection to the two-sample test of proportions</h3>
-<p>These are the <strong>same data</strong> and the <strong>same null hypothesis</strong> that we considered when comparing two group proportions.</p>
-<p>For a <span class="math inline">\(2\times2\)</span> table, <span class="math display">\[\large z^2 = \chi^2.\]</span> In our example, <span class="math display">\[\large (2.161)^2 \approx 4.669.\]</span></p>
-<p>Therefore, the two-sample <span class="math inline">\(z\)</span>-test and the Pearson chi-square test give the <strong>same p-value</strong> when the continuity correction is not used.</p>
-<blockquote class="blockquote">
-<p><strong>For a binary outcome and two groups, the two-proportion</strong><span class="math inline">\(z\)</span>-test and the <span class="math inline">\(2 \times 2\)</span> chi-square test are two ways of looking at the same comparison.</p>
-</blockquote>
-<p><a href="general-contingency-table.html" target="_blank">Additional example: extending beyond the 2 x 2 contingency table</a></p>
-</section>
-<section id="fishers-exact-test" class="level3">
-<h3 class="anchored" data-anchor-id="fishers-exact-test">Fisher’s exact test</h3>
-<p>The chi-square test compares observed and expected counts using an approximate chi-square distribution. This approximation may not work well when expected cell counts are small.</p>
-<p><strong>Fisher’s exact test</strong> takes a different approach: it is particularly useful for small samples, where the chi-square approximation may be unreliable. For large samples, the chi-square approximation generally works well, and the two approaches often give very similar results.</p>
-<p>Consider a small study with the following results:</p>
+<p>Because the margins are fixed, that determines every other cell.</p>
+<p>The table must be</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2704,221 +2257,483 @@ df=(2-1)(2-1)=1.
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Group 1</td>
-<td style="text-align: center;">5</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span class="math inline">\(15+d\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(45-d\)</span></td>
+<td style="text-align: center;">60</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Group 2</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span class="math inline">\(30-d\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(90+d\)</span></td>
+<td style="text-align: center;">120</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>Total</strong></td>
-<td style="text-align: center;"><strong>6</strong></td>
-<td style="text-align: center;"><strong>4</strong></td>
-<td style="text-align: center;"><strong>10</strong></td>
+<td style="text-align: center;"><strong>45</strong></td>
+<td style="text-align: center;"><strong>135</strong></td>
+<td style="text-align: center;"><strong>180</strong></td>
 </tr>
 </tbody>
 </table>
-<p>Suppose there is <strong>no association between group and outcome</strong>.</p>
-<p>Fisher’s exact test considers the marginal totals to be fixed:</p>
-<ul>
-<li>There are 5 observations in each group.</li>
-<li>There are 6 successes and 4 failures overall.</li>
-</ul>
-</section>
-<section id="if-group-and-outcome-are-not-associated" class="level3">
-<h3 class="anchored" data-anchor-id="if-group-and-outcome-are-not-associated">If group and outcome are not associated …</h3>
-<p>those 6 successes could have been distributed between the two groups in different ways simply by chance.</p>
-<p>For example (and this is not something you would ever need to enumerate):</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Successes in Group 1</th>
-<th style="text-align: center;">Successes in Group 2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">5</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">2</td>
-<td style="text-align: center;">4</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">3</td>
-<td style="text-align: center;">3</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">5</td>
-<td style="text-align: center;">1</td>
-</tr>
-</tbody>
-</table>
-<p>Fisher’s exact test calculates the probability of each possible table with these same marginal totals <strong>under the null hypothesis of no association</strong>.</p>
-</section>
-<section id="the-p-value-is-based-on" class="level3">
-<h3 class="anchored" data-anchor-id="the-p-value-is-based-on">The p-value is based on …</h3>
-<p>the probabilities of the observed table and other tables that are at least as inconsistent with the null hypothesis.</p>
-<blockquote class="blockquote">
-<p><strong>Rather than relying on a large-sample approximation, Fisher’s exact test calculates probabilities directly from the possible tables with the same marginal totals.</strong></p>
-</blockquote>
-<p>These probabilities are calculated using the <strong>hypergeometric distribution</strong>.</p>
-<p>In <strong>R</strong>:</p>
-<div id="qwebr-insertion-location-34"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-</section>
-<section id="paired-binary-outcomes" class="level2">
-<h2 class="anchored" data-anchor-id="paired-binary-outcomes">Paired binary outcomes</h2>
-<p>Suppose we want to compare two chemotherapy treatments, A and B, in a study that includes 200 patients.</p>
-<p>The 100 patients receiving treatment A are <strong>matched</strong> with 100 patients receiving treatment B based on characteristics such as age and disease severity.</p>
-<p>For each of the 100 matched pairs, we record the 5-year survival outcome of both patients.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: center;">Treatment B: Survived</th>
-<th style="text-align: center;">Treatment B: Did not survive</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Treatment A: Survived</strong></td>
-<td style="text-align: center;">30</td>
-<td style="text-align: center;"><strong>20</strong></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Treatment A: Did not survive</strong></td>
-<td style="text-align: center;"><strong>8</strong></td>
-<td style="text-align: center;">42</td>
-</tr>
-</tbody>
-</table>
-<p>The observations in the two treatment groups are <strong>not independent</strong>: each patient receiving treatment A is paired with a patient receiving treatment B.</p>
-<blockquote class="blockquote">
-<p><strong>How should we compare the survival probabilities when the observations are paired?</strong></p>
-</blockquote>
-<section id="which-pairs-tell-us-about-the-difference" class="level3">
-<h3 class="anchored" data-anchor-id="which-pairs-tell-us-about-the-difference">Which pairs tell us about the difference?</h3>
-<p>The diagonal cells are <strong>concordant pairs</strong>: both members of the pair have the same outcome.</p>
-<p>The off-diagonal cells are <strong>discordant pairs</strong>: the outcomes differ.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: center;">Treatment B: Survived</th>
-<th style="text-align: center;">Treatment B: Did not survive</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Treatment A: Survived</strong></td>
-<td style="text-align: center;">30</td>
-<td style="text-align: center;"><strong>20: A survives, B does not</strong></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Treatment A: Did not survive</strong></td>
-<td style="text-align: center;"><strong>8: B survives, A does not</strong></td>
-<td style="text-align: center;">42</td>
-</tr>
-</tbody>
-</table>
-<p>The discordant pairs contain the information about whether the survival probabilities differ between treatments.</p>
-<p>If the treatments have the same probability of survival, we would expect the two types of discordant pairs to occur equally often.</p>
-<ul>
-<li>A survives, B does not: <strong>20 pairs</strong></li>
-<li>B survives, A does not: <strong>8 pairs</strong></li>
-</ul>
-<blockquote class="blockquote">
-<p><strong>McNemar’s test asks whether the two types of discordant pairs occur equally often.</strong></p>
-</blockquote>
-<p><a href="mcnemar-statistic.html" target="_blank">Additional details: McNemar’s test statistic</a></p>
-</section>
-<section id="where-does-this-fit-in-the-set-of-problems-weve-seen-so-far" class="level3">
-<h3 class="anchored" data-anchor-id="where-does-this-fit-in-the-set-of-problems-weve-seen-so-far">Where does this fit in the set of problems we’ve seen so far?</h3>
-<p>We have encountered the same distinction with continuous outcomes:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: left;">Continuous outcome</th>
-<th style="text-align: left;">Binary outcome</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Independent groups</strong></td>
-<td style="text-align: left;">Two-sample t-test</td>
-<td style="text-align: left;">Two-proportion / chi-square test</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Paired observations</strong></td>
-<td style="text-align: left;">Paired t-test</td>
-<td style="text-align: left;"><strong>McNemar’s test</strong></td>
-</tr>
-</tbody>
-</table>
-<blockquote class="blockquote">
-<p><strong>Whether the outcome is continuous or binary, paired observations require an analysis that accounts for the pairing.</strong></p>
-</blockquote>
-</section>
-<section id="comparing-the-treatments---hypothesis-test" class="level3">
-<h3 class="anchored" data-anchor-id="comparing-the-treatments---hypothesis-test">Comparing the treatments - hypothesis test</h3>
-<p>The null and alternative hypotheses are:</p>
+<p>The four deviations from the expected counts are therefore</p>
 <p><span class="math display">\[
 \large
-H_0: P(\text{A survives, B does not})
-=
-P(\text{B survives, A does not})
-\]</span> <span class="math display">\[
+d,\quad -d,\quad -d,\quad d.
+\]</span></p>
+<p>There are four cells, but there is only <strong>one random deviation</strong>.</p>
+<p>Once we know <span class="math inline">\(d\)</span>, we know the entire table.</p>
+</section>
+<section id="a-brief-detour-the-hypergeometric-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="a-brief-detour-the-hypergeometric-distribution">A brief detour: the hypergeometric distribution</h2>
+<p>To understand how <span class="math inline">\(d\)</span> varies under the null, we need a probability distribution we haven’t encountered before.</p>
+<p>Recall the binomial distribution.</p>
+<p>Suppose we observe 60 independent trials, each with probability</p>
+<p><span class="math display">\[
+p=\frac{45}{180}=0.25
+\]</span></p>
+<p>of success.</p>
+<p>Then</p>
+<p><span class="math display">\[
 \large
-H_A: P(\text{A survives, B does not})
-\neq
-P(\text{B survives, A does not}).
+X\sim\operatorname{Binomial}(60,0.25)
 \]</span></p>
-<p>We can test this hypothesis in <strong>R</strong> using the function <code>mcnemar.test()</code>:</p>
-<div id="qwebr-insertion-location-35"></div>
+<p>counts the number of successes.</p>
+<p>The number of trials is fixed at 60, but the total number of successes is not fixed.</p>
+<div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Since the p-value = <span class="math inline">\(0.038\)</span>, we reject the null hypothesis and conclude that the survival rates for the two treatment groups are not equal.</p>
+<p>The expected number of successes is</p>
+<p><span class="math display">\[
+E(X)=np
+=
+60(0.25)
+=
+15,
+\]</span></p>
+<p>and the variance is</p>
+<p><span class="math display">\[
+\operatorname{Var}(X)
+=
+np(1-p)
+=
+60(0.25)(0.75)
+=
+11.25.
+\]</span></p>
+<section id="what-if-the-total-number-of-successes-is-fixed" class="level3">
+<h3 class="anchored" data-anchor-id="what-if-the-total-number-of-successes-is-fixed">What if the total number of successes is fixed?</h3>
+<p>Our contingency table is different.</p>
+<p>We have exactly 180 individuals:</p>
+<ul>
+<li>45 successes</li>
+<li>135 failures</li>
+</ul>
+<p>and we assign exactly 60 individuals to Group 1.</p>
+<p>Under the null hypothesis, group membership is unrelated to outcome.</p>
+<p>We can therefore think of Group 1 as a random selection of 60 individuals from the 180, <strong>without replacement</strong>.</p>
+<p>Let</p>
+<p><span class="math display">\[
+X=\text{number of successes selected for Group 1}.
+\]</span></p>
+<p>This is not a binomial experiment.</p>
+<p>Once a success has been selected, there is one fewer success available for the next selection. The selections are therefore not independent.</p>
+<p>This setting gives rise to the <strong>hypergeometric distribution</strong>.</p>
+<p>We write</p>
+<p><span class="math display">\[
+\large
+X\sim\operatorname{Hypergeometric}(N,K,n),
+\]</span></p>
+<p>where</p>
+<ul>
+<li><span class="math inline">\(N\)</span> = total population size</li>
+<li><span class="math inline">\(K\)</span> = number of successes in the population</li>
+<li><span class="math inline">\(n\)</span> = number selected</li>
+<li><span class="math inline">\(X\)</span> = number of successes among those selected</li>
+</ul>
+<p>For our table,</p>
+<p><span class="math display">\[
+\large
+X\sim\operatorname{Hypergeometric}(180,45,60).
+\]</span></p>
 </section>
-<section id="comparing-the-treatments---point-estimate-and-95-ci" class="level3">
-<h3 class="anchored" data-anchor-id="comparing-the-treatments---point-estimate-and-95-ci">Comparing the treatments - point estimate and 95% CI</h3>
-<p>We can estimate the difference in survival probabilities and construct a 95% confidence interval that accounts for the matching using <code>rdpairci()</code> from the <strong>R</strong> package <code>ratesci</code>:</p>
-<p>The observed survival probabilities were</p>
-<p><span class="math display">\[\large
-\hat p_A = \frac{50}{100}=0.50,
-\qquad
-\hat p_B = \frac{38}{100}=0.38.
+<section id="what-is-the-probability-of-observing-exactly-x-successes" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-probability-of-observing-exactly-x-successes">What is the probability of observing exactly <span class="math inline">\(x\)</span> successes?</h3>
+<p>There are</p>
+<p><span class="math display">\[
+\binom{180}{60}
 \]</span></p>
-<p>And the estimated difference in proportions is:</p>
-<p><span class="math display">\[\large
-\hat p_A - \hat p_B = 0.50 - 0.38 = 0.12,
+<p>possible ways to select 60 individuals from the population.</p>
+<p>To obtain exactly <span class="math inline">\(x\)</span> successes, we must choose</p>
+<p><span class="math display">\[
+\binom{45}{x}
 \]</span></p>
-<div id="qwebr-insertion-location-36"></div>
+<p>individuals from the 45 successes and</p>
+<p><span class="math display">\[
+\binom{135}{60-x}
+\]</span></p>
+<p>individuals from the 135 failures.</p>
+<p>Therefore,</p>
+<p><span class="math display">\[
+\large
+P(X=x)
+=
+\frac{
+\binom{45}{x}
+\binom{135}{60-x}
+}{
+\binom{180}{60}
+}.
+\]</span></p>
+<p>More generally,</p>
+<p><span class="math display">\[
+\boxed{
+P(X=x)
+=
+\frac{
+\binom{K}{x}
+\binom{N-K}{n-x}
+}{
+\binom{N}{n}
+}
+}
+\]</span></p>
+<p>The expected value has a particularly intuitive form:</p>
+<p><span class="math display">\[
+\large
+E(X)
+=
+n\frac{K}{N}.
+\]</span></p>
+<p>We select 60 individuals from a population in which one-quarter are successes, so</p>
+<p><span class="math display">\[
+E(X)
+=
+60\frac{45}{180}
+=
+15.
+\]</span></p>
+<p>Notice that this is <strong>exactly the expected count from our contingency table</strong>.</p>
+</section>
+<section id="sampling-without-replacement-reduces-the-variation" class="level3">
+<h3 class="anchored" data-anchor-id="sampling-without-replacement-reduces-the-variation">Sampling without replacement reduces the variation</h3>
+<p>The variance of a hypergeometric random variable is</p>
+<p><span class="math display">\[
+\large
+\operatorname{Var}(X)
+=
+n\frac{K}{N}
+\left(1-\frac{K}{N}\right)
+\frac{N-n}{N-1}.
+\]</span></p>
+<p>The first part,</p>
+<p><span class="math display">\[
+n\frac{K}{N}
+\left(1-\frac{K}{N}\right),
+\]</span></p>
+<p>is the familiar binomial variance if you think of <span class="math inline">\(K/N\)</span> as <span class="math inline">\(p\)</span>.</p>
+<p>But the hypergeometric variance contains an additional factor,</p>
+<p><span class="math display">\[
+\large
+\frac{N-n}{N-1},
+\]</span></p>
+<p>called the <strong>finite population correction</strong>.</p>
+<p>Because this factor is less than 1, sampling without replacement produces less variation than independent binomial sampling.</p>
+<p>For our example,</p>
+<p><span class="math display">\[
+\begin{aligned}
+\operatorname{Var}(X)
+&amp;=
+60(0.25)(0.75)
+\frac{120}{179}\\[4pt]
+&amp;\approx 7.54.
+\end{aligned}
+\]</span></p>
+<p>Compare this with the binomial variance:</p>
+<p><span class="math display">\[
+60(0.25)(0.75)=11.25.
+\]</span></p>
+<p>Both distributions have expected value 15.</p>
+<p>But their deviations around 15 do not have the same variability.</p>
+<div id="qwebr-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The estimated survival probability is 12 percentage points higher with treatment A than with treatment B (95% CI: 1.7 to 22.5 percentage points).</p>
+<div id="qwebr-insertion-location-10"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>This difference matters because we are interested not merely in the expected count, but in the <strong>distribution of deviations from that expected count</strong>.</p>
+</section>
+</section>
+<section id="back-to-the-deviation-in-our-table" class="level2">
+<h2 class="anchored" data-anchor-id="back-to-the-deviation-in-our-table">Back to the deviation in our table</h2>
+<p>The number of successes in Group 1 is</p>
+<p><span class="math display">\[
+O_{11}\sim\operatorname{Hypergeometric}(180,45,60).
+\]</span></p>
+<p>We have just seen that</p>
+<p><span class="math display">\[
+E(O_{11})=15
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\operatorname{Var}(O_{11})\approx7.54.
+\]</span></p>
+<p>Our deviation is</p>
+<p><span class="math display">\[
+\large
+d=O_{11}-15.
+\]</span></p>
+<p>Subtracting 15 changes the center of the distribution but not its variance.</p>
+<p>Therefore,</p>
+<p><span class="math display">\[
+E(d)=0
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\operatorname{Var}(d)\approx7.54.
+\]</span></p>
+<p>Let’s simulate the deviations directly.</p>
+<div id="qwebr-insertion-location-11"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-12"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>This is the distribution of the random deviations we would expect simply from assigning 60 of the 180 individuals to Group 1 when group and outcome are unrelated.</p>
+</section>
+<section id="standardizing-the-deviation" class="level2">
+<h2 class="anchored" data-anchor-id="standardizing-the-deviation">Standardizing the deviation</h2>
+<p>For sufficiently large counts, the hypergeometric distribution is approximately Normal.</p>
+<p>So if we standardize the deviation,</p>
+<p><span class="math display">\[
+\large
+Z
+=
+\frac{d}{SD(d)},
+\]</span></p>
+<p>we should obtain something approximately distributed as</p>
+<p><span class="math display">\[
+N(0,1).
+\]</span></p>
+<p>The exact hypergeometric variance here is</p>
+<p><span class="math display">\[
+\operatorname{Var}(d)
+=
+60(0.25)(0.75)\frac{120}{179}
+\approx7.54.
+\]</span></p>
+<div id="qwebr-insertion-location-13"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-14"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Again, the important object is the <strong>deviation from what the null predicts</strong>.</p>
+<p>We have simply put that deviation on a scale that reflects how much such deviations naturally vary under the null.</p>
+</section>
+<section id="now-square-the-standardized-deviation" class="level2">
+<h2 class="anchored" data-anchor-id="now-square-the-standardized-deviation">Now square the standardized deviation</h2>
+<p>If</p>
+<p><span class="math display">\[
+Z\approx N(0,1),
+\]</span></p>
+<p>then</p>
+<p><span class="math display">\[
+Z^2\approx\chi^2_1.
+\]</span></p>
+<div id="qwebr-insertion-location-15"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-16"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>So the chi-square distribution has appeared naturally:</p>
+<p><span class="math display">\[
+\large
+\text{deviation}
+\longrightarrow
+\text{standardized deviation}
+\longrightarrow
+\text{squared standardized deviation}.
+\]</span></p>
+</section>
+<section id="now-return-to-pearsons-statistic" class="level2">
+<h2 class="anchored" data-anchor-id="now-return-to-pearsons-statistic">Now return to Pearson’s statistic</h2>
+<p>Pearson’s chi-square statistic includes the contribution from all four cells:</p>
+<p><span class="math display">\[
+\large
+X^2
+=
+\sum
+\frac{(O-E)^2}{E}.
+\]</span></p>
+<p>Our expected counts are</p>
+<p><span class="math display">\[
+15,\quad45,\quad30,\quad90,
+\]</span></p>
+<p>and the corresponding deviations are</p>
+<p><span class="math display">\[
+d,\quad-d,\quad-d,\quad d.
+\]</span></p>
+<p>Therefore,</p>
+<p><span class="math display">\[
+\begin{aligned}
+X^2
+&amp;=
+\frac{d^2}{15}
++
+\frac{(-d)^2}{45}
++
+\frac{(-d)^2}{30}
++
+\frac{d^2}{90}\\[6pt]
+&amp;=
+d^2
+\left(
+\frac{1}{15}
++
+\frac{1}{45}
++
+\frac{1}{30}
++
+\frac{1}{90}
+\right).
+\end{aligned}
+\]</span></p>
+<p>The terms inside the parentheses sum to</p>
+<p><span class="math display">\[
+\frac{2}{15},
+\]</span></p>
+<p>so</p>
+<p><span class="math display">\[
+\large
+X^2
+=
+\frac{2d^2}{15}
+=
+\frac{d^2}{7.5}.
+\]</span></p>
+<p>But the exact variance of the deviation is</p>
+<p><span class="math display">\[
+\operatorname{Var}(d)
+=
+60(0.25)(0.75)\frac{120}{179}
+=
+\frac{1350}{179}
+\approx7.54.
+\]</span></p>
+<p>So the squared standardized deviation is</p>
+<p><span class="math display">\[
+\large
+Z^2
+=
+\frac{d^2}{1350/179}.
+\]</span></p>
+<p>Pearson’s statistic is therefore almost exactly the squared standardized deviation.</p>
+<p>In fact,</p>
+<p><span class="math display">\[
+\large
+X^2
+=
+\frac{180}{179}Z^2.
+\]</span></p>
+<p>The small difference comes from the finite population correction.</p>
+<p>As the sample size becomes large,</p>
+<p><span class="math display">\[
+\frac{180}{179}\rightarrow1,
+\]</span></p>
+<p>so</p>
+<p><span class="math display">\[
+\boxed{
+X^2\approx Z^2\sim\chi^2_1.
+}
+\]</span></p>
+</section>
+<section id="does-this-actually-happen" class="level2">
+<h2 class="anchored" data-anchor-id="does-this-actually-happen">Does this actually happen?</h2>
+<p>We can calculate Pearson’s statistic for every simulated table.</p>
+<p>Since each simulated value of <span class="math inline">\(O_{11}\)</span> determines the entire table, we can calculate</p>
+<p><span class="math display">\[
+X^2
+=
+\frac{d^2}{15}
++
+\frac{d^2}{45}
++
+\frac{d^2}{30}
++
+\frac{d^2}{90}.
+\]</span></p>
+<div id="qwebr-insertion-location-17"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Now compare its simulated distribution with a chi-square distribution with one degree of freedom.</p>
+<div id="qwebr-insertion-location-18"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The agreement is not exact: the underlying cell counts are discrete, and the chi-square distribution is a continuous approximation.</p>
+<p>But the connection should now be visible.</p>
+</section>
+<section id="the-four-cells-did-not-disappear" class="level2">
+<h2 class="anchored" data-anchor-id="the-four-cells-did-not-disappear">The four cells did not disappear</h2>
+<p>Pearson’s statistic includes <strong>all four cells</strong>.</p>
+<p>Each contributes</p>
+<p><span class="math display">\[
+\frac{(O-E)^2}{E}.
+\]</span></p>
+<p>But the four deviations are not independent.</p>
+<p>With fixed margins, they are</p>
+<p><span class="math display">\[
+d,\quad-d,\quad-d,\quad d.
+\]</span></p>
+<p>They all arise from the same underlying random deviation.</p>
+<p>The sum of the four Pearson contributions turns out to be approximately the square of <strong>one standardized random deviation</strong>.</p>
+<p>That is why the reference distribution has <strong>one degree of freedom</strong>.</p>
+<blockquote class="blockquote">
+<p>A <span class="math inline">\(2\times2\)</span> table has four cell contributions to Pearson’s statistic, but with fixed margins they contain only one independent source of random variation.</p>
+</blockquote>
+</section>
+<section id="the-broader-idea" class="level2">
+<h2 class="anchored" data-anchor-id="the-broader-idea">The broader idea</h2>
+<p>We started with the familiar standardization</p>
+<p><span class="math display">\[
+\large
+Z_i = \frac{X_i-\mu}{\sigma}.
+\]</span></p>
+<p>Instead of thinking only about standardizing <span class="math inline">\(X_i\)</span>, we treated</p>
+<p><span class="math display">\[
+\large
+D_i = X_i-\mu
+\]</span></p>
+<p>and treated <span class="math inline">\(D_i\)</span> as a random <strong>deviation</strong> and asked about its distribution.</p>
+<p>For a sample mean, the. mean deviation is</p>
+<p><span class="math display">\[\large
+\bar D = \bar X - \mu
+\]</span></p>
+<p>Under the null hypothesis <span class="math inline">\(H_0: \mu = \mu_0\)</span>, this becomes</p>
+<p><span class="math display">\[\large
+\bar D = \bar X - \mu_0
+\]</span> and</p>
+<p><span class="math display">\[
+\large
+Z = \frac{\bar D}{SE(\bar D)} = \frac{\bar X-\mu_0}{SE(\bar X)}
+\]</span></p>
+<p>asks how large the observed deviation is relative to the deviations expected under the null.</p>
+<p>For our contingency table, Pearson’s statistic ultimately does something closely related:</p>
+<p><span class="math display">\[
+\large
+X^2
+\approx
+\left[
+\frac{\text{observed deviation}}
+{\text{SD of deviations under the null}}
+\right]^2.
+\]</span></p>
+<p>The details differ, but the underlying inferential question is the same:</p>
+<blockquote class="blockquote">
+<p><strong>How large is what we observed relative to the random deviations we would expect if the null model were true?</strong></p>
+</blockquote>
+<p>For larger contingency tables, there is more than one independent deviation.</p>
+<p>The mathematics becomes more complicated, because those deviations have to be considered jointly. But the basic idea remains: understand how the deviations behave under the null, standardize that variation appropriately, and combine the resulting squared deviations.</p>
+<p>For an <span class="math inline">\(r\times c\)</span> table, there are</p>
+<p><span class="math display">\[
+(r-1)(c-1)
+\]</span></p>
+<p>independent sources of variation, leading to a chi-square reference distribution with</p>
+<p><span class="math display">\[
+(r-1)(c-1)
+\]</span></p>
+<p>degrees of freedom.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

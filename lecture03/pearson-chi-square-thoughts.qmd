@@ -1,0 +1,1122 @@
+---
+title: "From standardized deviations to chi-square"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+---
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 1.1em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>
+
+## A different way to think about standardization
+
+We often write
+
+$$
+\large
+Z_i = \frac{X_i-\mu}{\sigma}
+$$
+
+and describe this as **standardizing $X_i$**:
+
+- subtract $\mu$ to center the distribution at 0
+- divide by $\sigma$ to give the distribution a standard deviation of 1
+
+There is another way to think about exactly the same calculation.
+
+Define the **deviation**
+
+$$
+\large
+D_i = X_i-\mu.
+$$
+
+Then
+
+$$
+E(D_i)=0
+$$
+
+and
+
+$$
+SD(D_i)=\sigma.
+$$
+
+So
+
+$$
+\large
+Z_i
+=
+\frac{D_i}{SD(D_i)}
+$$
+
+is the **standardized deviation**.
+
+## Looking at the deviations
+
+Suppose
+
+$$
+X\sim N(100,15^2).
+$$
+
+Generate many observations:
+
+```{webr-r}
+set.seed(123)
+
+x <- rnorm(
+  10000,
+  mean = 100,
+  sd = 15
+)
+
+mean(x)
+sd(x)
+```
+
+Now calculate each observation's deviation from the population mean:
+
+```{webr-r}
+d <- x - 100
+
+mean(d)
+sd(d)
+```
+
+The distribution has simply shifted.
+
+The observations are centered around 100.
+
+The deviations are centered around 0.
+
+```{webr-r}
+#| classes: webr-plot
+
+par(mfrow = c(1, 2))
+
+hist(
+  x,
+  breaks = 40,
+  main = "Observations",
+  xlab = "X"
+)
+
+hist(
+  d,
+  breaks = 40,
+  main = "Deviations",
+  xlab = "X - 100"
+)
+
+par(mfrow = c(1, 1))
+```
+
+The variability has not changed:
+
+$$
+SD(D_i). =SD(X_i-\mu)=SD(X_i) = \sigma.
+$$
+
+## Standardizing the deviations
+
+Now divide each deviation by its standard deviation:
+
+```{webr-r}
+z <- d / 15
+
+mean(z)
+sd(z)
+```
+
+We can now interpret a value such as
+
+$$
+Z=2
+$$
+
+as a deviation that is **two standard deviations larger than expected**.
+
+Nothing new has happened mathematically.
+
+But thinking in terms of deviations emphasizes a question that becomes important for statistical inference:
+
+> **How large is the observed deviation compared with the deviations we would ordinarily expect?**
+
+## From observations to sample means
+
+Now suppose we take a random sample of 25 observations from the same population.
+
+For each sample, calculate
+
+$$
+\bar X-\mu.
+$$
+
+Let's repeat this many times.
+
+```{webr-r}
+set.seed(123)
+
+sample_means <- replicate(
+  10000,
+  mean(rnorm(25, mean = 100, sd = 15))
+)
+
+d_mean <- sample_means - 100
+
+mean(d_mean)
+sd(d_mean)
+```
+
+These deviations are still centered around 0.
+
+But they vary much less than the individual observations.
+
+Why?
+
+Because
+
+$$
+SD(\bar X-\mu)
+=
+SD(\bar X)
+=
+\frac{\sigma}{\sqrt n}.
+$$
+
+Here,
+
+$$
+\frac{15}{\sqrt{25}}=3.
+$$
+
+So the sampling deviations have a standard deviation of about 3.
+
+```{webr-r}
+sd(d_mean)
+
+15 / sqrt(25)
+```
+
+## Standardizing a sampling deviation
+
+We can therefore write
+
+$$
+\large
+Z
+=
+\frac{\bar X-\mu}
+{\sigma/\sqrt n}.
+$$
+
+Again, we can think of this as standardizing $\bar X$.
+
+But we can also think of it as standardizing the deviation
+
+$$
+\bar D = \bar X-\mu.
+$$
+
+The denominator tells us **how much these deviations naturally vary across repeated samples**.
+
+```{webr-r}
+z_mean <- d_mean / 3
+
+mean(z_mean)
+sd(z_mean)
+```
+
+And because the population is Normal,
+
+$$
+\large
+\frac{\bar D}{\sigma/\sqrt n}
+\sim N(0,1).
+$$
+
+This is the familiar $Z$-statistic—but viewed as a standardized deviation, rather than simply as a standardized sample mean.
+
+## This is the basis of statistical inference
+
+Suppose the null hypothesis says
+
+$$
+H_0:\mu=100.
+$$
+
+We observe a sample mean $\bar X$.
+
+The relevant deviation is now
+
+$$
+\large
+\bar D = \bar X-100.
+$$
+
+The size of that deviation alone doesn't tell us very much.
+
+A deviation of 3 could be quite ordinary if
+
+$$
+SE(\bar X)=5,
+$$
+
+but quite unusual if
+
+$$
+SE(\bar X)=0.5.
+$$
+
+What matters is the observed deviation **relative to the distribution of deviations we expect when the null hypothesis is true**.
+
+That is exactly what
+
+$$
+\large
+Z=
+\frac{\bar X-\mu_0}{SE(\bar X)}
+$$
+
+does.
+
+> **Inference depends not only on how far the observed result is from what the null model predicts, but on how much such deviations would naturally vary if the null model were true.**
+
+## What does this have to do with a contingency table?
+
+Consider a population of 180 individuals.
+
+Exactly 45 experience a particular outcome ("success") and 135 do not.
+
+The 180 individuals are divided into two groups:
+
+- 60 individuals in Group 1
+- 120 individuals in Group 2
+
+We want to ask whether outcome is associated with group.
+
+The margins of the table are therefore fixed:
+
+| | Success | Failure | Total |
+|:---|:---:|:---:|:---:|
+| Group 1 |  |  | 60 |
+| Group 2 |  |  | 120 |
+| **Total** | **45** | **135** | **180** |
+
+Under the null hypothesis of **no association between group and outcome**, the expected count in each cell is
+
+$$
+\large
+E_{ij}
+=
+\frac{
+(\text{row total})(\text{column total})
+}{
+\text{grand total}
+}.
+$$
+
+For Group 1 successes,
+
+$$
+E_{11}
+=
+\frac{60(45)}{180}
+=
+15.
+$$
+
+The complete expected table is therefore
+
+| | Success | Failure | Total |
+|:---|:---:|:---:|:---:|
+| Group 1 | 15 | 45 | 60 |
+| Group 2 | 30 | 90 | 120 |
+| **Total** | **45** | **135** | **180** |
+
+Pearson's chi-square statistic is based on the deviations
+
+$$
+\large
+O-E.
+$$
+
+So once again, the key question is:
+
+> **How do the deviations between observed and expected counts behave when the null hypothesis is true?**
+
+## There is only one random deviation
+
+Suppose the observed number of successes in Group 1 is
+
+$$
+O_{11}=15+d.
+$$
+
+Because the margins are fixed, that determines every other cell.
+
+The table must be
+
+| | Success | Failure | Total |
+|:---|:---:|:---:|:---:|
+| Group 1 | $15+d$ | $45-d$ | 60 |
+| Group 2 | $30-d$ | $90+d$ | 120 |
+| **Total** | **45** | **135** | **180** |
+
+The four deviations from the expected counts are therefore
+
+$$
+\large
+d,\quad -d,\quad -d,\quad d.
+$$
+
+There are four cells, but there is only **one random deviation**.
+
+Once we know $d$, we know the entire table.
+
+## A brief detour: the hypergeometric distribution
+
+To understand how $d$ varies under the null, we need a probability distribution we haven't encountered before.
+
+Recall the binomial distribution.
+
+Suppose we observe 60 independent trials, each with probability
+
+$$
+p=\frac{45}{180}=0.25
+$$
+
+of success.
+
+Then
+
+$$
+\large
+X\sim\operatorname{Binomial}(60,0.25)
+$$
+
+counts the number of successes.
+
+The number of trials is fixed at 60, but the total number of successes is not fixed.
+
+```{webr-r}
+set.seed(123)
+
+x_binom <- rbinom(
+  10000,
+  size = 60,
+  prob = 0.25
+)
+
+mean(x_binom)
+var(x_binom)
+```
+
+The expected number of successes is
+
+$$
+E(X)=np
+=
+60(0.25)
+=
+15,
+$$
+
+and the variance is
+
+$$
+\operatorname{Var}(X)
+=
+np(1-p)
+=
+60(0.25)(0.75)
+=
+11.25.
+$$
+
+### What if the total number of successes is fixed?
+
+Our contingency table is different.
+
+We have exactly 180 individuals:
+
+- 45 successes
+- 135 failures
+
+and we assign exactly 60 individuals to Group 1.
+
+Under the null hypothesis, group membership is unrelated to outcome.
+
+We can therefore think of Group 1 as a random selection of 60 individuals from the 180, **without replacement**.
+
+Let
+
+$$
+X=\text{number of successes selected for Group 1}.
+$$
+
+This is not a binomial experiment.
+
+Once a success has been selected, there is one fewer success available for the next selection. The selections are therefore not independent.
+
+This setting gives rise to the **hypergeometric distribution**.
+
+We write
+
+$$
+\large
+X\sim\operatorname{Hypergeometric}(N,K,n),
+$$
+
+where
+
+- $N$ = total population size
+- $K$ = number of successes in the population
+- $n$ = number selected
+- $X$ = number of successes among those selected
+
+For our table,
+
+$$
+\large
+X\sim\operatorname{Hypergeometric}(180,45,60).
+$$
+
+### What is the probability of observing exactly $x$ successes?
+
+There are
+
+$$
+\binom{180}{60}
+$$
+
+possible ways to select 60 individuals from the population.
+
+To obtain exactly $x$ successes, we must choose
+
+$$
+\binom{45}{x}
+$$
+
+individuals from the 45 successes and
+
+$$
+\binom{135}{60-x}
+$$
+
+individuals from the 135 failures.
+
+Therefore,
+
+$$
+\large
+P(X=x)
+=
+\frac{
+\binom{45}{x}
+\binom{135}{60-x}
+}{
+\binom{180}{60}
+}.
+$$
+
+More generally,
+
+$$
+\boxed{
+P(X=x)
+=
+\frac{
+\binom{K}{x}
+\binom{N-K}{n-x}
+}{
+\binom{N}{n}
+}
+}
+$$
+
+The expected value has a particularly intuitive form:
+
+$$
+\large
+E(X)
+=
+n\frac{K}{N}.
+$$
+
+We select 60 individuals from a population in which one-quarter are successes, so
+
+$$
+E(X)
+=
+60\frac{45}{180}
+=
+15.
+$$
+
+Notice that this is **exactly the expected count from our contingency table**.
+
+### Sampling without replacement reduces the variation
+
+The variance of a hypergeometric random variable is
+
+$$
+\large
+\operatorname{Var}(X)
+=
+n\frac{K}{N}
+\left(1-\frac{K}{N}\right)
+\frac{N-n}{N-1}.
+$$
+
+The first part,
+
+$$
+n\frac{K}{N}
+\left(1-\frac{K}{N}\right),
+$$
+
+is the familiar binomial variance if you think of $K/N$ as $p$.
+
+But the hypergeometric variance contains an additional factor,
+
+$$
+\large
+\frac{N-n}{N-1},
+$$
+
+called the **finite population correction**.
+
+Because this factor is less than 1, sampling without replacement produces less variation than independent binomial sampling.
+
+For our example,
+
+$$
+\begin{aligned}
+\operatorname{Var}(X)
+&=
+60(0.25)(0.75)
+\frac{120}{179}\\[4pt]
+&\approx 7.54.
+\end{aligned}
+$$
+
+Compare this with the binomial variance:
+
+$$
+60(0.25)(0.75)=11.25.
+$$
+
+Both distributions have expected value 15.
+
+But their deviations around 15 do not have the same variability.
+
+```{webr-r}
+set.seed(123)
+
+x_binom <- rbinom(
+  10000,
+  size = 60,
+  prob = 0.25
+)
+
+x_hyper <- rhyper(
+  10000,
+  m = 45,
+  n = 135,
+  k = 60
+)
+
+mean(x_binom)
+mean(x_hyper)
+
+var(x_binom)
+var(x_hyper)
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+par(mfrow = c(1, 2))
+
+hist(
+  x_binom,
+  breaks = seq(-0.5, 30.5, by = 1),
+  probability = TRUE,
+  ylim = c(0, 0.16),
+  main = "Binomial",
+  xlab = "Number of successes"
+)
+
+hist(
+  x_hyper,
+  breaks = seq(-0.5, 30.5, by = 1),
+  probability = TRUE,
+  ylim = c(0, 0.16),
+  main = "Hypergeometric",
+  xlab = "Number of successes"
+)
+
+par(mfrow = c(1, 1))
+```
+
+This difference matters because we are interested not merely in the expected count, but in the **distribution of deviations from that expected count**.
+
+## Back to the deviation in our table
+
+The number of successes in Group 1 is
+
+$$
+O_{11}\sim\operatorname{Hypergeometric}(180,45,60).
+$$
+
+We have just seen that
+
+$$
+E(O_{11})=15
+$$
+
+and
+
+$$
+\operatorname{Var}(O_{11})\approx7.54.
+$$
+
+Our deviation is
+
+$$
+\large
+d=O_{11}-15.
+$$
+
+Subtracting 15 changes the center of the distribution but not its variance.
+
+Therefore,
+
+$$
+E(d)=0
+$$
+
+and
+
+$$
+\operatorname{Var}(d)\approx7.54.
+$$
+
+Let's simulate the deviations directly.
+
+```{webr-r}
+set.seed(123)
+
+o11 <- rhyper(
+  10000,
+  m = 45,
+  n = 135,
+  k = 60
+)
+
+d <- o11 - 15
+
+mean(d)
+var(d)
+sd(d)
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+hist(
+  d,
+  breaks = seq(-15.5, 15.5, by = 1),
+  probability = TRUE,
+  main = "Deviations under the null",
+  xlab = "O - E"
+)
+```
+
+This is the distribution of the random deviations we would expect simply from assigning 60 of the 180 individuals to Group 1 when group and outcome are unrelated.
+
+## Standardizing the deviation
+
+For sufficiently large counts, the hypergeometric distribution is approximately Normal.
+
+So if we standardize the deviation,
+
+$$
+\large
+Z
+=
+\frac{d}{SD(d)},
+$$
+
+we should obtain something approximately distributed as
+
+$$
+N(0,1).
+$$
+
+The exact hypergeometric variance here is
+
+$$
+\operatorname{Var}(d)
+=
+60(0.25)(0.75)\frac{120}{179}
+\approx7.54.
+$$
+
+```{webr-r}
+var_d <- 60 * 0.25 * 0.75 * (120 / 179)
+
+z <- d / sqrt(var_d)
+
+mean(z)
+sd(z)
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+hist(
+  z,
+  breaks = 30,
+  probability = TRUE,
+  main = "Standardized deviations",
+  xlab = "Z"
+)
+
+curve(
+  dnorm(x),
+  from = -4,
+  to = 4,
+  add = TRUE,
+  lwd = 2
+)
+```
+
+Again, the important object is the **deviation from what the null predicts**.
+
+We have simply put that deviation on a scale that reflects how much such deviations naturally vary under the null.
+
+## Now square the standardized deviation
+
+If
+
+$$
+Z\approx N(0,1),
+$$
+
+then
+
+$$
+Z^2\approx\chi^2_1.
+$$
+
+```{webr-r}
+z2 <- z^2
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+hist(
+  z2,
+  breaks = 50,
+  probability = TRUE,
+  xlim = c(0, 10),
+  main = "Squared standardized deviations",
+  xlab = expression(Z^2)
+)
+
+curve(
+  dchisq(x, df = 1),
+  from = 0,
+  to = 10,
+  add = TRUE,
+  lwd = 2
+)
+```
+
+So the chi-square distribution has appeared naturally:
+
+$$
+\large
+\text{deviation}
+\longrightarrow
+\text{standardized deviation}
+\longrightarrow
+\text{squared standardized deviation}.
+$$
+
+## Now return to Pearson's statistic
+
+Pearson's chi-square statistic includes the contribution from all four cells:
+
+$$
+\large
+X^2
+=
+\sum
+\frac{(O-E)^2}{E}.
+$$
+
+Our expected counts are
+
+$$
+15,\quad45,\quad30,\quad90,
+$$
+
+and the corresponding deviations are
+
+$$
+d,\quad-d,\quad-d,\quad d.
+$$
+
+Therefore,
+
+$$
+\begin{aligned}
+X^2
+&=
+\frac{d^2}{15}
++
+\frac{(-d)^2}{45}
++
+\frac{(-d)^2}{30}
++
+\frac{d^2}{90}\\[6pt]
+&=
+d^2
+\left(
+\frac{1}{15}
++
+\frac{1}{45}
++
+\frac{1}{30}
++
+\frac{1}{90}
+\right).
+\end{aligned}
+$$
+
+The terms inside the parentheses sum to
+
+$$
+\frac{2}{15},
+$$
+
+so
+
+$$
+\large
+X^2
+=
+\frac{2d^2}{15}
+=
+\frac{d^2}{7.5}.
+$$
+
+But the exact variance of the deviation is
+
+$$
+\operatorname{Var}(d)
+=
+60(0.25)(0.75)\frac{120}{179}
+=
+\frac{1350}{179}
+\approx7.54.
+$$
+
+So the squared standardized deviation is
+
+$$
+\large
+Z^2
+=
+\frac{d^2}{1350/179}.
+$$
+
+Pearson's statistic is therefore almost exactly the squared standardized deviation.
+
+In fact,
+
+$$
+\large
+X^2
+=
+\frac{180}{179}Z^2.
+$$
+
+The small difference comes from the finite population correction.
+
+As the sample size becomes large,
+
+$$
+\frac{180}{179}\rightarrow1,
+$$
+
+so
+
+$$
+\boxed{
+X^2\approx Z^2\sim\chi^2_1.
+}
+$$
+
+## Does this actually happen?
+
+We can calculate Pearson's statistic for every simulated table.
+
+Since each simulated value of $O_{11}$ determines the entire table, we can calculate
+
+$$
+X^2
+=
+\frac{d^2}{15}
++
+\frac{d^2}{45}
++
+\frac{d^2}{30}
++
+\frac{d^2}{90}.
+$$
+
+```{webr-r}
+x2 <- d^2 / 15 +
+      d^2 / 45 +
+      d^2 / 30 +
+      d^2 / 90
+```
+
+Now compare its simulated distribution with a chi-square distribution with one degree of freedom.
+
+```{webr-r}
+#| classes: webr-plot
+
+hist(
+  x2,
+  breaks = 50,
+  probability = TRUE,
+  xlim = c(0, 10),
+  main = "Pearson chi-square statistics under the null",
+  xlab = expression(X^2)
+)
+
+curve(
+  dchisq(x, df = 1),
+  from = 0,
+  to = 10,
+  add = TRUE,
+  lwd = 2
+)
+```
+
+The agreement is not exact: the underlying cell counts are discrete, and the chi-square distribution is a continuous approximation.
+
+But the connection should now be visible.
+
+## The four cells did not disappear
+
+Pearson's statistic includes **all four cells**.
+
+Each contributes
+
+$$
+\frac{(O-E)^2}{E}.
+$$
+
+But the four deviations are not independent.
+
+With fixed margins, they are
+
+$$
+d,\quad-d,\quad-d,\quad d.
+$$
+
+They all arise from the same underlying random deviation.
+
+The sum of the four Pearson contributions turns out to be approximately the square of **one standardized random deviation**.
+
+That is why the reference distribution has **one degree of freedom**.
+
+> A $2\times2$ table has four cell contributions to Pearson's statistic, but with fixed margins they contain only one independent source of random variation.
+
+## The broader idea
+
+We started with the familiar standardization
+
+$$
+\large
+Z_i = \frac{X_i-\mu}{\sigma}.
+$$
+
+Instead of thinking only about standardizing $X_i$, we treated
+
+$$
+\large
+D_i = X_i-\mu
+$$
+
+and treated $D_i$ as a random **deviation** and asked about its distribution.
+
+For a sample mean, the. mean deviation is 
+
+$$\large
+\bar D = \bar X - \mu
+$$
+
+Under the null hypothesis $H_0: \mu = \mu_0$, this becomes
+
+$$\large
+\bar D = \bar X - \mu_0
+$$
+and 
+
+$$
+\large
+Z = \frac{\bar D}{SE(\bar D)} = \frac{\bar X-\mu_0}{SE(\bar X)}
+$$
+
+asks how large the observed deviation is relative to the deviations expected under the null.
+
+For our contingency table, Pearson's statistic ultimately does something closely related:
+
+$$
+\large
+X^2
+\approx
+\left[
+\frac{\text{observed deviation}}
+{\text{SD of deviations under the null}}
+\right]^2.
+$$
+
+The details differ, but the underlying inferential question is the same:
+
+> **How large is what we observed relative to the random deviations we would expect if the null model were true?**
+
+For larger contingency tables, there is more than one independent deviation.
+
+The mathematics becomes more complicated, because those deviations have to be considered jointly. But the basic idea remains: understand how the deviations behave under the null, standardize that variation appropriately, and combine the resulting squared deviations.
+
+For an $r\times c$ table, there are
+
+$$
+(r-1)(c-1)
+$$
+
+independent sources of variation, leading to a chi-square reference distribution with
+
+$$
+(r-1)(c-1)
+$$
+
+degrees of freedom.

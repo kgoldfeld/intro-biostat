@@ -1180,12 +1180,14 @@ where $O_{ij}$ is the observed count and $E_{ij}$ is the expected count.
 - Squaring ensures that deviations in either direction contribute positively.
 - Dividing by the expected count scales the discrepancy relative to the size of the expected count.
 
-The **chi-square statistic** adds these contributions across all cells:
+The Pearson **chi-square statistic** adds these contributions across all cells:
 
 $$
 \large
 \chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}.
 $$
+[Additional details: from standardized deviations to chi-square](pearson-chi-square-thoughts.html){target="_blank"}
+
 
 ### For our data:
 
@@ -1237,9 +1239,9 @@ $$
 >
 > Therefore, the p-value is the probability of observing a chi-square statistic at least as large as the one we observed, assuming the null hypothesis is true.
 
-### The shape of the chi-square distribution depends ...
+### The shape of the chi-square distribution depends on ...
 
-on the degrees of freedom. For our $2 \times2$ table, $df=1$. The shaded upper-tail area beyond our observed $\chi^2 = 4.669$ is the p-value.
+the degrees of freedom. For our $2 \times2$ table, $df=1$. The shaded upper-tail area beyond our observed $\chi^2 = 4.669$ is the p-value.
 
 ```{webr-r}
 #| classes: webr-plot
@@ -1289,6 +1291,7 @@ chisq.test(tab_rats, correct = FALSE)
 
 > **Continuity correction**: For a $2 \times 2$ table, **R** applies Yates' continuity correction by default. We omit it here so that the chi-square test corresponds directly to the two-proportion $z$-test described above.
 
+<!-- This would be a good place for a link to r x c contingency table (4x3) -->
 
 ### Connection to the two-sample test of proportions
 
@@ -1303,6 +1306,7 @@ Therefore, the two-sample $z$-test and the Pearson chi-square test give the **sa
 
 > **For a binary outcome and two groups, the two-proportion**$z$-test and the $2 \times 2$ chi-square test are two ways of looking at the same comparison.
 
+[Additional example: extending beyond the 2 x 2 contingency table](general-contingency-table.html){target="_blank"}
 
 ### Fisher's exact test
 
@@ -1405,6 +1409,7 @@ If the treatments have the same probability of survival, we would expect the two
 
 > **McNemar's test asks whether the two types of discordant pairs occur equally often.**
 
+[Additional details: McNemar's test statistic](mcnemar-statistic.html){target="_blank"}
 
 ### Where does this fit in the set of problems we've seen so far?
 

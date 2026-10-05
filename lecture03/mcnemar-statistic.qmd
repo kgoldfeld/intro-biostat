@@ -1,0 +1,111 @@
+---
+title: "McNemar's test statistic"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+---
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>
+
+McNemar's test focuses only on the **discordant pairs**.
+
+Suppose we label the two discordant cells:
+
+|   | Treatment B: Survived | Treatment B: Did not survive |
+|:---|:--:|:--:|
+| **Treatment A: Survived** |  | \(b\) |
+| **Treatment A: Did not survive** | \(c\) |  |
+
+Under the null hypothesis, the two types of discordant pairs are equally likely. Among the discordant pairs, we therefore expect approximately half to fall in each cell.
+
+The McNemar test statistic is
+
+$$
+\large
+\chi^2
+=
+\frac{(b-c)^2}{b+c}.$$
+
+The numerator measures the difference between the two discordant counts, while the denominator reflects the total number of discordant pairs.
+
+> **If** $b$ and $c$ are similar, $\chi^2$ will be small. If they are very different, $\chi^2$ will be large.
+
+For our example,
+
+$$\large
+b=20,\qquad c=8,$$
+
+so
+
+$$\large
+\chi^2
+=
+\frac{(20-8)^2}{20+8}
+=
+5.14.$$
+
+Under the null hypothesis, this statistic has approximately a chi-square distribution with 1 degree of freedom.
+
+We can calculate the p-value directly:
+
+```{webr-r}
+b <- 20
+c <- 8
+
+chi_sq <- (b - c)^2 / (b + c)
+
+pchisq(chi_sq, df = 1, lower.tail = FALSE)
+```
+
+Or we can conduct the test directly in **R**:
+
+```{webr-r}
+tab <- matrix(
+  c(30, 20,
+    8, 42),
+  nrow = 2,
+  byrow = TRUE
+)
+
+mcnemar.test(tab, correct = FALSE)
+```
+
+We turn off the continuity correction here so that the **R** result corresponds directly to the calculation above.
+
+> McNemar's test assesses whether the marginal survival probabilities differ; the observed proportions tell us the direction and magnitude of the difference.
+
+To estimate the difference in survival probabilities,
+
+$$\large
+\hat{p}_A = \frac{a+b}{n},
+\qquad
+\hat{p}_B = \frac{a+c}{n},$$
+
+where $n = a+b+c+d$ is the total number of matched pairs.
+
+The estimated risk difference is therefore
+
+$$\large
+\hat{p}_A-\hat{p}_B
+=
+\frac{a+b}{n}-\frac{a+c}{n}
+=
+\frac{b-c}{n}.$$
+
+For our data,
+
+$$\large
+\hat{p}_A-\hat{p}_B
+=
+\frac{20-8}{100}
+=
+0.12.$$
+
+**In sum, we reject the null hypothesis and conclude that 5-year survival differs between treatments. The estimated survival probability is 12 percentage points higher with treatment A than with treatment B.**

@@ -1,0 +1,273 @@
+---
+title: "A 4x3 Contingency Table"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+webr:
+  packages: ["data.table", "ggplot2", "patchwork"]
+---
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>
+
+```{webr-r}
+#| context: setup
+
+theme_set(
+  theme_bw(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold", size = 12)
+  )
+)
+```
+
+## Chi-square tests for larger contingency tables
+
+The chi-square test is not limited to $2\times2$ tables.
+
+Suppose we are comparing responses to four treatments, with three possible outcomes:
+
+| | Improved | No change | Worse | Total |
+|:---|:---:|:---:|:---:|:---:|
+| Treatment A | 32 | 13 | 5 | 50 |
+| Treatment B | 29 | 13 | 8 | 50 |
+| Treatment C | 27 | 11 | 12 | 50 |
+| Treatment D | 20 | 15 | 15 | 50 |
+| **Total** | **108** | **52** | **40** | **200** |
+
+> **Is response associated with treatment group?**
+
+We can create the contingency table in **R**:
+
+```{webr-r}
+tab_treatment <- matrix(
+  c(
+    32, 13, 5,
+    29, 13, 8,
+    27, 11, 12,
+    20, 15, 15
+  ),
+  nrow = 4,
+  byrow = TRUE
+)
+
+rownames(tab_treatment) <- paste("Treatment", LETTERS[1:4])
+colnames(tab_treatment) <- c("Improved", "No change", "Worse")
+
+tab_treatment
+```
+
+### Compare the observed outcome distributions
+
+As before, we are interested in the outcome proportions **within each group**:
+
+```{webr-r}
+prop.table(tab_treatment, margin = 1)
+```
+
+The outcome distributions are not the same in our sample.
+
+For example, the proportion who improved ranges from
+
+$$
+\large
+\frac{32}{50}=0.64
+$$
+
+in Treatment A to
+
+$$
+\large
+\frac{20}{50}=0.40
+$$
+
+in Treatment D.
+
+The question is whether the differences among the observed distributions are larger than we would expect from sampling variability if **treatment and response were not associated**.
+
+### Visualize the observed distributions
+
+```{webr-r}
+#| classes: webr-plot
+
+dd <- data.table(
+  treatment = rep(
+    paste("Treatment", LETTERS[1:4]),
+    each = 3
+  ),
+  response = rep(
+    c("Improved", "No change", "Worse"),
+    times = 4
+  ),
+  count = c(
+    32, 13, 5,
+    29, 13, 8,
+    27, 11, 12,
+    20, 15, 15
+  )
+)
+
+ggplot(
+  dd,
+  aes(
+    x = treatment,
+    y = count,
+    fill = response
+  )
+) +
+  geom_col(
+    position = "fill",
+    linewidth = 0.4,
+    alpha = 0.95
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    x = NULL,
+    y = "Proportion",
+    fill = "Response",
+    title = "Observed response distributions"
+  )
+```
+
+### Expected counts under no association
+
+The overall response proportions are
+
+$$
+\large
+\frac{108}{200}=0.54,\qquad
+\frac{52}{200}=0.26,\qquad
+\frac{40}{200}=0.20.
+$$
+
+If treatment and response were not associated, we would expect these same proportions in each treatment group.
+
+For example, the expected number of participants who improve in Treatment A is
+
+$$
+\large
+E_{\text{A, Improved}}
+=
+\frac{(50)(108)}{200}
+=
+22.
+$$
+
+As before, the expected count for any cell is
+
+$$
+\large
+E_{ij}
+=
+\frac{
+(\text{row total})(\text{column total})
+}{
+\text{grand total}
+}.
+$$
+
+We can obtain all of the expected counts in **R**:
+
+```{webr-r}
+chisq.test(tab_treatment)$expected
+```
+
+Because each treatment group contains 50 participants, the expected counts are the same for every row:
+
+| | Improved | No change | Worse |
+|:---|:---:|:---:|:---:|
+| Treatment A | 27 | 13 | 10 |
+| Treatment B | 27 | 13 | 10 |
+| Treatment C | 27 | 13 | 10 |
+| Treatment D | 27 | 13 | 10 |
+
+> Under no association, the response distribution is the same in all four treatment groups.
+
+### Comparing observed and expected counts
+
+Nothing changes about the chi-square statistic:
+
+$$
+\large
+\chi^2
+=
+\sum_{i,j}
+\frac{(O_{ij}-E_{ij})^2}{E_{ij}}.
+$$
+
+We now simply add the contributions from all **12 cells** in the table.
+
+**R** can do this calculation directly:
+
+```{webr-r}
+chi_result <- chisq.test(tab_treatment)
+
+chi_result$statistic
+```
+
+### What changes?
+
+The degrees of freedom depend on the dimensions of the contingency table:
+
+$$
+\large
+df=(r-1)(c-1).
+$$
+
+For this $4\times3$ table,
+
+$$
+\large
+df=(4-1)(3-1)=6.
+$$
+Here is the $\chi^2_{\text{df=}6}$ denisty with the observed chi-square statistic. The area of the
+shaded region is the p-value, which is reported below.
+
+```{webr-r}
+#| classes: webr-plot
+
+density_chisq <- data.table(x = seq(0.001, 15, length.out = 1000))
+
+density_chisq[, density := dchisq(x, df = 6)]
+# density_chisq <- density_chisq[density <= 0.3]
+
+ggplot(density_chisq, aes(x = x, y = density)) +
+  geom_area(
+    data = density_chisq[x >= chi_result$statistic],
+    fill = "grey60",
+    alpha = 0.4
+  ) +
+  geom_line(linewidth = 0.8) +
+  geom_segment(
+    x = chi_result$statistic,
+    xend = chi_result$statistic,
+    y = 0,
+    yend = dchisq(chi_result$statistic, df = 6),
+    linewidth = 0.2,
+    color = "pink"
+  ) +
+  labs(
+    x = expression(chi^2),
+    y = "Density",
+    title = "Chi-square distribution with df = 6"
+  ) +
+  scale_y_continuous(
+    limits = c(0, 0.3),
+    expand = expansion(mult = c(0, 0.05))
+  )
+```
+
+Here is the formal test comparing the observed chi-square statistic with a **chi-square distribution with 6 degrees of freedom**.
+
+```{webr-r}
+chi_result
+```
+
+> **The same idea applies to any $r\times c$ contingency table:** compare the observed counts with the counts expected under no association, and use the chi-square statistic to quantify the discrepancy.
