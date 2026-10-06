@@ -1989,24 +1989,88 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <div style="margin-top: 30rem;">
 
 </div>
-<p><img src="images/ASA.png" class="img-fluid"></p>
-<p><a href="https://doi.org/10.1080/00031305.2016.1154108">The ASA’s Statement on <em>p</em>-Values: Context, Process, and Purpose</a></p>
 </section>
-<section id="what-are-we-trying-to-learn" class="level2">
-<h2 class="anchored" data-anchor-id="what-are-we-trying-to-learn">What are we trying to learn?</h2>
-<p>Hypothesis testing is often used to make a <strong>binary decision</strong>:</p>
+<section id="what-does-a-p-value-tell-us" class="level2">
+<h2 class="anchored" data-anchor-id="what-does-a-p-value-tell-us">What does a <em>p</em>-value tell us?</h2>
+<p>Recall how we defined a <em>p</em>-value:</p>
+<blockquote class="blockquote">
+<p><strong>Assume the null hypothesis is true.</strong></p>
+</blockquote>
+<p>The <em>p</em>-value tells us how unusual it would be to observe a result <strong>at least as extreme as the one we observed</strong> if the null hypothesis were true.</p>
+<p>In other words, we compare:</p>
+<p><span class="math display">\[
+\text{what we observed}
+\qquad \text{to} \qquad
+\text{what we would expect under } H_0
+\]</span></p>
+<section id="what-does-a-p-value-not-tell-us" class="level3">
+<h3 class="anchored" data-anchor-id="what-does-a-p-value-not-tell-us">What does a <em>p</em>-value <strong>not</strong> tell us?</h3>
+<p>A <em>p</em>-value is <strong>not</strong>:</p>
+<ul>
+<li><p>the probability that the null hypothesis is true;</p></li>
+<li><p>the probability that the observed finding is “due to chance”;</p></li>
+<li><p>a measure of how large or clinically important an effect is.</p></li>
+</ul>
+</section>
+<section id="a-common-mistake" class="level3">
+<h3 class="anchored" data-anchor-id="a-common-mistake">A common mistake</h3>
+<p>Suppose we obtain:</p>
+<p><span class="math display">\[
+p = 0.06
+\]</span></p>
+<p>Can we conclude that there is a 94% probability that a real difference exists?</p>
+<p>. . .</p>
+<p><strong>No.</strong></p>
+<p>The <em>p</em>-value is calculated <strong>assuming the null hypothesis is true</strong>.</p>
+<p>It does not tell us the probability that <span class="math inline">\(H_0\)</span> or <span class="math inline">\(H_A\)</span> is true.</p>
+</section>
+<section id="statistical-significance-is-not-clinical-importance" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-significance-is-not-clinical-importance">Statistical significance is not clinical importance</h3>
+<p>A very small <em>p</em>-value does not necessarily imply a large or important effect.</p>
+<p>With enough information, even a very small difference can be estimated precisely and produce a very small <em>p</em>-value.</p>
+<p>Conversely, an important difference may not produce a small <em>p</em>-value if the estimate is very uncertain.</p>
+<blockquote class="blockquote">
+<p><strong>Statistical significance and clinical importance are different questions.</strong></p>
+</blockquote>
+</section>
+<section id="what-are-we-trying-to-learn" class="level3">
+<h3 class="anchored" data-anchor-id="what-are-we-trying-to-learn">What are we trying to learn?</h3>
+<p>In practice, hypothesis testing often reduces a result to a <strong>binary decision</strong>:</p>
 <blockquote class="blockquote">
 <p>Do we reject <span class="math inline">\(H_0\)</span> or fail to reject <span class="math inline">\(H_0\)</span>?</p>
 </blockquote>
-<p>But often the questions we are interested in are:</p>
+<p>But often the scientific questions we are interested in are:</p>
 <ul>
 <li><p><strong>How large</strong> is the estimated difference or association?</p></li>
+<li><p>Is that difference <strong>clinically meaningful</strong>?</p></li>
 <li><p><strong>How uncertain</strong> are we about that estimate?</p></li>
 </ul>
-<p>Reducing the scientific finding to p&lt;0.05 can obscure both.</p>
+<p>Reducing a scientific finding to <span class="math inline">\(p &lt; 0.05\)</span> can obscure all three.</p>
 <blockquote class="blockquote">
 <p><strong>Shift the focus from testing to estimation.</strong></p>
 </blockquote>
+</section>
+<section id="moving-from-testing-to-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="moving-from-testing-to-estimation">Moving from testing to estimation</h3>
+<p>If we want to know both</p>
+<p><span class="math display">\[
+\text{how large is the effect?}
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\text{how uncertain are we about it?}
+\]</span></p>
+<p>we need more than a hypothesis test.</p>
+<p>This brings us to <strong>confidence intervals</strong>.</p>
+</section>
+<section id="further-reading" class="level3">
+<h3 class="anchored" data-anchor-id="further-reading">Further reading</h3>
+<p>The distinction between a <em>p</em>-value and a decision rule has a long and interesting history.</p>
+<p>Blume J, Peipert JF.<br>
+<a href="https://doi.org/10.1016/S1074-3804(05)60143-0">What Your Statistician Never Told You about <em>P</em>-Values</a></p>
+<p>For a broader discussion of the use and interpretation of <em>p</em>-values:</p>
+<p><a href="https://doi.org/10.1080/00031305.2016.1154108">The ASA’s Statement on <em>p</em>-Values: Context, Process, and Purpose</a></p>
+</section>
 </section>
 <section id="revisiting-our-birth-weight-analysis-with-a-focus-on-estimation-of-mean" class="level2">
 <h2 class="anchored" data-anchor-id="revisiting-our-birth-weight-analysis-with-a-focus-on-estimation-of-mean">Revisiting our birth weight analysis with a focus on estimation of mean</h2>

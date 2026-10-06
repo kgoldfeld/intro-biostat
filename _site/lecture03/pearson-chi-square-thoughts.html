@@ -1994,11 +1994,11 @@ Z_i = \frac{X_i-\mu}{\sigma}
 D_i = X_i-\mu.
 \]</span></p>
 <p>Then</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 E(D_i)=0
 \]</span></p>
 <p>and</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 SD(D_i)=\sigma.
 \]</span></p>
 <p>So</p>
@@ -2014,6 +2014,7 @@ Z_i
 <h2 class="anchored" data-anchor-id="looking-at-the-deviations">Looking at the deviations</h2>
 <p>Suppose</p>
 <p><span class="math display">\[
+\large
 X\sim N(100,15^2).
 \]</span></p>
 <p>Generate many observations:</p>
@@ -2029,6 +2030,7 @@ X\sim N(100,15^2).
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The variability has not changed:</p>
 <p><span class="math display">\[
+\large
 SD(D_i). =SD(X_i-\mu)=SD(X_i) = \sigma.
 \]</span></p>
 </section>
@@ -2039,6 +2041,7 @@ SD(D_i). =SD(X_i-\mu)=SD(X_i) = \sigma.
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>We can now interpret a value such as</p>
 <p><span class="math display">\[
+\large
 Z=2
 \]</span></p>
 <p>as a deviation that is <strong>two standard deviations larger than expected</strong>.</p>
@@ -2053,6 +2056,7 @@ Z=2
 <p>Now suppose we take a random sample of 25 observations from the same population.</p>
 <p>For each sample, calculate</p>
 <p><span class="math display">\[
+\large
 \bar X-\mu.
 \]</span></p>
 <p>Let’s repeat this many times.</p>
@@ -2063,6 +2067,7 @@ Z=2
 <p>Why?</p>
 <p>Because</p>
 <p><span class="math display">\[
+\large
 SD(\bar X-\mu)
 =
 SD(\bar X)
@@ -2071,6 +2076,7 @@ SD(\bar X)
 \]</span></p>
 <p>Here,</p>
 <p><span class="math display">\[
+\large
 \frac{15}{\sqrt{25}}=3.
 \]</span></p>
 <p>So the sampling deviations have a standard deviation of about 3.</p>
@@ -2090,6 +2096,7 @@ Z
 <p>Again, we can think of this as standardizing <span class="math inline">\(\bar X\)</span>.</p>
 <p>But we can also think of it as standardizing the deviation</p>
 <p><span class="math display">\[
+\large
 \bar D = \bar X-\mu.
 \]</span></p>
 <p>The denominator tells us <strong>how much these deviations naturally vary across repeated samples</strong>.</p>
@@ -2107,6 +2114,7 @@ Z
 <h2 class="anchored" data-anchor-id="this-is-the-basis-of-statistical-inference">This is the basis of statistical inference</h2>
 <p>Suppose the null hypothesis says</p>
 <p><span class="math display">\[
+\large
 H_0:\mu=100.
 \]</span></p>
 <p>We observe a sample mean <span class="math inline">\(\bar X\)</span>.</p>
@@ -2118,10 +2126,12 @@ H_0:\mu=100.
 <p>The size of that deviation alone doesn’t tell us very much.</p>
 <p>A deviation of 3 could be quite ordinary if</p>
 <p><span class="math display">\[
+\large
 SE(\bar X)=5,
 \]</span></p>
 <p>but quite unusual if</p>
 <p><span class="math display">\[
+\large
 SE(\bar X)=0.5.
 \]</span></p>
 <p>What matters is the observed deviation <strong>relative to the distribution of deviations we expect when the null hypothesis is true</strong>.</p>
@@ -2138,15 +2148,15 @@ Z=
 </section>
 <section id="what-does-this-have-to-do-with-a-contingency-table" class="level2">
 <h2 class="anchored" data-anchor-id="what-does-this-have-to-do-with-a-contingency-table">What does this have to do with a contingency table?</h2>
-<p>Consider a population of 180 individuals.</p>
-<p>Exactly 45 experience a particular outcome (“success”) and 135 do not.</p>
-<p>The 180 individuals are divided into two groups:</p>
+<p>Suppose we observe 180 individuals divided into two groups:</p>
 <ul>
 <li>60 individuals in Group 1</li>
 <li>120 individuals in Group 2</li>
 </ul>
+<p>Suppose 45 experience a particular outcome (“success”) and 135 do not.</p>
 <p>We want to ask whether outcome is associated with group.</p>
-<p>The margins of the table are therefore fixed:</p>
+<p>The group sizes are fixed. The total number of successes does <strong>not</strong> need to have been fixed in advance.</p>
+<p>For what follows, we will condition on the 45 observed successes. Our table therefore has fixed margins:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2189,7 +2199,7 @@ E_{ij}
 }.
 \]</span></p>
 <p>For Group 1 successes,</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 E_{11}
 =
 \frac{60(45)}{180}
@@ -2240,7 +2250,7 @@ O-E.
 <section id="there-is-only-one-random-deviation" class="level2">
 <h2 class="anchored" data-anchor-id="there-is-only-one-random-deviation">There is only one random deviation</h2>
 <p>Suppose the observed number of successes in Group 1 is</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 O_{11}=15+d.
 \]</span></p>
 <p>Because the margins are fixed, that determines every other cell.</p>
@@ -2288,7 +2298,7 @@ d,\quad -d,\quad -d,\quad d.
 <p>To understand how <span class="math inline">\(d\)</span> varies under the null, we need a probability distribution we haven’t encountered before.</p>
 <p>Recall the binomial distribution.</p>
 <p>Suppose we observe 60 independent trials, each with probability</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 p=\frac{45}{180}=0.25
 \]</span></p>
 <p>of success.</p>
@@ -2303,6 +2313,7 @@ X\sim\operatorname{Binomial}(60,0.25)
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The expected number of successes is</p>
 <p><span class="math display">\[
+\large
 E(X)=np
 =
 60(0.25)
@@ -2311,6 +2322,7 @@ E(X)=np
 \]</span></p>
 <p>and the variance is</p>
 <p><span class="math display">\[
+\large
 \operatorname{Var}(X)
 =
 np(1-p)
@@ -2319,24 +2331,23 @@ np(1-p)
 =
 11.25.
 \]</span></p>
-<section id="what-if-the-total-number-of-successes-is-fixed" class="level3">
-<h3 class="anchored" data-anchor-id="what-if-the-total-number-of-successes-is-fixed">What if the total number of successes is fixed?</h3>
-<p>Our contingency table is different.</p>
-<p>We have exactly 180 individuals:</p>
+<section id="what-if-we-condition-on-the-total-number-of-successes" class="level3">
+<h3 class="anchored" data-anchor-id="what-if-we-condition-on-the-total-number-of-successes">What if we condition on the total number of successes?</h3>
+<p>Our contingency table is different from the binomial setting.</p>
+<p>We observed exactly 45 successes among the 180 individuals.</p>
+<p>Although that number did not need to be fixed in advance, we are now <strong>conditioning on what we observed</strong>:</p>
 <ul>
 <li>45 successes</li>
 <li>135 failures</li>
 </ul>
-<p>and we assign exactly 60 individuals to Group 1.</p>
+<p>and there are exactly 60 individuals in Group 1.</p>
 <p>Under the null hypothesis, group membership is unrelated to outcome.</p>
-<p>We can therefore think of Group 1 as a random selection of 60 individuals from the 180, <strong>without replacement</strong>.</p>
+<p>So, conditional on the 45 observed successes, we can think of Group 1 as a random selection of 60 individuals from the 180, <strong>without replacement</strong>.</p>
 <p>Let</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 X=\text{number of successes selected for Group 1}.
 \]</span></p>
-<p>This is not a binomial experiment.</p>
-<p>Once a success has been selected, there is one fewer success available for the next selection. The selections are therefore not independent.</p>
-<p>This setting gives rise to the <strong>hypergeometric distribution</strong>.</p>
+<p>This gives rise to the <strong>hypergeometric distribution</strong>.</p>
 <p>We write</p>
 <p><span class="math display">\[
 \large
@@ -2359,15 +2370,18 @@ X\sim\operatorname{Hypergeometric}(180,45,60).
 <h3 class="anchored" data-anchor-id="what-is-the-probability-of-observing-exactly-x-successes">What is the probability of observing exactly <span class="math inline">\(x\)</span> successes?</h3>
 <p>There are</p>
 <p><span class="math display">\[
+\large
 \binom{180}{60}
 \]</span></p>
 <p>possible ways to select 60 individuals from the population.</p>
 <p>To obtain exactly <span class="math inline">\(x\)</span> successes, we must choose</p>
 <p><span class="math display">\[
+\large
 \binom{45}{x}
 \]</span></p>
 <p>individuals from the 45 successes and</p>
 <p><span class="math display">\[
+\large
 \binom{135}{60-x}
 \]</span></p>
 <p>individuals from the 135 failures.</p>
@@ -2385,6 +2399,7 @@ P(X=x)
 \]</span></p>
 <p>More generally,</p>
 <p><span class="math display">\[
+\large
 \boxed{
 P(X=x)
 =
@@ -2405,6 +2420,7 @@ n\frac{K}{N}.
 \]</span></p>
 <p>We select 60 individuals from a population in which one-quarter are successes, so</p>
 <p><span class="math display">\[
+\large
 E(X)
 =
 60\frac{45}{180}
@@ -2426,6 +2442,7 @@ n\frac{K}{N}
 \]</span></p>
 <p>The first part,</p>
 <p><span class="math display">\[
+\large
 n\frac{K}{N}
 \left(1-\frac{K}{N}\right),
 \]</span></p>
@@ -2438,7 +2455,7 @@ n\frac{K}{N}
 <p>called the <strong>finite population correction</strong>.</p>
 <p>Because this factor is less than 1, sampling without replacement produces less variation than independent binomial sampling.</p>
 <p>For our example,</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 \begin{aligned}
 \operatorname{Var}(X)
 &amp;=
@@ -2448,7 +2465,7 @@ n\frac{K}{N}
 \end{aligned}
 \]</span></p>
 <p>Compare this with the binomial variance:</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 60(0.25)(0.75)=11.25.
 \]</span></p>
 <p>Both distributions have expected value 15.</p>
@@ -2464,14 +2481,17 @@ n\frac{K}{N}
 <h2 class="anchored" data-anchor-id="back-to-the-deviation-in-our-table">Back to the deviation in our table</h2>
 <p>The number of successes in Group 1 is</p>
 <p><span class="math display">\[
+\large
 O_{11}\sim\operatorname{Hypergeometric}(180,45,60).
 \]</span></p>
 <p>We have just seen that</p>
 <p><span class="math display">\[
+\large
 E(O_{11})=15
 \]</span></p>
 <p>and</p>
 <p><span class="math display">\[
+\large
 \operatorname{Var}(O_{11})\approx7.54.
 \]</span></p>
 <p>Our deviation is</p>
@@ -2482,10 +2502,12 @@ d=O_{11}-15.
 <p>Subtracting 15 changes the center of the distribution but not its variance.</p>
 <p>Therefore,</p>
 <p><span class="math display">\[
+\large
 E(d)=0
 \]</span></p>
 <p>and</p>
 <p><span class="math display">\[
+\large
 \operatorname{Var}(d)\approx7.54.
 \]</span></p>
 <p>Let’s simulate the deviations directly.</p>
@@ -2506,11 +2528,11 @@ Z
 \frac{d}{SD(d)},
 \]</span></p>
 <p>we should obtain something approximately distributed as</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 N(0,1).
 \]</span></p>
 <p>The exact hypergeometric variance here is</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 \operatorname{Var}(d)
 =
 60(0.25)(0.75)\frac{120}{179}
@@ -2526,11 +2548,11 @@ N(0,1).
 <section id="now-square-the-standardized-deviation" class="level2">
 <h2 class="anchored" data-anchor-id="now-square-the-standardized-deviation">Now square the standardized deviation</h2>
 <p>If</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 Z\approx N(0,1),
 \]</span></p>
 <p>then</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 Z^2\approx\chi^2_1.
 \]</span></p>
 <div id="qwebr-insertion-location-15"></div>
@@ -2567,6 +2589,7 @@ d,\quad-d,\quad-d,\quad d.
 \]</span></p>
 <p>Therefore,</p>
 <p><span class="math display">\[
+\large
 \begin{aligned}
 X^2
 &amp;=
@@ -2592,6 +2615,7 @@ d^2
 \]</span></p>
 <p>The terms inside the parentheses sum to</p>
 <p><span class="math display">\[
+\large
 \frac{2}{15},
 \]</span></p>
 <p>so</p>
@@ -2604,7 +2628,7 @@ X^2
 \frac{d^2}{7.5}.
 \]</span></p>
 <p>But the exact variance of the deviation is</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 \operatorname{Var}(d)
 =
 60(0.25)(0.75)\frac{120}{179}
@@ -2629,21 +2653,44 @@ X^2
 \]</span></p>
 <p>The small difference comes from the finite population correction.</p>
 <p>As the sample size becomes large,</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 \frac{180}{179}\rightarrow1,
 \]</span></p>
 <p>so</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 \boxed{
 X^2\approx Z^2\sim\chi^2_1.
 }
 \]</span></p>
+<div style="height: 100px;">
+
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>An alternative route for a <span class="math inline">\(2\times2\)</span> table
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a <span class="math inline">\(2\times2\)</span> table with fixed group sizes, we could instead model the numbers of successes in the two groups as independent binomial random variables.</p>
+<p>Under the null hypothesis that the groups have the same success probability, the standardized difference between the two sample proportions is approximately <span class="math inline">\(N(0,1)\)</span>.</p>
+<p>In this setting, the square of that <span class="math inline">\(Z\)</span>-statistic is algebraically equal to Pearson’s statistic:</p>
+<p><span class="math display">\[
+Z^2 = X^2.
+\]</span></p>
+<p>We used the conditional hypergeometric approach because it makes the <strong>random deviations among the cells</strong> especially transparent and provides a natural bridge to larger contingency tables.</p>
+</div>
+</div>
 </section>
 <section id="does-this-actually-happen" class="level2">
 <h2 class="anchored" data-anchor-id="does-this-actually-happen">Does this actually happen?</h2>
 <p>We can calculate Pearson’s statistic for every simulated table.</p>
 <p>Since each simulated value of <span class="math inline">\(O_{11}\)</span> determines the entire table, we can calculate</p>
 <p><span class="math display">\[
+\large
 X^2
 =
 \frac{d^2}{15}
@@ -2659,19 +2706,20 @@ X^2
 <p>Now compare its simulated distribution with a chi-square distribution with one degree of freedom.</p>
 <div id="qwebr-insertion-location-18"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The agreement is not exact: the underlying cell counts are discrete, and the chi-square distribution is a continuous approximation.</p>
-<p>But the connection should now be visible.</p>
+<p>The agreement is not exact (the underlying cell counts are discrete, and the chi-square distribution is a continuous approximation) but the connection is apparent.</p>
 </section>
 <section id="the-four-cells-did-not-disappear" class="level2">
 <h2 class="anchored" data-anchor-id="the-four-cells-did-not-disappear">The four cells did not disappear</h2>
 <p>Pearson’s statistic includes <strong>all four cells</strong>.</p>
 <p>Each contributes</p>
 <p><span class="math display">\[
+\large
 \frac{(O-E)^2}{E}.
 \]</span></p>
 <p>But the four deviations are not independent.</p>
-<p>With fixed margins, they are</p>
+<p>Conditional on the margins, they are</p>
 <p><span class="math display">\[
+\large
 d,\quad-d,\quad-d,\quad d.
 \]</span></p>
 <p>They all arise from the same underlying random deviation.</p>
@@ -2724,11 +2772,11 @@ X^2
 <p>For larger contingency tables, there is more than one independent deviation.</p>
 <p>The mathematics becomes more complicated, because those deviations have to be considered jointly. But the basic idea remains: understand how the deviations behave under the null, standardize that variation appropriately, and combine the resulting squared deviations.</p>
 <p>For an <span class="math inline">\(r\times c\)</span> table, there are</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 (r-1)(c-1)
 \]</span></p>
 <p>independent sources of variation, leading to a chi-square reference distribution with</p>
-<p><span class="math display">\[
+<p><span class="math display">\[\large
 (r-1)(c-1)
 \]</span></p>
 <p>degrees of freedom.</p>

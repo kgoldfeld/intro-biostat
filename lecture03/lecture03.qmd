@@ -43,26 +43,112 @@ We'll shift the focus from **hypothesis testing** to **estimation and uncertaint
 
 <div style="margin-top: 30rem;"></div>
 
-![](images/ASA.png)
+## What does a *p*-value tell us?
 
-[The ASA's Statement on *p*-Values: Context, Process, and Purpose](https://doi.org/10.1080/00031305.2016.1154108)
+Recall how we defined a *p*-value:
 
-## What are we trying to learn?
+> **Assume the null hypothesis is true.**
+
+The *p*-value tells us how unusual it would be to observe a result **at least as extreme as the one we observed** if the null hypothesis were true.
+
+In other words, we compare:
+
+$$
+\text{what we observed}
+\qquad \text{to} \qquad
+\text{what we would expect under } H_0
+$$
 
 
-Hypothesis testing is often used to make a **binary decision**:
+### What does a *p*-value **not** tell us?
+
+A *p*-value is **not**:
+
+- the probability that the null hypothesis is true;
+
+- the probability that the observed finding is "due to chance";
+
+- a measure of how large or clinically important an effect is.
+
+
+### A common mistake
+
+Suppose we obtain:
+
+$$
+p = 0.06
+$$
+
+Can we conclude that there is a 94% probability that a real difference exists?
+
+. . .
+
+**No.**
+
+The *p*-value is calculated **assuming the null hypothesis is true**.
+
+It does not tell us the probability that $H_0$ or $H_A$ is true.
+
+
+### Statistical significance is not clinical importance
+
+A very small *p*-value does not necessarily imply a large or important effect.
+
+With enough information, even a very small difference can be estimated precisely and produce a very small *p*-value.
+
+Conversely, an important difference may not produce a small *p*-value if the estimate is very uncertain.
+
+> **Statistical significance and clinical importance are different questions.**
+
+
+### What are we trying to learn?
+
+In practice, hypothesis testing often reduces a result to a **binary decision**:
 
 > Do we reject $H_0$ or fail to reject $H_0$?
 
-But often the questions we are interested in are:
+But often the scientific questions we are interested in are:
 
 - **How large** is the estimated difference or association?
 
+- Is that difference **clinically meaningful**?
+
 - **How uncertain** are we about that estimate?
 
-Reducing the scientific finding to p\<0.05 can obscure both.
+Reducing a scientific finding to $p < 0.05$ can obscure all three.
 
 > **Shift the focus from testing to estimation.**
+
+
+### Moving from testing to estimation
+
+If we want to know both
+
+$$
+\text{how large is the effect?}
+$$
+
+and
+
+$$
+\text{how uncertain are we about it?}
+$$
+
+we need more than a hypothesis test.
+
+This brings us to **confidence intervals**.
+
+
+### Further reading
+
+The distinction between a *p*-value and a decision rule has a long and interesting history.
+
+Blume J, Peipert JF.  
+[What Your Statistician Never Told You about *P*-Values](https://doi.org/10.1016/S1074-3804(05)60143-0)
+
+For a broader discussion of the use and interpretation of *p*-values:
+
+[The ASA's Statement on *p*-Values: Context, Process, and Purpose](https://doi.org/10.1080/00031305.2016.1154108)
 
 
 ## Revisiting our birth weight analysis with a focus on estimation of mean
