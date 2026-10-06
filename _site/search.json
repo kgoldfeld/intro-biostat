@@ -873,5 +873,33 @@
     "title": "From standardized deviations to chi-square",
     "section": "What does this have to do with a contingency table?",
     "text": "What does this have to do with a contingency table?\nConsider a population of 180 individuals.\nExactly 45 experience a particular outcome (“success”) and 135 do not.\nThe 180 individuals are divided into two groups:\n\n60 individuals in Group 1\n120 individuals in Group 2\n\nWe want to ask whether outcome is associated with group.\nThe margins of the table are therefore fixed:\n\n\n\n\nSuccess\nFailure\nTotal\n\n\n\n\nGroup 1\n\n\n60\n\n\nGroup 2\n\n\n120\n\n\nTotal\n45\n135\n180\n\n\n\nUnder the null hypothesis of no association between group and outcome, the expected count in each cell is\n\\[\n\\large\nE_{ij}\n=\n\\frac{\n(\\text{row total})(\\text{column total})\n}{\n\\text{grand total}\n}.\n\\]\nFor Group 1 successes,\n\\[\nE_{11}\n=\n\\frac{60(45)}{180}\n=\n15.\n\\]\nThe complete expected table is therefore\n\n\n\n\nSuccess\nFailure\nTotal\n\n\n\n\nGroup 1\n15\n45\n60\n\n\nGroup 2\n30\n90\n120\n\n\nTotal\n45\n135\n180\n\n\n\nPearson’s chi-square statistic is based on the deviations\n\\[\n\\large\nO-E.\n\\]\nSo once again, the key question is:\n\nHow do the deviations between observed and expected counts behave when the null hypothesis is true?"
+  },
+  {
+    "objectID": "lecture02/lecture02.html#using-a-probability-model",
+    "href": "lecture02/lecture02.html#using-a-probability-model",
+    "title": "Lecture 2: Statistical Inference",
+    "section": "Using a probability model",
+    "text": "Using a probability model\nTo understand how much a statistic might vary, we use a probability model to describe how the data could vary.\n\nThe model lets us consider the different samples that could have arisen.\nSimulation lets us bring the probability model to life and see the variation it predicts.\n\n\nWe don’t need to imagine literally repeating the study thousands of times — the possible samples help us understand the implications of the probability model."
+  },
+  {
+    "objectID": "lecture02/lecture02.html#how-much-would-the-sample-mean-vary",
+    "href": "lecture02/lecture02.html#how-much-would-the-sample-mean-vary",
+    "title": "Lecture 2: Statistical Inference",
+    "section": "How much would the sample mean vary?",
+    "text": "How much would the sample mean vary?\nLet’s use our probability model to generate many possible samples and calculate the mean for each one.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nWe can look at the distribution of these means:\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nThe observed mean of the sampling distribution:\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nHow much do the estimated means vary from sample to sample?\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nThe standard deviation of a sampling distribution is called the standard error.\n\nBig takeaways\n\nDifferent samples from the same population produce different sample means.\nThe distribution of those sample means over repeated samples is called the sampling distribution of the sample mean.\nThe standard deviation of that sampling distribution is the standard error.\nSample means vary less than individual observations."
+  },
+  {
+    "objectID": "lecture02/lecture02.html#these-methods-point-to-an-idea-well-keep-coming-back-to",
+    "href": "lecture02/lecture02.html#these-methods-point-to-an-idea-well-keep-coming-back-to",
+    "title": "Lecture 2: Statistical Inference",
+    "section": "These methods point to an idea we’ll keep coming back to",
+    "text": "These methods point to an idea we’ll keep coming back to\n\\[\n\\Large\n\\frac{\\text{observed statistic} - \\text{expected statistic under a model}}{\\text{amount variation expected for statistic under that model}}\n\\]"
+  },
+  {
+    "objectID": "lecture02/lecture02.html#these-methods-point-to-an-idea-well-keep-coming-back-to-at-least-conceptually",
+    "href": "lecture02/lecture02.html#these-methods-point-to-an-idea-well-keep-coming-back-to-at-least-conceptually",
+    "title": "Lecture 2: Statistical Inference",
+    "section": "These methods point to an idea we’ll keep coming back to – at least conceptually",
+    "text": "These methods point to an idea we’ll keep coming back to – at least conceptually\n\n\n\n\\[\n\\Large\n\\frac{\\text{observed statistic} - \\text{expected statistic under a model}}\n{\\text{amount of variation expected in the statistic under that model}}\n\\]"
   }
 ]

@@ -2019,9 +2019,20 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <p><strong>How much variation in the <em>sample mean</em> should we expect simply from taking a sample?</strong></p>
 </blockquote>
 </section>
-<section id="repeated-sampling-behavior" class="level2">
-<h2 class="anchored" data-anchor-id="repeated-sampling-behavior">Repeated-sampling behavior</h2>
-<p>If we could repeat the experiment many times under identical conditions, we would obtain different estimates each time.</p>
+<section id="using-a-probability-model" class="level2">
+<h2 class="anchored" data-anchor-id="using-a-probability-model">Using a probability model</h2>
+<p>To understand how much a statistic might vary, we use a <strong>probability model</strong> to describe how the data could vary.</p>
+<ul>
+<li>The model lets us consider the different samples that could have arisen.</li>
+<li>Simulation lets us <strong>bring the probability model to life</strong> and see the variation it predicts.</li>
+</ul>
+<blockquote class="blockquote">
+<p>We don’t need to imagine literally repeating the study thousands of times — the possible samples help us understand the implications of the probability model.</p>
+</blockquote>
+</section>
+<section id="how-much-would-the-sample-mean-vary" class="level2">
+<h2 class="anchored" data-anchor-id="how-much-would-the-sample-mean-vary">How much would the sample mean vary?</h2>
+<p>Let’s use our probability model to generate many possible samples and calculate the mean for each one.</p>
 <div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>We can look at the distribution of these means:</p>
@@ -2429,10 +2440,24 @@ X_{\text{diet},i} \sim N(130, 22^2),
 <h4 class="anchored" data-anchor-id="assessing-whether-the-group-means-are-different">Assessing whether the group means are different:</h4>
 <div id="qwebr-insertion-location-37"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-
-
 </section>
 </section>
+</section>
+<section id="these-methods-point-to-an-idea-well-keep-coming-back-to-at-least-conceptually" class="level2">
+<h2 class="anchored" data-anchor-id="these-methods-point-to-an-idea-well-keep-coming-back-to-at-least-conceptually">These methods point to an idea we’ll keep coming back to – at least conceptually</h2>
+<div style="height: 100px;">
+
+</div>
+<p><span class="math display">\[
+\Large
+\frac{\text{observed statistic} - \text{expected statistic under a model}}
+{\text{amount of variation expected in the statistic under that model}}
+\]</span></p>
+<div style="height: 200px;">
+
+</div>
+
+
 </section>
 
 </main> <!-- /main -->

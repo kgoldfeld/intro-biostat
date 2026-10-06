@@ -123,9 +123,18 @@ Our sample mean is not exactly 120 oz.
 
 > **How much variation in the *sample mean* should we expect simply from taking a sample?**
 
-## Repeated-sampling behavior
+## Using a probability model
 
-If we could repeat the experiment many times under identical conditions, we would obtain different estimates each time.
+To understand how much a statistic might vary, we use a **probability model** to describe how the data could vary.
+
+- The model lets us consider the different samples that could have arisen.
+- Simulation lets us **bring the probability model to life** and see the variation it predicts.
+
+> We don't need to imagine literally repeating the study thousands of times — the possible samples help us understand the implications of the probability model.
+
+## How much would the sample mean vary?
+
+Let's use our probability model to generate many possible samples and calculate the mean for each one.
 
 ```{webr-r}
 set.seed(1234)
@@ -1202,3 +1211,16 @@ ggplot(dd, aes(x = group, y = ldl)) +
 ```{webr-r}
 t.test(ldl ~ group, data = dd)
 ```
+
+## These methods point to an idea we'll keep coming back to -- at least conceptually
+
+<div style="height: 100px;"></div>
+
+$$
+\Large
+\frac{\text{observed statistic} - \text{expected statistic under a model}}
+{\text{amount of variation expected in the statistic under that model}}
+$$
+
+<div style="height: 200px;"></div>
+
