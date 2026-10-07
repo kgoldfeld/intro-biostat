@@ -900,6 +900,13 @@
     "href": "lecture02/lecture02.html#these-methods-point-to-an-idea-well-keep-coming-back-to-at-least-conceptually",
     "title": "Lecture 2: Statistical Inference",
     "section": "These methods point to an idea we’ll keep coming back to – at least conceptually",
-    "text": "These methods point to an idea we’ll keep coming back to – at least conceptually\n\n\n\n\\[\n\\Large\n\\frac{\\text{observed statistic} - \\text{expected statistic under a model}}\n{\\text{amount of variation expected in the statistic under that model}}\n\\]"
+    "text": "These methods point to an idea we’ll keep coming back to – at least conceptually\n\n\n\n\\[\n\\Large\n\\frac{\\text{observed statistic} - \\text{expected statistic under a model}}\n{\\text{amount of variation expected in the statistic under that model}}\n\\]\n\n\n\n\nWhat did we observe, what does our model predict, and how much variation should we expect under that model?"
+  },
+  {
+    "objectID": "lecture02/lecture02.html#an-idea-well-keep-coming-back-to-at-least-conceptually",
+    "href": "lecture02/lecture02.html#an-idea-well-keep-coming-back-to-at-least-conceptually",
+    "title": "Lecture 2: Statistical Inference",
+    "section": "An idea we’ll keep coming back to – at least conceptually",
+    "text": "An idea we’ll keep coming back to – at least conceptually\n\n\n\n\\[\n\\Large\n\\frac{\\text{observed statistic} - \\text{expected statistic under a model}}\n{\\text{amount of variation expected in the statistic under that model}}\n\\]\n\n\n\n\nWhat did we observe, what does our model predict, and how much variation should we expect?"
   }
 ]

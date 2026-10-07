@@ -1212,9 +1212,9 @@ ggplot(dd, aes(x = group, y = ldl)) +
 t.test(ldl ~ group, data = dd)
 ```
 
-## These methods point to an idea we'll keep coming back to -- at least conceptually
+## An idea we'll keep coming back to -- at least conceptually
 
-<div style="height: 100px;"></div>
+<div style="height: 70px;"></div>
 
 $$
 \Large
@@ -1222,5 +1222,9 @@ $$
 {\text{amount of variation expected in the statistic under that model}}
 $$
 
-<div style="height: 200px;"></div>
+<div style="height: 50px;"></div>
 
+
+#### What did we observe, what does our model predict, and how much variation should we expect?
+
+<div style="height: 200px;"></div>
