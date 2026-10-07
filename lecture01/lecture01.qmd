@@ -142,7 +142,7 @@ We always start with a motivating research question. For example:
 
 > **What is the average systolic blood pressure among adult women living in New York City?**
 
-- We start with a ***population***, the larger collection of individuals or 
+- We begin with a ***population***, the larger collection of individuals or 
   experimental units we want to learn about.
 
   - Here, the population is *adult women living in New York City*.
