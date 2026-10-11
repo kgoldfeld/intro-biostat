@@ -7,7 +7,7 @@ engine: knitr
 filters:
   - webr
 webr:
-  packages: ["data.table", "ggplot2", "patchwork"]
+  packages: ["data.table", "ggplot2", "patchwork", "pwr"]
 ---
 
 ```{webr-r}
