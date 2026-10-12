@@ -71,9 +71,9 @@ n <- 30         # sample size for each group
 
 mu_a <- 10
 mu_b <- 10 
-mu_c <- 10 # 10 or 13
+mu_c <- 10 # 10 or 15
 
-sd <- 3 # 3 or 8
+sd <- 3 # sigma^2 = 9
 
 dd <- data.table(
   group = rep(c("A", "B", "C"), each = n),
@@ -174,12 +174,34 @@ ggplot(data = dd, aes(x = group, y = y)) +
 
 The dashed line represents the **overall mean**, and the red lines represent the **group means**.
 
-The two sources of variability, **within-group variability** and **between-group variability** can be measured using the same basic idea we use to calculate a variance: **squared distances from a mean**.
+ANOVA considers two sources of variability:
+
+- variability of individual observations **within groups**
+- variability **among the group means**
+
+Both can be measured using the same basic idea we use to calculate a variance: **squared distances from a mean**.
 
 
-### Within-group variability
+### Suppose the population means are equal
 
-For **within-group variability**, we measure the **squared distance** between each observation and the mean of its own group:
+Under the null hypothesis,
+
+$$
+\large
+H_0:\mu_1=\mu_2=\cdots=\mu_k
+$$
+
+Classical ANOVA also assumes that the groups share a common population variance $\sigma^2$.
+
+Under this model, ANOVA gives us **two different ways to estimate the same $\sigma^2$**.
+
+
+### 1. Variability within the groups
+
+Individual observations vary around their own group means.
+
+We measure this using squared deviations from each group mean:
+
 $$
 \large
 SS_{\text{within}}
@@ -188,183 +210,416 @@ SS_{\text{within}}
 \sum_{i=1}^{n_j}
 (x_{ij}-\bar{x}_j)^2
 $$
-where $k$ is the number of groups and $n_j$ is the number of observations in group $j$.
+
+Dividing by its degrees of freedom gives the **within-group mean square**:
+
+$$
+\large
+MS_{\text{within}}
+=
+\frac{SS_{\text{within}}}{N-k}
+$$
+
+Under the ANOVA model,
+
+$$
+\large
+E(MS_{\text{within}})=\sigma^2
+$$
+
+> **Within-group variability gives us one estimate of the population variance.**
 
 
-### Between-group variability
+```{webr-r}
 
-For **between-group variability**, we measure the squared distance between each group mean and the overall mean, accounting for the number of observations in each group:
+# within-group sum of squares
+
+sums_within <- dd[, .(
+    sum_dev_2 = sum((y - mean(y))^2)
+  ), by = group
+]
+
+sums_within
+```
+
+```{webr-r}
+ss_within <- sums_within[, sum(sum_dev_2)]
+ss_within
+```
+
+```{webr-r}
+
+# within degrees of freedom
+
+N <- dd[, .N]
+k <- uniqueN(dd$group)
+
+df_within  <- N - k
+
+# within group mean square
+
+ms_within <- ss_within / df_within
+ms_within
+```
+
+### 2. Variability among the group means
+
+Even if the population means are identical, the **sample means will not be identical**.
+
+Suppose for the moment that each group has $n$ observations. Each group mean varies around the common population mean, with
+
+$$
+\large
+\operatorname{Var}(\bar X_j)
+=
+\frac{\sigma^2}{n}
+$$
+
+We can estimate this variance from the observed group means in exactly the same way we estimate any variance.
+
+Recall that the sample variance of individual observations is based on
+
+$$
+\large
+(X_i-\bar X)^2.
+$$
+
+For the group means, the corresponding squared deviations are
+
+$$
+\large
+(\bar X_j-\bar X)^2.
+$$
+
+So the sample variance of the $k$ group means is
+
+$$
+\large
+s_{\bar X}^2
+=
+\frac{
+\sum_{j=1}^{k}(\bar X_j-\bar X)^2
+}{
+k-1
+}.
+$$
+
+Under $H_0$,
+
+$$
+\large
+E(s_{\bar X}^2)
+=
+\frac{\sigma^2}{n}.
+$$
+
+```{webr-r}
+# group and overall means
+
+group_stats <- dd[, .(
+  n = .N,
+  group_mean = mean(y)
+), by = group]
+
+overall_mean <- mean(dd$y)
+
+# between-group sum of squares
+
+raw_ss_between <- group_stats[
+  , sum((group_mean - overall_mean)^2)
+]
+
+raw_ss_between
+```
+
+```{webr-r}
+# between group degrees of freedom
+
+k <- uniqueN(dd$group)
+df_between <- k - 1
+
+
+raw_ss_between/(k-1)
+sd^2 / n
+```
+
+
+
+
+
+### Putting the variability back on the original scale
+
+Because group means have only $1/n$ as much variance as individual observations, multiply their variance by $n$:
+
+$$
+\large
+n s_{\bar X}^2
+=
+\frac{
+n\sum_{j=1}^{k}(\bar X_j-\bar X)^2
+}{
+k-1
+}.
+$$
+
+This is the **between-group mean square**:
+
+$$
+\large
+MS_{\text{between}}
+=
+\frac{SS_{\text{between}}}{k-1},
+$$
+
+where, more generally,
 
 $$
 \large
 SS_{\text{between}}
 =
 \sum_{j=1}^{k}
-n_j(\bar{x}_j-\bar{x})^2
+n_j(\bar X_j-\bar X)^2.
 $$
-The factor $n_j$ accounts for sample size, putting the variability among the sample means back on the scale of the individual observations.
 
-
-### $SS_{\text{within}}$ and $SS_{\text{between}}$ are called the *sums of squares*.
-
-As with a sample variance, we divide by the appropriate degrees of freedom to obtain measures of variability:
-
-$$
-\large
-MS_{\text{within}}
-=
-\frac{SS_{\text{within}}}{N-k}$$
+For equal group sizes,
 
 $$
 \large
 MS_{\text{between}}
 =
-\frac{SS_{\text{between}}}{k-1}
+n s_{\bar X}^2.
 $$
 
-These quantities are called **mean squares**.
+Therefore, under $H_0$,
 
-> Under the null hypothesis, both $MS_{\text{within}}$ and $MS_{\text{between}}$ estimate the same population variance $\sigma^2$.
+$$
+\large
+E(MS_{\text{between}})=\sigma^2.
+$$
+
+> **$MS_{\text{between}}$ is essentially the variance of the group means, rescaled to the variance of individual observations.**
+
+```{webr-r}
+ss_between <- group_stats[
+  , sum(n * (group_mean - overall_mean)^2)
+]
+
+ss_between
+```
+
+```{webr-r}
+# between mean squares
+
+ms_between <- ss_between / df_between
+ms_between
+```
+
+
+### Two estimates of the same variance
+
+Under $H_0$,
+
+$$
+\large
+\boxed{
+E(MS_{\text{within}})
+=
+E(MS_{\text{between}})
+=
+\sigma^2
+}
+$$
+
+The two mean squares use different information:
+
+- $MS_{\text{within}}$ uses variability of **individual observations around their group means**.
+- $MS_{\text{between}}$ uses variability **among the group means**.
+
+Their observed values will not be identical -- both vary from sample to sample.
+
+### Comparing the two estimates
 
 ANOVA compares them using the **F-statistic**:
 
-$$\large 
+$$
+\large
 F
 =
 \frac{MS_{\text{between}}}
- {MS_{\text{within}}}
-$$
- 
-### Why does variability among the group means estimate $\sigma^2$?
-
-Suppose each group has $n$ observations.
-
-- Individual observations vary with variance:
-
-$$
-\large
-\operatorname{Var}(X)=\sigma^2
+     {MS_{\text{within}}}.
 $$
 
-- Sample means vary less:
+If $H_0$ is true, both are estimating the same $\sigma^2$, so their ratio should generally be somewhere around 1.
 
-$$\large
-\operatorname{Var}(\bar X_j)=\frac{\sigma^2}{n}
-$$
+If the population means differ, $MS_{\text{between}}$ also reflects those differences and tends to become larger relative to $MS_{\text{within}}$.
 
-- Under $H_0$, differences among the sample means arise entirely from sampling variability.
+```{webr-r}
+# F statistic
+F_obs <- ms_between / ms_within
 
-- The between-group sum of squares multiplies the squared differences among the means by $n$:
-
-$$
-\large
-SS_{\text{between}}
-=
-n\sum_j(\bar X_j-\bar X)^2$$
-
-> Multiplying by $n$ puts the variability among the sample means back on the $\sigma^2$ scale.
-
-
-### What happens when the population means are equal?
-
-Under the null hypothesis:
-
-- $MS_{\text{within}}$ estimates variability among individual observations within the populations.
-- $MS_{\text{between}}$ uses variability among the sample means to estimate that **same underlying population variance**.
-
-$$
-\large MS_{\text{within}} \approx \sigma^2
-\qquad\text{and}\qquad
-MS_{\text{between}} \approx \sigma^2$$
-
-Therefore:
-
-$$\large
-F=\frac{MS_{\text{between}}}{MS_{\text{within}}}
-\approx 1
-$$
-
-> If the population means differ, $MS_{\text{between}}$ also reflects those differences and tends to become larger.
+ms_between
+ms_within
+F_obs
+```
 
 
 ### $F$ distribution
 
-The shape of the $F$ distribution is determined by two degrees of freedom - one associated with $MS_{\text{between}}$ and one with $MS_{\text{within}}$:
+If the null hypothesis is true, $F$ will tend to be near 1 -- but it will not be exactly 1 because both mean squares vary from sample to sample.
 
-$$\large df_1 = k - 1,\qquad df_2 = N-k$$
-The F-distribution for our example has $df_1 = 3 - 1$, and $df_2 = 90 - 3$.
+**How large would $F$ have to be before it would be unusual under the null hypothesis?**
+
+The $F$ distribution describes the values of $F$ we would expect under $H_0$.
+
+Its shape is determined by two degrees of freedom -- one associated with $MS_{\text{between}}$ and one with $MS_{\text{within}}$:
+
+$$
+\large
+df_1 = k - 1,\qquad df_2 = N-k
+$$
+
+For our example,
+
+$$
+\large
+df_1 = 3-1=2,\qquad df_2=90-3=87.
+$$
 
 ```{webr-r}
-#| classes: webr-plot
+#| context: setup
 
 plot_F <- function(
-    df1, df2, 
-    print_p = FALSE, 
-    F_obs = NULL) {
+    df1, df2,
+    show_critical = TRUE,
+    F_obs = NULL,
+    alpha = 0.05) {
 
-  x <- seq(0, 16, length.out = 1000)
+  # Critical value
+  F_crit <- qf(1 - alpha, df1 = df1, df2 = df2)
+
+  # Make sure x-axis includes anything we want to display
+  x_max <- max(
+    6,
+    if (!is.null(F_obs)) F_obs * 1.2 else 0
+  )
+
+  x <- seq(0, x_max, length.out = 1000)
 
   dd_f <- data.table(
     f = x,
     density = df(x, df1 = df1, df2 = df2)
   )
 
-  p_f <- 
-    ggplot(dd_f, aes(x = f, y = density)) +
-      labs(
-        x = "F",
-        y = "Density",
-        title = sprintf(
-          "F-distribution (df1 = %d, df2 = %d)", 
-          df1, df2)) +
-      scale_y_continuous(
-        expand = expansion(mult = c(0, 0.05)))
- 
-  if (print_p == TRUE) {
+  p_f <- ggplot(dd_f, aes(x = f, y = density))
+
+  # Show observed F and shade p-value
+  if (!is.null(F_obs)) {
+
+    p_value <- pf(
+      F_obs,
+      df1 = df1,
+      df2 = df2,
+      lower.tail = FALSE
+    )
+
     p_f <- p_f +
-    geom_area(
-      data = dd_f[f >= F_obs], 
-      aes(x = f, y = density), 
-      fill = "grey90") +
-    geom_segment(
-      x = F_obs,
-      xend = F_obs,
-      y = 0,
-      yend = df(F_obs, df1 = df1, df2 = df2),
-      linewidth = 0.2,
-      color = "pink") + 
-  annotate(
-    "text", 
-    x = F_obs - 2.5, y = 0.15, 
-    label = sprintf("F = %.2f", F_obs),
-    hjust = -0.1, size = 4)
+      geom_area(
+        data = dd_f[f >= F_obs],
+        aes(x = f, y = density),
+        fill = "grey70"
+      ) +
+      geom_segment(
+        x = F_obs,
+        xend = F_obs,
+        y = 0,
+        yend = df(F_obs, df1 = df1, df2 = df2),
+        linewidth = 0.5
+      ) +
+      annotate(
+        "text",
+        x = F_obs,
+        y = 0.6,
+        label = sprintf(
+          "F = %.2f\np = %.3f",
+          F_obs, p_value
+        ),
+        hjust = -0.1,
+        size = 4
+      )
   }
- 
-  p_f + geom_line(linewidth = 0.8)
- 
+  
+  # Shade critical region
+
+   if (show_critical) {
+
+    p_f <- p_f +
+      geom_area(
+        data = dd_f[f >= F_crit],
+        aes(x = f, y = density),
+        fill = "grey90"
+      ) +
+      geom_segment(
+        x = F_crit,
+        xend = F_crit,
+        y = 0,
+        yend = df(F_crit, df1 = df1, df2 = df2),
+        linewidth = 0.4,
+        color = "red"
+      ) +
+      annotate(
+        "text",
+        x = F_crit + 0.15,
+        y = 0.15,
+        label = sprintf("Critical F = %.2f", F_crit),
+        hjust = 0,
+        size = 4
+      )
+  }
+
+  p_f +
+    geom_line(linewidth = 0.8) +
+    labs(
+      x = "F",
+      y = "Density",
+      title = sprintf(
+        "F-distribution (df1 = %d, df2 = %d)",
+        df1, df2
+      )
+    ) +
+    scale_y_continuous(
+      expand = expansion(mult = c(0, 0.05))
+    )
+  
+  
 }
 
-plot_F(df1 = 2, df2 = 87)
+
 ```
 
+```{webr-r}
+#| classes: webr-plot
+
+plot_F(2, 87)
+```
+
+The shaded region contains the **largest 5% of $F$ values expected under $H_0$**.
+
+For this $F$ distribution, the critical value is approximately
+
+$$
+\large
+F_{0.05}=3.10.
+$$
+
+> If $H_0$ is true, only about 5% of samples would produce an $F$-statistic greater than 3.10.
 
 ### Fitting the ANOVA model
 
-Let's return to our simulated data and test:
+Let's analyze our simulated data using `R`. Again, here are the hypotheses:
 
 $$\large H_0:\mu_A=\mu_B=\mu_C$$
 
 $$\large H_A:\text{the population means are not all equal}$$
-
-Here are the group averages and within-group standard deviations:
-
-```{webr-r}
-dd[, .(
- n = .N,
- mean = mean(y),
- sd = sd(y)
-), by = group]
-```
 
 The model can be estimated in **R** using the function `aov()`:
 
@@ -383,11 +638,70 @@ F_obs <- summary(fit)[[1]][["F value"]][1]
 plot_F(
   df1 = 2, 
   df2 = 87, 
-  print_p = TRUE, 
   F_obs = F_obs
 )
 ```
 
+### Now let's change the population
+
+Return to the beginning and change the population mean for Group C from 10 to 15. What do you expect to happen to $MS_{\text{within}}$, $MS_{\text{between}}$, and $F$?
+
+### Which groups differ?
+
+When the ANOVA analysis suggests that the population means are not all equal, it does not tell us which groups differ.
+
+We could compare each pair of groups separately. With three groups, there are
+
+$$\large
+{3 \choose 2}=3$$
+
+possible pairwise comparisons (A/B, A/C, B/C).
+
+However, making multiple comparisons creates a problem: the more comparisons we make, the greater the chance that **at least one comparison** will appear statistically significant, even if none of the population means differ.
+
+### Tukey's method ...
+
+allows us to estimate all pairwise differences while accounting for the fact that we are making multiple comparisons.
+
+```{webr-r}
+TukeyHSD(fit)
+```
+
+For each pair of groups, Tukey's method provides:
+
+- `diff`: the estimated difference between the two group means
+- `lwr` and `upr`: a 95% confidence interval for the difference
+- `p adj`: a p-value adjusted for the fact that we are making multiple comparisons
+
+The 95% confidence intervals are **simultaneous confidence intervals**: they are constructed so that, over repeated samples, all of the true pairwise differences would be contained within their respective intervals 95% of the time.
+
+As a result, the intervals are wider than the confidence intervals we would calculate if each comparison were considered separately.
+
+> We will return to the problem of multiple comparisons later in the course. For now, the important point is that once we start asking several questions of the same data, we need to account for the fact that we are making several comparisons.
+
+### Assumptions and robustness
+
+The classical one-way ANOVA has several assumptions, with some important caveats:
+
+- **Independent observations:** *independence* comes from the study design and data structure. Paired, repeated, or clustered observations require a different approach.
+
+- **Normality:** as with the $t$-test, the $F$-test used in ANOVA is generally **robust to moderate departures from normality**. The normality assumption concerns the distributions *within the groups* (or equivalently, the model residuals), not the overall distribution after combining all groups.
+
+- **Equal population variances:** classical ANOVA assumes that all groups share the same population variance $\sigma^2$. This is the assumption that allowed us to view $MS_{\text{within}}$ and $MS_{\text{between}}$ as two estimates of the **same $\sigma^2$** under $H_0$.
+
+The classical ANOVA $F$-test is reasonably robust to moderate differences in population variances, particularly when the group sizes are similar.
+
+Equal sample sizes are **not required**. 
+
+However, when population variances differ substantially -- especially when group sizes are also unequal -- **Welch's ANOVA** does not require a common population variance. This is the same idea we encountered with the two-sample \(t\)-test: Welch's method allows the population variances to differ.
+
+```{webr-r}
+oneway.test(
+  y ~ group, 
+  data = dd, 
+  var.equal = FALSE
+)
+```
 
 ### Example - weight loss programs
 
@@ -440,62 +754,9 @@ F_obs <- summary(res_aov)[[1]][["F value"]][1]
 plot_F(
   df1 = 3, 
   df2 = 28, 
-  print_p = TRUE, 
   F_obs = F_obs
 )
 ```
-
-The ANOVA p-value is small, suggesting that the population means are **not all equal**.
-
-However, the ANOVA does not tell us **which groups differ from one another**.
-
-
-### Which groups differ?
-
-The overall ANOVA suggests that the population means are not all equal, but it does not tell us which groups differ.
-
-We could compare each pair of groups separately. With four groups, there are
-
-$$\large
-{4 \choose 2}=6$$
-
-possible pairwise comparisons (0/1, 0/2, 0/3, 1/2, 1/3, 2/3).
-
-However, making multiple comparisons creates a problem: the more comparisons we make, the greater the chance that **at least one comparison** will appear statistically significant, even if none of the population means differ.
-
-
-### Tukey's method ...
-
-allows us to estimate all pairwise differences while accounting for the fact that we are making multiple comparisons.
-
-```{webr-r}
-TukeyHSD(res_aov)
-```
-
-For each pair of groups, Tukey's method provides:
-
-- `diff`: the estimated difference between the two group means
-- `lwr` and `upr`: a 95% confidence interval for the difference
-- `p adj`: a p-value adjusted for the fact that we are making multiple comparisons
-
-The 95% confidence intervals are **simultaneous confidence intervals**: they are constructed so that, over repeated samples, all of the true pairwise differences would be contained within their respective intervals 95% of the time.
-
-As a result, the intervals are wider than the confidence intervals we would calculate if each comparison were considered separately.
-
-> We will return to the problem of multiple comparisons later in the course. For now, the important point is that once we start asking several questions of the same data, we need to account for the fact that we are making several comparisons.
-
-
-### Assumptions and robustness
-
-The classical one-way ANOVA has several assumptions, with some important caveats:
-
-- **Independent observations:** *independence* comes from the study design and data structure. Paired, repeated, or clustered observations require a different approach.
-
-- **Normality:** as with the $t$-test, the $F$-test used in ANOVA is generally **robust to moderate departures from normality**. The normality assumption concerns the distributions *within the groups* (or equivalently, the model residuals), not the overall distribution after combining all groups.
-
-- **Equal population variances:** The classical ANOVA $F$-test is reasonably robust to moderate differences in variance, particularly when group sizes are similar.
-
-- Equal sample sizes are **not required**, but when variances differ substantially, especially with unequal group sizes, we can use **Welch's ANOVA** in **R** with function `oneway.test()`:
 
 ```{webr-r}
 oneway.test(
@@ -505,6 +766,9 @@ oneway.test(
 )
 ```
 
+```{webr-r}
+TukeyHSD(res_aov)
+```
 
 ### A rank-based comparison of more than two groups
 
@@ -528,9 +792,7 @@ kruskal.test(WeightChange ~ Group, data = data)
 
 - If the group distributions have similar shapes, the test can be interpreted as a comparison of their locations.
 
-
 ## Power
-
 
 Suppose we are comparing two populations and there really **is** a difference between their means:
 
@@ -594,11 +856,11 @@ If we repeated the study with new samples, sometimes the observed difference wou
 > **If a population difference really exists, how likely is our study to detect it?**
 
 
-### Repeating the study
+### Simulating possible studies
 
-Instead of conducting the study once, let's simulate it many times.
+We can use our probability model to generate many possible datasets that could arise from a study of this size.
 
-For each simulated study, we will:
+For each simulated dataset, we will:
 
 1.  sample $n$ observations from each population;
 2.  estimate the difference between the group means;
@@ -607,6 +869,11 @@ For each simulated study, we will:
 
 ```{webr-r}
 set.seed(3817)
+
+n <- 20 # 20 or 35 per group
+mu_a <- 10
+mu_b <- 12
+sd <- 3
 
 n_sim <- 5000
 
@@ -632,6 +899,7 @@ for (s in 1:n_sim) {
 }
 
 results[, significant := p_value < 0.05]
+results
 ```
 
 Let's plot the observed $t$-values:
@@ -652,24 +920,6 @@ ggplot(results, aes(x = t)) +
     ),
     guide = "none"
   ) +
-  annotate(
-    "text",
-    x = -0.1,
-    y = 500,
-    label = 
-      "bold(beta == P(fail~to~reject~H[0]~'|'~mu[B] - mu[A] == 2))",
-    parse = TRUE,
-    size = 3.5
-  ) +
-  annotate(
-    "text",
-    x = 5.3,
-    y = 420,
-    label = 
-      "bold(Power == P(reject~H[0]~'|'~mu[B] - mu[A] == 2))",
-    parse = TRUE,
-    size = 3.5
-  ) + 
   labs(
     title = bquote(
       bold("Distribution of t-statistics when" ~
@@ -682,44 +932,58 @@ ggplot(results, aes(x = t)) +
   ylim(0, 600)
 ```
 
-Each value in the histogram is the $t$-statistic from one simulated study. In every simulation, the population means differ by 2.
-
-The blue region represents studies that reject $H_0$; the gray region represents studies that fail to reject $H_0$, even though the population means really are different.
-
-The probability of rejecting the null hypothesis when a particular alternative is true is called **power**:
-
-$$\large
-\text{Power}
-=
-P(\text{reject } H_0 \mid \mu_B - \mu_A = 2)$$
-
-The probability of failing to reject the null hypothesis when that alternative is true is the **Type II error probability**, denoted by $\beta$:
+> The gray observations represent simulated studies that fail to reject $H_0$, *even though the population means really are different*. The probability of failing to reject the null hypothesis when that alternative is true is the **Type II error probability**, denoted by $\beta$:
 
 $$\large
 \beta
 =
-P(\text{fail to reject } H_0 \mid \mu_B - \mu_A = 2)$$
+P(\text{fail to reject } H_0 \mid \mu_B - \mu_A = 2)
+$$
 
-Therefore,
+> The blue observations represent simulated studies that correctly reject $H_0$. The probability of rejecting the null hypothesis when a particular alternative is true is called **power**:
+
+$$\large
+\text{Power}
+=
+P(\text{reject } H_0 \mid \mu_B - \mu_A = 2),
+$$
+
+and
 
 $$\large
 \text{Power} = 1-\beta$$
 
 ```{webr-r}
 results[, .(
-  power = mean(significant),
-  beta = mean(!significant)
+  beta = mean(!significant),
+  power = mean(significant)
 )]
 ```
 
 > **A study does not have a single power independent of the effect. Power depends on the particular population difference we want the study to be able to detect.**
 
+### Type I error, Type II error, and power
 
-### What determines power?
+We can now put together the two types of errors we have discussed.
 
-**Power increases when the population difference becomes large relative to the sampling variability of its estimate.**
+Whether we make an error depends on **what is true in the population** and on **what we decide based on our sample**.
 
-Let's see how changes in the study affect power.
+<div style="height: 30px;"></div>
+
+
+|                       | $H_0$ is true | A particular $H_A$ is true |
+|-----------------------|:---------------------------:|:---------------------------:|
+| **Reject $H_0$**      | Type I error ($\alpha$) | Correct decision (**power**) |
+| **Fail to reject $H_0$** | Correct decision ($1-\alpha$) | Type II error ($\beta$) |
+
+<div style="height: 50px;"></div>
+
+**$\alpha$ is the probability of rejecting $H_0$ when it is true. Power is the probability of rejecting $H_0$ when a particular alternative is true.**
+
+
+### Factors that determine power
+
+**Power depends on sample size, population variability, and the population difference we want to detect.** Power also depends on the significance level $alpha$: making the threshold for rejecting $H_0$ more stringent reduces power.
 
 ```{webr-r}
 estimate_power <- function(
@@ -744,6 +1008,9 @@ estimate_power <- function(
 }
 ```
 
+
+#### Sample size
+
 Increasing the sample size ($n_A$ and $n_B$) reduces the sampling variability of the estimated difference:
 
 $$
@@ -755,31 +1022,39 @@ SE(\bar Y_B-\bar Y_A)
  $$
  
  ```{webr-r}
+set.seed(4321)
+
 estimate_power(n = 10)
 estimate_power(n = 20)
 estimate_power(n = 50)
 estimate_power(n = 100)
 ```
 
-Increasing the population standard deviations ($\large \sigma_A$and$\large \sigma_B$) increases the sampling variability of the estimated difference:
+#### Variability
+
+Decreasing population standard deviations ($\large \sigma_A$and$\large \sigma_B$) reduces the sampling variability of the estimated difference:
 
 ```{webr-r}
+set.seed(4321)
+
 estimate_power(n = 35, sd = 5)
 estimate_power(n = 35, sd = 4)
 estimate_power(n = 35, sd = 3)
 estimate_power(n = 35, sd = 2)
 ```
 
+#### Effect sizes
+
 Increasing the population difference ($\mu_B - \mu_A$) increases power:
 
 ```{webr-r}
+set.seed(4321)
+
 estimate_power(n = 35, mu_b = 11, sd = 3)
 estimate_power(n = 35, mu_b = 12, sd = 3)
 estimate_power(n = 35, mu_b = 13, sd = 3)
 estimate_power(n = 35, mu_b = 14, sd = 3)
 ```
-
-
 ### Power curves
 
 We can put these relationships together in a set of *power curves*:
@@ -856,3 +1131,29 @@ pwr::pwr.t.test(
 The two approaches give essentially the same result; Cohen's $d$ simply combines the population difference and SD into a single standardized quantity.
 
 > Sample size calculations require us to specify what population difference matters scientifically and how likely we want the study to be to detect that difference.
+
+### But what if we aren't sure about the population variability?
+
+```{webr-r}
+sample_sizes <- data.table(
+  sd = 1:5
+)
+
+sample_sizes[, n := sapply(sd, function(s) {
+  
+  result <- power.t.test(
+    delta = 2,
+    sd = s,
+    power = 0.80,
+    sig.level = 0.05,
+    type = "two.sample"
+  )
+  
+  ceiling(result$n)
+})]
+
+sample_sizes
+```
+
+> Sample-size calculations depend on assumptions about quantities such as the population variability, which we usually do not know exactly when designing a study.
+
