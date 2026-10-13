@@ -173,19 +173,33 @@ n_2-1
 }
 }.
 \]</span></p>
-<p>The numerator is the squared estimated variance of the difference. The denominator combines the contributions from the two groups, taking into account the uncertainty in each group’s variance estimate.</p>
-<p>Unlike the usual degrees of freedom, this value does not have to be an integer.</p>
-<blockquote class="blockquote">
-<p><strong>The important point is not the formula.</strong> The degrees of freedom depend on how the total variability in the difference is distributed between the two groups, as well as on the two sample sizes.</p>
-</blockquote>
-<p>The absolute amount of variability does <strong>not</strong> by itself determine the degrees of freedom. For example, if both <span class="math inline">\(v_1\)</span> and <span class="math inline">\(v_2\)</span> were doubled, both the numerator and denominator would be multiplied by the same amount, leaving the degrees of freedom unchanged.</p>
-<p>What matters is how the two groups contribute to the variance of the difference.</p>
-<p>If the sample sizes are equal and <span class="math inline">\(v_1=v_2\)</span>, then</p>
+<p>Unlike <span class="math inline">\(n_1 + n_2 - 2\)</span>, this value does not have to be an integer.</p>
+<section id="what-can-we-learn-from-the-formula" class="level4">
+<h4 class="anchored" data-anchor-id="what-can-we-learn-from-the-formula">What can we learn from the formula?</h4>
+<p>A few features of the approximation help explain how Welch’s test works:</p>
+<ul>
+<li><p><strong>Scaling both variance contributions by the same amount does not change the degrees of freedom.</strong> If <span class="math inline">\(v_1\)</span> and <span class="math inline">\(v_2\)</span> become <span class="math inline">\(cv_1\)</span> and <span class="math inline">\(cv_2\)</span>, the factor <span class="math inline">\(c^2\)</span> appears in both the numerator and denominator and cancels.</p></li>
+<li><p><strong>With equal sample sizes and equal variance contributions, we recover the usual degrees of freedom.</strong> If <span class="math inline">\(n_1=n_2=n\)</span> and <span class="math inline">\(v_1=v_2=v\)</span>,</p></li>
+</ul>
 <p><span class="math display">\[\large
-df=n_1+n_2-2,
+df
+=
+\frac{(2v)^2}
+{\dfrac{v^2}{n-1}+\dfrac{v^2}{n-1}}
+=
+2(n-1)
+=
+n_1+n_2-2.
 \]</span></p>
-<p>the same degrees of freedom as in the traditional pooled <span class="math inline">\(t\)</span>-test.</p>
-<p>As the variance of the difference becomes increasingly concentrated in one group, the effective degrees of freedom decrease. This reduction can be particularly large when much of the variability comes from the <strong>smaller group</strong>, because its variance is being estimated from fewer observations.</p>
+<ul>
+<li><strong>As the variance contribution becomes concentrated in one group, the effective degrees of freedom decrease.</strong> In the extreme, if <span class="math inline">\(v_2\)</span> approaches zero,</li>
+</ul>
+<p><span class="math display">\[\large
+df \longrightarrow n_1-1.
+\]</span></p>
+<ul>
+<li><strong>A large variance contribution from a smaller group can reduce the degrees of freedom particularly strongly.</strong> Its contribution to the denominator is <span class="math inline">\(v_i^2/(n_i-1)\)</span>, so estimating a large variance contribution from relatively few observations increases the denominator and reduces the effective degrees of freedom.</li>
+</ul>
 <p>So Welch’s test makes an important distinction:</p>
 <blockquote class="blockquote">
 <p>The <strong>amount</strong> of variability affects the standard error. How that variability is <strong>distributed between the two groups</strong>, together with their sample sizes, affects the effective degrees of freedom.</p>
@@ -197,11 +211,15 @@ df=n_1+n_2-2,
 <div style="height: 50px;">
 
 </div>
-<p><strong>References</strong>:</p>
-<p>Delacre, M., Lakens, D., &amp; Leys, C. (2017). Why psychologists should by default use Welch’s t-test instead of Student’s t-test. International Review of Social Psychology, 30(1), 92–101. doi:10.5334/irsp.82.</p>
-<p>Welch, B. L. (1947). The generalization of ‘Student’s’ problem when several different population variances are involved. Biometrika, 34(1–2), 28–35. doi:10.1093/biomet/34.1-2.28.</p>
+<p><strong>Further reading</strong>: Delacre, M., Lakens, D., &amp; Leys, C. (2017). Why psychologists should by default use Welch’s t-test instead of Student’s t-test. International Review of Social Psychology, 30(1), 92–101. doi:10.5334/irsp.82.</p>
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+← Return to lecture
+</button>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
