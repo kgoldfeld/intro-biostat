@@ -139,7 +139,7 @@ Let's use our probability model to generate many possible samples and calculate 
 ```{webr-r}
 set.seed(1234)
 
-sample_size <- 100 # 10, 30, 100 <--- for examples below
+sample_size <- 100 # 30, 100, 200 <--- for examples below
 mu <- 120
 sigma <-24
 
@@ -172,6 +172,10 @@ ggplot(data.table(bw_means), aes(x = bw_means)) +
       "Sampling Distribution of the Mean Birth Weight",
     x = "Estimated Mean",
     y = "Count"
+  ) +
+  coord_cartesian(
+    xlim = c(110, 130), 
+    ylim = c(0, 3000)
   )
 ```
 
@@ -331,7 +335,6 @@ theoretical_se
 
 ## From sampling distributions to inference
 
-
 Back to our commmunity study ... we had an observed mean birth weight of **115 oz.**, compared with a national mean of **120 oz.**
 
 We know that sample means vary from sample to sample.
@@ -358,6 +361,8 @@ If the null hypothesis is true, repeated samples should produce sample means lik
 
 
 ### Putting the observed mean value in the context of the null distribution
+
+If we are taking a sample of 100 individuals, this is the sampling distribution of the mean:
 
 ```{webr-r}
 #| classes: webr-plot
