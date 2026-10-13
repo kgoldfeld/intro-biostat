@@ -1,0 +1,95 @@
+---
+title: "How does Welch's t-test determine the degrees of freedom?"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+---
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>
+
+In the traditional two-sample $t$-test, the two groups are assumed to have the same population variance. This leads to a simple expression for the degrees of freedom:
+
+$$\large
+df=n_1+n_2-2.
+$$
+
+Welch's $t$-test does not assume that the population variances are equal. As a result, the uncertainty in the estimated standard error is a little more complicated.
+
+Welch's test uses the **Welch-Satterthwaite approximation**. First, define
+
+$$
+v_1=\frac{s_1^2}{n_1},\qquad v_2=\frac{s_2^2}{n_2},
+$$
+
+where $v_1$ and $v_2$ are the estimated variances of the two sample means. The estimated variance of their difference is therefore
+
+$$\large
+v_1+v_2.
+$$
+
+The degrees of freedom are approximated by
+
+$$\large
+df
+=
+\frac{
+\left(
+v_1  + v_2
+\right)^2
+}{
+\frac{
+v_1^2
+}{
+n_1-1
+}
++
+\frac{
+v_2^2
+}{
+n_2-1
+}
+}.
+$$
+
+The numerator is the squared estimated variance of the difference. The denominator combines the contributions from the two groups, taking into account the uncertainty in each group's variance estimate.
+
+Unlike the usual degrees of freedom, this value does not have to be an integer.
+
+> **The important point is not the formula.** The degrees of freedom depend on how the total variability in the difference is distributed between the two groups, as well as on the two sample sizes.
+
+The absolute amount of variability does **not** by itself determine the degrees of freedom. For example, if both $v_1$ and $v_2$ were doubled, both the numerator and denominator would be multiplied by the same amount, leaving the degrees of freedom unchanged.
+
+What matters is how the two groups contribute to the variance of the difference.
+
+If the sample sizes are equal and $v_1=v_2$, then
+
+$$\large
+df=n_1+n_2-2,
+$$
+
+the same degrees of freedom as in the traditional pooled $t$-test.
+
+As the variance of the difference becomes increasingly concentrated in one group, the effective degrees of freedom decrease. This reduction can be particularly large when much of the variability comes from the **smaller group**, because its variance is being estimated from fewer observations.
+
+So Welch's test makes an important distinction:
+
+> The **amount** of variability affects the standard error. How that variability is **distributed between the two groups**, together with their sample sizes, affects the effective degrees of freedom.
+
+The degrees of freedom determine which $t$ distribution is used to describe the uncertainty in the standardized statistic.
+
+> The smaller the effective degrees of freedom, the heavier the tails of the corresponding $t$ distribution, reflecting greater uncertainty in the estimated standard error.
+
+<div style="height: 50px;"></div>
+
+**References**:
+
+Delacre, M., Lakens, D., & Leys, C. (2017). Why psychologists should by default use Welch's t-test instead of Student's t-test. International Review of Social Psychology, 30(1), 92–101. doi:10.5334/irsp.82.
+
+Welch, B. L. (1947). The generalization of ‘Student's’ problem when several different population variances are involved. Biometrika, 34(1–2), 28–35. doi:10.1093/biomet/34.1-2.28.

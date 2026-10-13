@@ -2378,24 +2378,37 @@ H_A &amp;: \mu_{\text{statin}} - \mu_{\text{diet}} \ne 0
 <section id="two-sample-means-two-sources-of-variability" class="level3">
 <h3 class="anchored" data-anchor-id="two-sample-means-two-sources-of-variability">Two sample means, two sources of variability</h3>
 <p>With independent samples, both sample means vary from sample to sample.</p>
-<p>If the two samples are independent, the standard error of their difference is</p>
+<p>Both sample means vary, so both contribute to the variability of their difference. Variation in either sample mean can move <span class="math inline">\(\bar X_1 - \bar X_2\)</span> away from the true population difference, in either direction.</p>
+<p>If the two samples are independent, their <strong>variances add</strong>:</p>
+<p><span class="math display">\[\large
+\text{Var}(\bar{X}_1-\bar{X}_2)
+=
+\frac{\sigma^2}{n_1}
++
+\frac{\sigma^2}{n_2}.
+\]</span></p>
+<p>Taking the square root gives the standard error:</p>
 <p><span class="math display">\[\large
 SE(\bar{X}_1-\bar{X}_2)
 =
+\sigma
 \sqrt{
-\frac{\sigma_1^2}{n_1}
+\frac{1}{n_1}
 +
-\frac{\sigma_2^2}{n_2}
-}.\]</span></p>
-<p>As with the one-sample t-test, we generally don’t know the population variances, so we estimate them from the data:</p>
+\frac{1}{n_2}
+}.
+\]</span></p>
+<p>As with the one-sample <span class="math inline">\(t\)</span>-test, we don’t know the population variance, so we estimate the common variance from the data. This gives a <strong>pooled standard deviation</strong>, <span class="math inline">\(s_p\)</span>:</p>
 <p><span class="math display">\[\large
 \widehat{SE}(\bar{X}_1-\bar{X}_2)
 =
+s_p
 \sqrt{
-\frac{s_1^2}{n_1}
+\frac{1}{n_1}
 +
-\frac{s_2^2}{n_2}
-}.\]</span></p>
+\frac{1}{n_2}
+}.
+\]</span></p>
 <p>We can now standardize the observed difference just as we did before:</p>
 <p><span class="math display">\[\large
 t
@@ -2403,22 +2416,53 @@ t
 \frac{
 (\bar{x}_1-\bar{x}_2)-0
 }{
+s_p
+\sqrt{
+\frac{1}{n_1}
++
+\frac{1}{n_2}
+}
+}.
+\]</span></p>
+<p><a href="pooled_sd.html" target="_blank">Additional details: pooled standard deviation</a></p>
+</section>
+<section id="what-about-unequal-variances" class="level3">
+<h3 class="anchored" data-anchor-id="what-about-unequal-variances">What about unequal variances?</h3>
+<p>The traditional two-sample <span class="math inline">\(t\)</span>-test assumes that the two populations have the <strong>same variance</strong>. But there is usually no reason to assume this.</p>
+<p><strong>Welch’s <span class="math inline">\(t\)</span>-test</strong> allows each population to have its own variance:</p>
+<p><span class="math display">\[\large
+\text{Var}(\bar{X}_1-\bar{X}_2)
+=
+\frac{\sigma_1^2}{n_1}
++
+\frac{\sigma_2^2}{n_2}.
+\]</span></p>
+<p>Since we don’t know the population variances, we estimate them using the two sample variances:</p>
+<p><span class="math display">\[\large
+\widehat{SE}_W(\bar{X}_1-\bar{X}_2)
+=
 \sqrt{
 \frac{s_1^2}{n_1}
 +
 \frac{s_2^2}{n_2}
-}
-}.\]</span></p>
-</section>
-<section id="what-about-unequal-variances" class="level3">
-<h3 class="anchored" data-anchor-id="what-about-unequal-variances">What about unequal variances?</h3>
-<p>The traditional two-sample t-test assumes that the two populations have the <strong>same variance</strong>.</p>
-<p><strong>Welch’s t-test</strong> does not make this assumption — each group can have its own variance.</p>
+}.
+\]</span></p>
+<p>Then</p>
+<p><span class="math display">\[\large
+t_W
+=
+\frac{
+(\bar{x}_1-\bar{x}_2)-0
+}{
+\widehat{SE}_W(\bar{X}_1-\bar{X}_2)
+}.
+\]</span></p>
 <blockquote class="blockquote">
-<p>Welch’s t-test works well even when the variances are equal, so there is generally little reason to assume equal variances.</p>
+<p>Welch’s <span class="math inline">\(t\)</span>-test works well even when the population variances are equal, so there is generally little reason to assume equal variances.</p>
 </blockquote>
 <p>Welch’s test uses an approximation to determine the <strong>degrees of freedom</strong>, which is why <strong>R</strong> may report a non-integer value.</p>
-<p>We will use Welch’s t-test for two independent samples. It is the default in <strong>R</strong>.</p>
+<p>We will use Welch’s <span class="math inline">\(t\)</span>-test for two independent samples. It is the default in <strong>R</strong>.</p>
+<p><a href="welchs_df.html" target="_blank">Additional details: Welch’s degrees of freedom</a></p>
 </section>
 <section id="simulate-a-data-set-1" class="level3">
 <h3 class="anchored" data-anchor-id="simulate-a-data-set-1">Simulate a data set</h3>

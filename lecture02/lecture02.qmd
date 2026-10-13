@@ -1090,32 +1090,47 @@ $$\large
 
 As before, the size of the observed difference needs to be considered relative to its **standard error**.
 
-
 ### Two sample means, two sources of variability
 
 With independent samples, both sample means vary from sample to sample.
 
-If the two samples are independent, the standard error of their difference is
+Both sample means vary, so both contribute to the variability of their difference. Variation in either sample mean can move $\bar X_1 - \bar X_2$ away from the true population difference, in either direction.
+
+If the two samples are independent, their **variances add**:
+
+$$\large
+\text{Var}(\bar{X}_1-\bar{X}_2)
+=
+\frac{\sigma^2}{n_1}
++
+\frac{\sigma^2}{n_2}.
+$$
+
+Taking the square root gives the standard error:
 
 $$\large
 SE(\bar{X}_1-\bar{X}_2)
 =
+\sigma
 \sqrt{
-\frac{\sigma_1^2}{n_1}
+\frac{1}{n_1}
 +
-\frac{\sigma_2^2}{n_2}
-}.$$
+\frac{1}{n_2}
+}.
+$$
 
-As with the one-sample t-test, we generally don't know the population variances, so we estimate them from the data:
+As with the one-sample $t$-test, we don't know the population variance, so we estimate the common variance from the data. This gives a **pooled standard deviation**, $s_p$:
 
 $$\large
 \widehat{SE}(\bar{X}_1-\bar{X}_2)
 =
+s_p
 \sqrt{
-\frac{s_1^2}{n_1}
+\frac{1}{n_1}
 +
-\frac{s_2^2}{n_2}
-}.$$
+\frac{1}{n_2}
+}.
+$$
 
 We can now standardize the observed difference just as we did before:
 
@@ -1125,25 +1140,64 @@ t
 \frac{
 (\bar{x}_1-\bar{x}_2)-0
 }{
+s_p
 \sqrt{
-\frac{s_1^2}{n_1}
+\frac{1}{n_1}
 +
-\frac{s_2^2}{n_2}
+\frac{1}{n_2}
 }
-}.$$
+}.
+$$
+
+
+[Additional details: pooled standard deviation](pooled_sd.html){target="_blank"}
 
 
 ### What about unequal variances?
 
-The traditional two-sample t-test assumes that the two populations have the **same variance**.
+The traditional two-sample $t$-test assumes that the two populations have the **same variance**. But there is usually no reason to assume this.
 
-**Welch's t-test** does not make this assumption — each group can have its own variance.
+**Welch's $t$-test** allows each population to have its own variance:
 
-> Welch's t-test works well even when the variances are equal, so there is generally little reason to assume equal variances.
+$$\large
+\text{Var}(\bar{X}_1-\bar{X}_2)
+=
+\frac{\sigma_1^2}{n_1}
++
+\frac{\sigma_2^2}{n_2}.
+$$
+
+Since we don't know the population variances, we estimate them using the two sample variances:
+
+$$\large
+\widehat{SE}_W(\bar{X}_1-\bar{X}_2)
+=
+\sqrt{
+\frac{s_1^2}{n_1}
++
+\frac{s_2^2}{n_2}
+}.
+$$
+
+Then
+
+$$\large
+t_W
+=
+\frac{
+(\bar{x}_1-\bar{x}_2)-0
+}{
+\widehat{SE}_W(\bar{X}_1-\bar{X}_2)
+}.
+$$
+
+> Welch's $t$-test works well even when the population variances are equal, so there is generally little reason to assume equal variances.
 
 Welch's test uses an approximation to determine the **degrees of freedom**, which is why **R** may report a non-integer value.
 
-We will use Welch's t-test for two independent samples. It is the default in **R**.
+We will use Welch's $t$-test for two independent samples. It is the default in **R**.
+
+[Additional details: Welch's degrees of freedom](welchs_df.html){target="_blank"}
 
 
 ### Simulate a data set

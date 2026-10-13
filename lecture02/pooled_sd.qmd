@@ -1,0 +1,40 @@
+---
+title: "Pooled standard deviation"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+---
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>
+
+If we assume that the two populations have the same variance, we can use both samples to estimate that common variance.
+
+The **pooled variance** is
+
+$$\large
+s_p^2
+=
+\frac{
+(n_1-1)s_1^2+(n_2-1)s_2^2
+}{
+n_1+n_2-2
+}.
+$$
+
+The pooled standard deviation is therefore
+
+$$\large
+s_p=\sqrt{s_p^2}.
+$$
+
+This is essentially a **weighted average of the two sample variances**, with larger samples contributing more information.
+
+> Pooling makes sense only because we are assuming that both sample variances are estimating the **same population variance** $\sigma^2$.
+
