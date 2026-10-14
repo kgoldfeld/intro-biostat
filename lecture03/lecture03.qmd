@@ -81,9 +81,7 @@ $$
 
 Can we conclude that there is a 94% probability that a real difference exists?
 
-. . .
-
-**No.**
+### No
 
 The *p*-value is calculated **assuming the null hypothesis is true**.
 
@@ -682,7 +680,7 @@ gen_stats <- function(
 }
 ```
 
-We repeat this across different population distributions and sample sizes:
+Here we run the experiment using a sample size of 100 in each group using the highly skewed distribution:
 
 ```{webr-r}
 set.seed(7612)
@@ -707,7 +705,6 @@ results <- rbindlist(
 
 results[, mean(reject)]
 ```
-
 
 ### Running the experiment with different sample sizes
 
@@ -797,6 +794,8 @@ wilcox.test(outcome ~ group, data = dd)
 ```
 
 The data suggest that observations from Group 2 tend to be larger than observations from Group 1.
+
+[More details on the Wilcoxon rank-sum statistic ](rank-sum-stat.html){target="_blank"}
 
 
 ## Binary outcomes - estimating a sample proportion
