@@ -218,7 +218,7 @@ ggplot(dd, aes(x, t_density)) +
 ### The **critical value** $t_{crit}$ that captures the central 95%:
 
 $$\large
-\Pr\left( -t_{crit}
+P\left( -t_{crit}
 \leq
 \frac{\bar{X} - \mu}{S/\sqrt{n}}
 \leq 
@@ -239,7 +239,7 @@ t_crit <- qt(0.975, df = 29)
 So we now have
 
 $$\large
-\Pr
+P
 \left(
 `r -round(t_crit, 3)`
 \leq
@@ -251,7 +251,7 @@ $$\large
 ### Rearranging gives the **95% confidence interval**:
 
 $$\large
-\Pr\left( -2.045
+P\left( -2.045
 \leq
 \frac{\bar{X} - \mu}{S/\sqrt{n}}
 \leq 
@@ -261,7 +261,7 @@ $$\large
 becomes
 
 $$\large
-\Pr\left(
+P\left(
 \bar{X} - 2.045\frac{S}{\sqrt{n}}
 \leq
 \mu
@@ -478,7 +478,7 @@ t.test(x = dd$grip_change)$conf.int
 
 In **Lecture 2**, we compared LDL cholesterol between individuals randomized to **statin therapy** and those randomized to a **healthy diet alone**.
 
-Now, rather than testing whether the population means differ, we want to **estimate the difference and quantify its uncertainty**.
+Now, rather than simply testing for a difference, we want to **estimate the difference in mean outcomes we would expect if everyone were treated versus if no one were treated, and quantify the uncertainty in that estimate**.
 
 $$
 \large
@@ -862,6 +862,101 @@ $$\large
 
 > **The confidence interval quantifies the uncertainty around our estimate of the population proportion.**
 
+### Since $\hat{p}$ is a sample mean, the *Central Limit Theorem* applies...
+
+Remember that a proportion can be written as a mean of 0s and 1s:
+
+$$\large
+\hat p = \frac{X_1+\cdots+X_n}{n},
+\qquad X_i \in \{0,1\}.
+$$
+
+The **Central Limit Theorem** tells us that, for sufficiently large samples, the sampling distribution of a sample mean is approximately normal.
+
+For a binary outcome,
+
+$$\large
+\hat p
+\ \dot\sim\
+N\left(
+p,\;
+\frac{p(1-p)}{n}
+\right).
+$$
+
+Standardizing gives
+
+$$\large
+Z =
+\frac{\hat p-p}
+{\sqrt{p(1-p)/n}}
+\ \dot\sim\
+N(0,1).
+$$
+
+> **So the same standard Normal distribution we used before describes the standardized sampling distribution of $\hat p$.**
+
+### From the standard Normal distribution to a confidence interval
+
+For the standard Normal distribution, **95% of the distribution lies between $-1.96$ and $+1.96$**:
+
+$$\large
+P(-1.96 < Z < 1.96) \approx 0.95.
+$$
+
+Since
+
+$$\large
+Z =
+\frac{\hat p-p}
+{\sqrt{p(1-p)/n}}
+\ \dot\sim\
+N(0,1),
+$$
+
+then
+
+$$\large
+P(-1.96
+<
+\frac{\hat p-p}
+{\sqrt{p(1-p)/n}}
+<
+1.96) \approx 0.95.
+$$
+
+So, under this approximation, $\hat p$ falls within 1.96 standard errors of $p$ about 95% of the time.
+
+Since we don't know $p$, we estimate the standard error using $\hat p$:
+
+$$\large
+\widehat{\mathrm{SE}}(\hat p)
+=
+\sqrt{
+\frac{\hat p(1-\hat p)}{n}
+}.
+$$
+
+This gives the familiar 95% confidence interval
+
+$$\large
+\text{estimate}
+\ \pm\
+1.96
+\times
+\widehat{\mathrm{SE}},
+$$
+
+or
+
+$$\large
+\hat p
+\ \pm\
+1.96
+\sqrt{
+\frac{\hat p(1-\hat p)}{n}
+}.
+$$
 
 ### When is the normal approximation reasonable?
 

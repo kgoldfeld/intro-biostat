@@ -2091,7 +2091,7 @@ p = 0.06
 <section id="the-critical-value-t_crit-that-captures-the-central-95" class="level3">
 <h3 class="anchored" data-anchor-id="the-critical-value-t_crit-that-captures-the-central-95">The <strong>critical value</strong> <span class="math inline">\(t_{crit}\)</span> that captures the central 95%:</h3>
 <p><span class="math display">\[\large
-\Pr\left( -t_{crit}
+P\left( -t_{crit}
 \leq
 \frac{\bar{X} - \mu}{S/\sqrt{n}}
 \leq
@@ -2102,7 +2102,7 @@ t_{crit} \right)
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>So we now have</p>
 <p><span class="math display">\[\large
-\Pr
+P
 \left(
 -2.045
 \leq
@@ -2114,7 +2114,7 @@ t_{crit} \right)
 <section id="rearranging-gives-the-95-confidence-interval" class="level3">
 <h3 class="anchored" data-anchor-id="rearranging-gives-the-95-confidence-interval">Rearranging gives the <strong>95% confidence interval</strong>:</h3>
 <p><span class="math display">\[\large
-\Pr\left( -2.045
+P\left( -2.045
 \leq
 \frac{\bar{X} - \mu}{S/\sqrt{n}}
 \leq
@@ -2122,7 +2122,7 @@ t_{crit} \right)
 = 0.95\]</span></p>
 <p>becomes</p>
 <p><span class="math display">\[\large
-\Pr\left(
+P\left(
 \bar{X} - 2.045\frac{S}{\sqrt{n}}
 \leq
 \mu
@@ -2208,7 +2208,7 @@ t_{crit} \right)
 <section id="revisiting-scenario-2-ldl-cholesterol" class="level3">
 <h3 class="anchored" data-anchor-id="revisiting-scenario-2-ldl-cholesterol">Revisiting Scenario 2: LDL cholesterol</h3>
 <p>In <strong>Lecture 2</strong>, we compared LDL cholesterol between individuals randomized to <strong>statin therapy</strong> and those randomized to a <strong>healthy diet alone</strong>.</p>
-<p>Now, rather than testing whether the population means differ, we want to <strong>estimate the difference and quantify its uncertainty</strong>.</p>
+<p>Now, rather than simply testing for a difference, we want to <strong>estimate the difference in mean outcomes we would expect if everyone were treated versus if no one were treated, and quantify the uncertainty in that estimate</strong>.</p>
 <p><span class="math display">\[
 \large
 \text{estimate}
@@ -2382,6 +2382,85 @@ E(X) = p
 <blockquote class="blockquote">
 <p><strong>The confidence interval quantifies the uncertainty around our estimate of the population proportion.</strong></p>
 </blockquote>
+</section>
+<section id="since-hatp-is-a-sample-mean-the-central-limit-theorem-applies-1" class="level3">
+<h3 class="anchored" data-anchor-id="since-hatp-is-a-sample-mean-the-central-limit-theorem-applies-1">Since <span class="math inline">\(\hat{p}\)</span> is a sample mean, the <em>Central Limit Theorem</em> applies…</h3>
+<p>Remember that a proportion can be written as a mean of 0s and 1s:</p>
+<p><span class="math display">\[\large
+\hat p = \frac{X_1+\cdots+X_n}{n},
+\qquad X_i \in \{0,1\}.
+\]</span></p>
+<p>The <strong>Central Limit Theorem</strong> tells us that, for sufficiently large samples, the sampling distribution of a sample mean is approximately normal.</p>
+<p>For a binary outcome,</p>
+<p><span class="math display">\[\large
+\hat p
+\ \dot\sim\
+N\left(
+p,\;
+\frac{p(1-p)}{n}
+\right).
+\]</span></p>
+<p>Standardizing gives</p>
+<p><span class="math display">\[\large
+Z =
+\frac{\hat p-p}
+{\sqrt{p(1-p)/n}}
+\ \dot\sim\
+N(0,1).
+\]</span></p>
+<blockquote class="blockquote">
+<p><strong>So the same standard Normal distribution we used before describes the standardized sampling distribution of <span class="math inline">\(\hat p\)</span>.</strong></p>
+</blockquote>
+</section>
+<section id="from-the-standard-normal-distribution-to-a-confidence-interval" class="level3">
+<h3 class="anchored" data-anchor-id="from-the-standard-normal-distribution-to-a-confidence-interval">From the standard Normal distribution to a confidence interval</h3>
+<p>For the standard Normal distribution, <strong>95% of the distribution lies between <span class="math inline">\(-1.96\)</span> and <span class="math inline">\(+1.96\)</span></strong>:</p>
+<p><span class="math display">\[\large
+P(-1.96 &lt; Z &lt; 1.96) \approx 0.95.
+\]</span></p>
+<p>Since</p>
+<p><span class="math display">\[\large
+Z =
+\frac{\hat p-p}
+{\sqrt{p(1-p)/n}}
+\ \dot\sim\
+N(0,1),
+\]</span></p>
+<p>then</p>
+<p><span class="math display">\[\large
+P(-1.96
+&lt;
+\frac{\hat p-p}
+{\sqrt{p(1-p)/n}}
+&lt;
+1.96) \approx 0.95.
+\]</span></p>
+<p>So, under this approximation, <span class="math inline">\(\hat p\)</span> falls within 1.96 standard errors of <span class="math inline">\(p\)</span> about 95% of the time.</p>
+<p>Since we don’t know <span class="math inline">\(p\)</span>, we estimate the standard error using <span class="math inline">\(\hat p\)</span>:</p>
+<p><span class="math display">\[\large
+\widehat{\mathrm{SE}}(\hat p)
+=
+\sqrt{
+\frac{\hat p(1-\hat p)}{n}
+}.
+\]</span></p>
+<p>This gives the familiar 95% confidence interval</p>
+<p><span class="math display">\[\large
+\text{estimate}
+\ \pm\
+1.96
+\times
+\widehat{\mathrm{SE}},
+\]</span></p>
+<p>or</p>
+<p><span class="math display">\[\large
+\hat p
+\ \pm\
+1.96
+\sqrt{
+\frac{\hat p(1-\hat p)}{n}
+}.
+\]</span></p>
 </section>
 <section id="when-is-the-normal-approximation-reasonable" class="level3">
 <h3 class="anchored" data-anchor-id="when-is-the-normal-approximation-reasonable">When is the normal approximation reasonable?</h3>

@@ -87,9 +87,7 @@ for the rank-sum statistic. Here we use the statistic reported by R.*
 
 As always, we need to ask what we would expect **under the null hypothesis**.
 
-If the two groups come from the same population distribution, the group labels
-are interchangeable. Any three of the six ranks could have belonged to
-Group A.
+Under the null hypothesis, group membership is not associated with systematically higher or lower outcomes. The group labels are therefore interchangeable with respect to the ranks. Any three of the six ranks could have been assigned to Group A.
 
 There are
 
@@ -128,6 +126,8 @@ $$
 
 is as far into the lower tail as it is possible to go.
 
+> The two groups do not need to have the same sample size. We use equal-sized groups here only to make the null distribution easy to see.
+
 #### From the null distribution to a p-value
 
 Only **1 of the 20** possible allocations gives $W=0$.
@@ -165,9 +165,7 @@ but the underlying reasoning is familiar:
 3. **How unusual is what we observed under that null model?**  
    Only 2 of the 20 possible allocations are this extreme.
 
-> **The rank-sum test asks whether the ranks of the observations are more
-> separated between the groups than we would expect if the two groups came
-> from the same population distribution.**
+> The rank-sum test asks whether the ranks are more separated between the groups than we would expect under the null hypothesis.
 
 With larger samples, there are far too many possible allocations to list by
 hand. Software can calculate the exact distribution when feasible or use a
