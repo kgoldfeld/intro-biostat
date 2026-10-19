@@ -1,0 +1,235 @@
+---
+title: "Multiple regression in practice: an NHANES example"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+webr:
+  packages: ["data.table", "ggplot2", "broom"]
+---
+
+```{webr-r}
+#| context: setup
+
+download.file(
+  "https://teaching.rdatagen.net/lecture05/data/hanes_subset.RData",
+  "hanes_subset.RData",
+   mode = "wb"
+)
+
+theme_set(
+  theme_bw(base_size = 14) +
+  theme(panel.grid = element_blank(),
+  plot.title = element_text(face = "bold", size = 12))
+)
+```
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>
+
+
+Earlier, we examined the relationship between age and total cholesterol in the NHANES data set..
+
+Now that we have introduced multiple regression, we can ask a slightly different question:
+
+> **How is age associated with total cholesterol after accounting for gender?**
+
+We can fit a model that includes both age and gender:
+
+$$\large
+E(\text{cholesterol}\mid\text{age},\text{gender})
+=
+\beta_0
++\beta_1 I(\text{female})
++\beta_2(\text{age}-50),
+$$
+
+where $I(\text{female})=1$ for females and $0$ for males.
+
+The coefficients describe:
+
+- $\beta_0$: mean cholesterol at age 50 for males
+- $\beta_1$: difference in mean cholesterol between females and males **of the same age**
+- $\beta_2$: difference in mean cholesterol associated with a one-year difference in age, **for individuals of the same gender**
+
+> **Each coefficient in a multiple regression model is interpreted conditional on the other variables in the model.**
+
+Let's fit the model:
+
+```{webr-r}
+load("hanes_subset.RData")
+hanes <- data.table(hanes)
+
+hanes[, age50 := SPAGE - 50]
+hanes[, gender := factor(
+  GENDER,
+  levels = c(1, 2),
+  labels = c("Male", "Female")
+)]
+
+fit_gender <- lm(
+  CHOLESTEROLTOTAL ~ gender + age50,
+  data = hanes
+)
+
+tidy(fit_gender, conf.int = TRUE)
+```
+
+In this sample, mean total cholesterol was estimated to be about **1.0 mg/dL higher for each additional year of age**, comparing individuals of the same gender.
+
+Mean cholesterol was estimated to be about **1.0 mg/dL lower among females than males of the same age**, although the confidence interval is wide and includes no difference.
+
+## What does the fitted model look like?
+
+We can plot the fitted relationship separately for males and females:
+
+```{webr-r}
+#| classes: webr-plot
+
+plot_data <- data.table(
+  SPAGE = rep(seq(20, 80, by = 1), 2),
+  gender = rep(levels(hanes$gender), each = 61)
+)
+
+plot_data[, age50 := SPAGE - 50]
+plot_data[, cholesterol_hat := predict(
+  fit_gender,
+  newdata = plot_data
+)]
+
+ggplot(hanes, aes(
+  x = SPAGE,
+  y = CHOLESTEROLTOTAL,
+  color = gender
+)) +
+  geom_jitter(
+    alpha = 0.4,
+    size = 1,
+    height = 0,
+    width = 0.25
+  ) +
+  geom_line(
+    data = plot_data,
+    aes(y = cholesterol_hat),
+    linewidth = 1
+  ) +
+  labs(
+    x = "Age (years)",
+    y = "Total cholesterol (mg/dL)",
+    color = "Gender"
+  )
+```
+
+The fitted lines are parallel because the model assumes that the association between age and cholesterol is the same for males and females.
+
+The vertical distance between the lines represents the estimated difference between females and males of the same age.
+
+## Does the model describe the data adequately?
+
+Fitting a regression model does not guarantee that it provides a good description of the data.
+
+We can use the residuals and other diagnostics to look for ways in which the model may be inadequate.
+
+#### Is there systematic structure left in the residuals?
+
+```{webr-r}
+#| classes: webr-plot
+
+hanes[, `:=`(
+  fitted = fitted(fit_gender),
+  resid = residuals(fit_gender)
+)]
+
+ggplot(hanes, aes(x = fitted, y = resid)) +
+  geom_point(color = "grey60") +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_smooth(
+    method = "loess",
+    formula = y ~ x,
+    se = FALSE
+  ) +
+  labs(
+    x = "Fitted value",
+    y = "Residual"
+  )
+```
+
+We would like the residuals to be scattered around zero without a systematic pattern. Here, the smooth curve is fairly close to zero over most of the fitted values, but bends downward at the upper end. This suggests that the linear model may be overpredicting cholesterol for observations with the highest fitted values. There are also some unusually large positive and negative residuals.
+
+### How does the distribution of the residuals compare with a Normal distribution?
+
+```{webr-r}
+#| classes: webr-plot
+
+qqnorm(residuals(fit_gender))
+qqline(residuals(fit_gender))
+```
+
+If the residuals followed a Normal distribution closely, the points would fall approximately along the reference line. Here, the middle of the distribution follows the line reasonably well, but there are substantial departures in the tails, particularly the upper tail. The residual distribution therefore appears to have heavier tails than a Normal distribution.
+
+### Are there observations with unusual predictor values?
+
+Leverage measures how unusual an observation's predictor values are relative to the rest of the data.
+
+```{webr-r}
+#| classes: webr-plot
+
+hanes[, leverage := hatvalues(fit_gender)]
+hanes[, obs := .I]
+
+ggplot(hanes, aes(x = obs, y = leverage)) +
+  geom_point() +
+  labs(
+    x = "Observation",
+    y = "Leverage"
+  )
+```
+
+Most observations have fairly similar, low leverage, but a small group near the end of the dataset has substantially higher leverage. These observations have combinations of predictor values that are unusual relative to the rest of the sample. High leverage does not necessarily make an observation problematic, but it means that the observation has greater potential to affect the fitted model. The observation number on the horizontal axis is simply an index; its value has no substantive meaning.
+
+### Are any observations particularly influential?
+
+Finally, Cook's distance combines information about leverage and residual size to help identify observations that have a substantial effect on the fitted regression model.
+
+```{webr-r}
+#| classes: webr-plot
+
+hanes[, cooks_d := cooks.distance(fit_gender)]
+
+ggplot(hanes, aes(x = obs, y = cooks_d)) +
+  geom_point() +
+  labs(
+    x = "Observation",
+    y = "Cook's distance"
+  )
+```
+
+Most observations have very small Cook's distances, but a few stand out from the rest. These observations have a noticeably greater influence on the fitted regression model and would be worth examining more closely.
+
+### Final takeaways
+
+Taken together, these diagnostics suggest that the model captures much of the broad relationship in the data, but it is not a perfect description. There is some structure in the residuals, the residual distribution has heavier tails than a Normal distribution, and a few observations have relatively high leverage or influence.
+
+These findings do not necessarily mean that we should abandon the model. Instead, they tell us what we may need to investigate further:
+
+- **systematic patterns in the residuals** may suggest that the relationship has not been modeled adequately — for example, the relationship with age may not be completely linear
+- **departures from Normality** may affect the accuracy of standard errors, confidence intervals, and tests, particularly when departures are substantial or the sample is small
+- **high-leverage observations** should be examined to understand why their predictor values are unusual
+- **influential observations** should be examined to determine whether our conclusions depend heavily on a small number of observations
+
+Possible next steps might include modifying the model, using methods that are less sensitive to particular assumptions, or examining whether the substantive conclusions change under reasonable alternative analyses.
+
+> **The goal of diagnostics is not to find a model with no imperfections, but to understand whether the model is adequate for the scientific question we are asking.**
+
+These diagnostics are not a checklist of tests that a model must “pass.” A regression model is a description of the systematic and random variation in the data, and diagnostics help us see where that description may be inadequate.
+
+<div style="margin-top: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>

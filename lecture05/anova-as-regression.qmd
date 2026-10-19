@@ -1,0 +1,207 @@
+---
+title: "ANOVA as a linear regression model"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+webr:
+  packages: ["data.table", "ggplot2", "broom"]
+---
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>
+
+## From two groups to three groups
+
+With two groups, we saw that a linear regression model can reproduce the
+two-sample t-test.
+
+The same idea extends naturally to more than two groups.
+
+Suppose we have three groups:
+
+```{webr-r}
+set.seed(1550)
+
+dd <- data.table(
+  group = rep(c("A", "B", "C"), each = 50)
+)
+
+dd[, y := rnorm(
+  .N,
+  mean = fifelse(group == "A", 50,
+         fifelse(group == "B", 55, 60)),
+  sd = 10
+)]
+
+dd
+```
+
+We already know how to analyze these data using a one-way ANOVA:
+
+```{webr-r}
+fit_anova <- aov(y ~ group, data = dd)
+
+summary(fit_anova)
+```
+
+The ANOVA asks whether the population means are all equal:
+
+$$\large
+H_0:\mu_A=\mu_B=\mu_C.
+$$
+
+Now let's analyze exactly the same data using linear regression:
+
+```{webr-r}
+fit_lm <- lm(y ~ group, data = dd)
+
+tidy(fit_lm)
+```
+
+These may look like different analyses, but they are actually fitting the
+same underlying linear model.
+
+## How does regression represent three groups?
+
+R uses one group as the **reference group**. Here, Group A is the reference.
+
+The regression model can be written as
+
+$$\large
+E(Y \mid X)
+=
+\beta_0
++
+\beta_1 X_B
++
+\beta_2 X_C,
+$$
+
+where
+
+$$
+X_B =
+\begin{cases}
+1 & \text{Group B}\\
+0 & \text{otherwise}
+\end{cases}
+\qquad
+X_C =
+\begin{cases}
+1 & \text{Group C}\\
+0 & \text{otherwise}.
+\end{cases}
+$$
+
+For Group A,
+
+$$\large
+E(Y\mid A)=\beta_0.
+$$
+
+For Group B,
+
+$$\large
+E(Y\mid B)=\beta_0+\beta_1.
+$$
+
+For Group C,
+
+$$\large
+E(Y\mid C)=\beta_0+\beta_2.
+$$
+
+So the regression coefficients have a simple interpretation:
+
+- $\beta_0$ is the mean for **Group A**
+- $\beta_1$ is the difference **B − A**
+- $\beta_2$ is the difference **C − A**
+
+We can see this directly by comparing the observed group means with the
+regression coefficients:
+
+```{webr-r}
+dd[, .(mean_y = mean(y)), by = group]
+
+coef(fit_lm)
+```
+
+The intercept gives the mean for Group A. Adding the appropriate coefficient
+to the intercept gives the mean for Group B or Group C.
+
+## Where did the ANOVA go?
+
+The ANOVA null hypothesis was
+
+$$\large
+H_0:\mu_A=\mu_B=\mu_C.
+$$
+
+In the regression model, this is equivalent to
+
+$$\large
+H_0:\beta_1=\beta_2=0.
+$$
+
+If both coefficients are zero, neither Group B nor Group C differs from
+Group A, so all three groups have the same mean.
+
+We can ask R for an analysis-of-variance table for the regression model:
+
+```{webr-r}
+anova(fit_lm)
+```
+
+Compare this with the ANOVA we fit earlier:
+
+```{webr-r}
+summary(fit_anova)
+```
+
+The $F$ statistic and $p$-value are the same.
+
+> **A one-way ANOVA is a linear regression model with a categorical predictor.**
+
+## One potentially confusing R detail
+
+The names of R's functions can make this connection less obvious.
+
+`aov()` **fits a model**:
+
+```{webr-r}
+fit_anova <- aov(y ~ group, data = dd)
+```
+
+For this simple one-way ANOVA, `aov()` and `lm()` are fitting equivalent
+linear models.
+
+In contrast, `anova()` does **not** fit a model. It takes a model that has
+already been fitted and produces an **analysis-of-variance table** for that
+model:
+
+```{webr-r}
+fit_lm <- lm(y ~ group, data = dd)
+
+anova(fit_lm)
+```
+
+So in the code above:
+
+- `lm()` fits the linear model
+- `anova()` produces the ANOVA table and $F$ test for that fitted model
+
+The difference between the analyses we have called **ANOVA** and **linear
+regression** is therefore not that they require fundamentally different
+models. Instead, they give us different ways of looking at the same model.
+
+<div style="margin-top: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>

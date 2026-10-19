@@ -238,17 +238,6 @@ The linear model captures the general idea that hypertension becomes more common
 - But probabilities are constrained: $0 \leq P(Y=1 \mid X) \leq 1$
 - A linear model does not enforce this constraint. Depending on the predictor values, it can produce fitted probabilities below 0 or above 1.
 
-
-### What we need is a regression model that ...
-
-- allows the probability to change with age
-- keeps predicted probabilities between 0 and 1
-- retains the basic structure of a linear regression model
-
-> How can we turn a probability, which is constrained between 0 and 1, into something we can model on an unrestricted linear scale?
-
-
-
 ## From probabilities to odds
 
 

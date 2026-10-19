@@ -2071,17 +2071,6 @@ E(Y \mid \text{age}) = \hat{\beta}_0 + \hat{\beta}_1 \text{age}\]</span></p>
 <li>But probabilities are constrained: <span class="math inline">\(0 \leq P(Y=1 \mid X) \leq 1\)</span></li>
 <li>A linear model does not enforce this constraint. Depending on the predictor values, it can produce fitted probabilities below 0 or above 1.</li>
 </ul>
-<section id="what-we-need-is-a-regression-model-that" class="level3">
-<h3 class="anchored" data-anchor-id="what-we-need-is-a-regression-model-that">What we need is a regression model that …</h3>
-<ul>
-<li>allows the probability to change with age</li>
-<li>keeps predicted probabilities between 0 and 1</li>
-<li>retains the basic structure of a linear regression model</li>
-</ul>
-<blockquote class="blockquote">
-<p>How can we turn a probability, which is constrained between 0 and 1, into something we can model on an unrestricted linear scale?</p>
-</blockquote>
-</section>
 </section>
 <section id="from-probabilities-to-odds" class="level2">
 <h2 class="anchored" data-anchor-id="from-probabilities-to-odds">From probabilities to odds</h2>
