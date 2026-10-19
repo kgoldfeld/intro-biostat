@@ -253,24 +253,21 @@ sim_base <- data.table(
   z = rnorm(200)
 )
 
+sim_base[, age50 := age - 50]
+
 gen_data_and_plot <- function(
-    beta_0 = 100, 
+    beta_0 = 150, 
     beta_1 = 0.5, 
     sigma = 12) {
   
   dd_plot <- copy(sim_base)
   
-  dd_plot[, sbp := 
-              beta_0 + beta_1 * age + 
-                sigma * z
+  dd_plot[, 
+    sbp := beta_0 + beta_1 * age50 + sigma * z
   ]
   
   ggplot(dd_plot, aes(x = age, y = sbp)) +
-    geom_abline(
-      intercept = beta_0,
-      slope = beta_1,
-      linewidth = 1
-    ) +
+    geom_smooth(method = "lm", se = FALSE) +
     geom_point() +
     labs(
       title = bquote(
@@ -279,18 +276,20 @@ gen_data_and_plot <- function(
       x = "Age (years)",
       y = "Systolic blood pressure (mm Hg)"
     ) +
-    coord_cartesian(ylim = c(50, 190))
+    coord_cartesian(ylim = c(50, 210))
 }
 ```
 
 ```{webr-r}
 #| classes: webr-plot
+#| message: FALSE
 
-gen_data_and_plot(beta_1 = 0) # 0, 0.5, 1
+gen_data_and_plot(beta_1 = 0) # 0, 0.5, 2
 ```
 
 ```{webr-r}
 #| classes: webr-plot
+#| message: FALSE
 
 gen_data_and_plot(sigma = 5)   # 5, 12, 25
 ```
