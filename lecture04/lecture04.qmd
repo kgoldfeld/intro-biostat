@@ -323,14 +323,16 @@ group_stats <- dd[, .(
 
 overall_mean <- mean(dd$y)
 
-# between-group sum of squares
+# squared deviations among the group means
 
-raw_ss_between <- group_stats[
+ss_group_means <- group_stats[
   , sum((group_mean - overall_mean)^2)
 ]
 
-raw_ss_between
+ss_group_means
 ```
+
+We can compare the observed variance among the group means with the variance we expect under the null hypothesis:
 
 ```{webr-r}
 # between group degrees of freedom
@@ -339,17 +341,33 @@ k <- uniqueN(dd$group)
 df_between <- k - 1
 
 
-raw_ss_between/(k-1)
+ss_group_means / df_between
 sd^2 / n
 ```
 
+### From variability among group means to an estimate of $\sigma^2$
 
+We just saw that, under $H_0$,
 
+$$
+\large
+E(s_{\bar X}^2)
+=
+\frac{\sigma^2}{n}.
+$$
 
+> So under $H_0$, group means have $1/n$ as much variance as individual observations.
 
-### Putting the variability back on the original scale
+To put these two variances on the same scale, we multiply $s_{\bar X}^2$ by $n$:
 
-Because group means have only $1/n$ as much variance as individual observations, multiply their variance by $n$:
+$$
+\large
+n s_{\bar X}^2
+\quad\text{estimates}\quad
+\sigma^2.
+$$
+
+For equal group sizes,
 
 $$
 \large
@@ -359,10 +377,12 @@ n s_{\bar X}^2
 n\sum_{j=1}^{k}(\bar X_j-\bar X)^2
 }{
 k-1
-}.
+}
+=
+MS_{\text{between}}.
 $$
 
-This is the **between-group mean square**:
+More generally,
 
 $$
 \large
@@ -371,7 +391,7 @@ MS_{\text{between}}
 \frac{SS_{\text{between}}}{k-1},
 $$
 
-where, more generally,
+where
 
 $$
 \large
@@ -381,15 +401,6 @@ SS_{\text{between}}
 n_j(\bar X_j-\bar X)^2.
 $$
 
-For equal group sizes,
-
-$$
-\large
-MS_{\text{between}}
-=
-n s_{\bar X}^2.
-$$
-
 Therefore, under $H_0$,
 
 $$
@@ -397,7 +408,7 @@ $$
 E(MS_{\text{between}})=\sigma^2.
 $$
 
-> **$MS_{\text{between}}$ is essentially the variance of the group means, rescaled to the variance of individual observations.**
+> **$MS_{\text{between}}$ starts with the variability among the group means and rescales it so that, under $H_0$, it estimates the variance of individual observations, $\sigma^2$.**
 
 ```{webr-r}
 ss_between <- group_stats[
@@ -408,12 +419,9 @@ ss_between
 ```
 
 ```{webr-r}
-# between mean squares
-
 ms_between <- ss_between / df_between
 ms_between
 ```
-
 
 ### Two estimates of the same variance
 
@@ -851,10 +859,9 @@ t.test(y ~ group, data = dd)
 
 We know that the population means differ by 2. But because of **sampling variability**, the estimated difference will vary from study to study.
 
-If we repeated the study with new samples, sometimes the observed difference would be large enough to produce a small p-value, and sometimes it would not.
+Our probability model implies that the estimated difference between the groups will vary from sample to sample. Even when a population difference exists, some possible datasets will produce $p < 0.05$ and others will not.
 
 > **If a population difference really exists, how likely is our study to detect it?**
-
 
 ### Simulating possible studies
 
@@ -862,10 +869,10 @@ We can use our probability model to generate many possible datasets that could a
 
 For each simulated dataset, we will:
 
-1.  sample $n$ observations from each population;
-2.  estimate the difference between the group means;
-3.  conduct a two-sample t-test;
-4.  record whether $p < 0.05$.
+1. sample $n$ observations from each population;
+2. estimate the difference between the group means;
+3. conduct a two-sample t-test;
+4. record whether $p < 0.05$.
 
 ```{webr-r}
 set.seed(3817)
@@ -983,7 +990,7 @@ Whether we make an error depends on **what is true in the population** and on **
 
 ### Factors that determine power
 
-**Power depends on sample size, population variability, and the population difference we want to detect.** Power also depends on the significance level $alpha$: making the threshold for rejecting $H_0$ more stringent reduces power.
+**Power depends on sample size, population variability, and the population difference we want to detect.** Power also depends on the significance level $\alpha$: making the threshold for rejecting $H_0$ more stringent reduces power.
 
 ```{webr-r}
 estimate_power <- function(
@@ -1032,7 +1039,7 @@ estimate_power(n = 100)
 
 #### Variability
 
-Decreasing population standard deviations ($\large \sigma_A$and$\large \sigma_B$) reduces the sampling variability of the estimated difference:
+Decreasing population standard deviations ($\large \sigma_A$ and $\large \sigma_B$) reduces the sampling variability of the estimated difference:
 
 ```{webr-r}
 set.seed(4321)
