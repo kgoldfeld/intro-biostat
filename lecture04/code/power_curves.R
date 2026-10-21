@@ -1,3 +1,6 @@
+library(data.table)
+library(ggplot2)
+
 set.seed(3817)
 
 estimate_power <- function(n, mu_a = 10, mu_b = 12, sd = 3, n_sim = 5000) {
@@ -45,7 +48,7 @@ p1 <- ggplot(
   facet_wrap(
     ~ delta,
     labeller = labeller(
-      delta = function(x) paste("Population difference =", x)
+      delta = function(x) paste("Group difference =", x)
     )
   ) +
   scale_y_continuous(
@@ -66,9 +69,8 @@ p1 <- ggplot(
   )
 
 ggsave(
-  "lectures/images/lecture04/power_curves.png",
+  "lecture04/images/power_curves.png",
   width = 10,
   height = 3,
   dpi = 300
 )
-2

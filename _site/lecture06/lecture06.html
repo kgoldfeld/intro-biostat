@@ -23,6 +23,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -369,7 +404,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"download.file(\n  \"https://teaching.rdatagen.net/lecture06/data/heart.csv\",\n  \"heart.csv\"\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"setup","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\nlibrary(broom)\nlibrary(gt)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 500\n\ndd <- data.table(\n  age = runif(n, 20, 80)\n)\n\n# to be explained later ...\ndd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]          \n\ndd[, hypertension := rbinom(.N, size = 1, prob = p)]\ndd","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  scale_y_continuous(\n    breaks = c(0, 1),\n    labels = c(\"No\", \"Yes\")\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome\"\n  )","id":4,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  scale_y_continuous(\n    breaks = c(0, 1),\n    labels = c(\"No\", \"Yes\")\n  ) +\n  geom_line(\n    aes(y = p),\n    data = dd[order(age)],\n    linewidth = 1\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome / probability\"\n  )","id":5,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_linear <- lm(hypertension ~ age, data = dd)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, p_linear := predict(fit_linear)]\n\nggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  geom_line(\n    aes(y = p),\n    data = dd[order(age)],\n    linewidth = 1\n  ) +\n  geom_line(\n    aes(y = p_linear),\n    data = dd[order(age)],\n    linewidth = 1,\n    linetype = 2,\n    color = \"darkred\"\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome / probability\"\n  )","id":7,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_logistic <- glm(\n  hypertension ~ age, \n  family = binomial, \n  data = dd\n)\n\ntidy(fit_logistic)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, p_logistic := \n  predict(fit_logistic, type = \"response\")\n]\n\nggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  geom_line(\n    aes(y = p),\n    data = dd[order(age)],\n    linewidth = 1\n  ) +\n  geom_line(\n    aes(y = p_logistic),\n    data = dd[order(age)],\n    linewidth = 1,\n    linetype = 2,\n    color = \"darkred\"\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome / probability\"\n  )","id":10,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tidy(fit_logistic, exponentiate = TRUE)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"exp(coef(fit_logistic)[\"age\"])","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ages <- c(30, 50, 70)\n\ncompare <- data.table(\n  age = ages\n)\n\ncompare[, p_age :=\n  1 / (1 + exp(-(-5.5 + 0.075 * age)))]\n\ncompare[, p_next :=\n  1 / (1 + exp(-(-5.5 + 0.075 * (age + 1))))]\n\ncompare[, RD := p_next - p_age]\ncompare[, RR := p_next / p_age]\n\ncompare[, OR :=\n  (p_next / (1 - p_next)) /\n  (p_age / (1 - p_age))\n]\n\ncompare[, log_OR := log(OR)]\n\ncompare |>\n  gt() |>\n  cols_label(\n    age = \"Age\",\n    p_age = \"P(age)\",\n    p_next = \"P(age + 1)\",\n    RD = \"RD\",\n    RR = \"RR\",\n    OR = \"OR\",\n    log_OR = \"Log OR\"\n  ) |>\n  fmt_number(\n    columns = c(p_age, p_next, RD, RR, OR, log_OR),\n    decimals = 3\n  ) ","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"asis","warning":"true"}},{"code":"tt <- tidy(fit_logistic)\n\nb <- tt$estimate[tt$term == \"age\"]\nse <- tt$std.error[tt$term == \"age\"]\n\nci_log <- c(\n  b - 1.96 * se,\n  b + 1.96 * se\n)\n\nci_log","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"exp(ci_log)","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tidy(\n  fit_logistic,\n  exponentiate = TRUE,\n  conf.int = TRUE\n)","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"b0 <- coef(fit_logistic)[\"(Intercept)\"]\nb1 <- coef(fit_logistic)[\"age\"]\n\n1 / (1 + exp(-(b0 + b1 * 50)))","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"predict(\n  fit_logistic, \n  newdata = data.frame(age = 50), \n  type = \"response\"\n)","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"newdata <- data.table(\n  age = c(30, 40, 50, 60, 70)\n)\n\nnewdata[, p_hat :=\n  predict(\n    fit_logistic,\n    newdata = newdata,\n    type = \"response\"\n  )\n]\n\nnewdata","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pred <- data.table(\n  age = seq(20, 80, by = 0.1)\n)\n\npred[, p_hat :=\n  predict(\n    fit_logistic,\n    newdata = pred,\n    type = \"response\"\n  )\n]\n\nggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  geom_line(\n    data = pred,\n    aes(x = age, y = p_hat),\n    linewidth = 1\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome / probability\"\n  )","id":20,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 1000\n\ndd2 <- data.table(\n  age = runif(n, 30, 80)\n)\n\n# older people tend to be less physically active\ndd2[, activity :=\n  8 - 0.06 * age + rnorm(.N, 0, 1)\n]\n\n# hypertension depends on both age and physical activity\ndd2[, p :=\n  1 / (1 + exp(-(-4 + 0.06 * age - 0.35 * activity)))\n]\n\ndd2[, hypertension :=\n  rbinom(.N, size = 1, prob = p)\n]","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd2, aes(x = age, y = activity)) +\n  geom_point(alpha = 0.35, size = 0.7) +\n  geom_smooth(\n    method = \"lm\", \n    formula = y ~ x, \n    se = FALSE\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Physical activity\"\n  )","id":22,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_crude <- glm(\n  hypertension ~ activity,\n  family = binomial,\n  data = dd2\n)\n\ntidy(\n  fit_crude,\n  exponentiate = TRUE,\n  conf.int = TRUE\n)","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_adjusted <- glm(\n  hypertension ~ activity + age,\n  family = binomial,\n  data = dd2\n)\n\ntidy(\n  fit_adjusted,\n  exponentiate = TRUE,\n  conf.int = TRUE\n)","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pred_adj <- CJ(\n  age = c(40, 55, 70),\n  activity = seq(2, 7, by = 0.1)\n)\n\npred_adj[, p_hat :=\n  predict(\n    fit_adjusted,\n    newdata = pred_adj,\n    type = \"response\"\n  )\n]\n\npred_adj[, age_group := factor(\n  age,\n  levels = c(40, 55, 70),\n  labels = c(\"Age 40\", \"Age 55\", \"Age 70\")\n)]","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  pred_adj,\n  aes(\n    x = activity,\n    y = p_hat,\n    linetype = age_group\n  )\n) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Physical activity\",\n    y = \"Predicted probability of hypertension\",\n    linetype = NULL\n  )","id":26,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd2[, p_hat :=\n  predict(\n    fit_adjusted,\n    type = \"response\"\n  )\n]\n\ndd2[, risk_group :=\n  cut(\n    p_hat,\n    breaks = quantile(\n      p_hat,\n      probs = seq(0, 1, by = 0.1)\n    ),\n    include.lowest = TRUE\n  )\n]\n\ngof <- dd2[,\n  .(\n    predicted = mean(p_hat),\n    observed = mean(hypertension)\n  ),\n  by = risk_group\n]","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"lims <- range(c(gof$observed, gof$predicted))\n\nggplot(gof, aes(x = observed, y = predicted)) +\n  geom_point(size = 2) +\n  geom_abline(\n    intercept = 0,\n    slope = 1,\n    linetype = 2\n  ) +\n  coord_equal(xlim = lims, ylim = lims) +\n  labs(\n    x = \"Observed proportion with hypertension\",\n    y = \"Mean predicted probability\"\n  )","id":28,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"summary(fit_adjusted)","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_null <- glm(\n  hypertension ~ 1,\n  data = dd2,\n  family = binomial\n)\n\nanova(fit_null, fit_adjusted, test = \"Chisq\")","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"heart <- fread(\"heart.csv\")\nheart[, ck50 := ck / 50]\nheart","id":31,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"heart_prop <- heart[,\n  .(proportion = mean(heart_attack), n = .N),\n  by = ck\n]\n\nggplot(heart_prop, aes(x = ck, y = proportion)) +\n  geom_point(size = 2) +\n  geom_line() +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"CK level\",\n    y = \"Proportion with heart attack\"\n  )","id":32,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_glm <- glm(\n  heart_attack ~ ck50, \n  family = binomial, \n  data = heart\n)\n\ntidy(fit_glm, exponentiate = TRUE, conf.int = TRUE)","id":33,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"summary(fit_glm)","id":34,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pred <- data.table(\n  ck = seq(\n    min(heart$ck), \n    max(heart$ck),\n    length.out = 200\n  )\n)\n\npred[, ck50 := ck / 50]\n\npred[, p_hat := \n  predict(\n    fit_glm, \n    newdata = pred, \n    type = \"response\"\n  )\n]\n\nggplot() +\n  geom_line(\n    data = pred,\n    aes(x = ck, y = p_hat),\n    linewidth = 1\n  ) +\n  geom_point(\n    data = heart_prop,\n    aes(x = ck, y = proportion, size = n)\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"CK level\",\n    y = \"Probability of heart attack\",\n    size = \"Number of patients\"\n  )","id":35,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"download.file(\n  \"https://teaching.rdatagen.net/lecture06/data/heart.csv\",\n  \"heart.csv\"\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"setup","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\nlibrary(broom)\nlibrary(gt)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 500\n\ndd <- data.table(\n  age = runif(n, 20, 80)\n)\n\n# to be explained later ...\ndd[, p := 1 / (1 + exp(-(-5.5 + 0.075 * age)))]          \n\ndd[, hypertension := rbinom(.N, size = 1, prob = p)]\ndd","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  scale_y_continuous(\n    breaks = c(0, 1),\n    labels = c(\"No\", \"Yes\")\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome\"\n  )","id":4,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  scale_y_continuous(\n    breaks = c(0, 1),\n    labels = c(\"No\", \"Yes\")\n  ) +\n  geom_line(\n    aes(y = p),\n    data = dd[order(age)],\n    linewidth = 1\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome / probability\"\n  )","id":5,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_linear <- lm(hypertension ~ age, data = dd)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, p_linear := predict(fit_linear)]\n\nggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  geom_line(\n    aes(y = p),\n    data = dd[order(age)],\n    linewidth = 1\n  ) +\n  geom_line(\n    aes(y = p_linear),\n    data = dd[order(age)],\n    linewidth = 1,\n    linetype = 2,\n    color = \"darkred\"\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome / probability\"\n  )","id":7,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_logistic <- glm(\n  hypertension ~ age, \n  family = binomial, \n  data = dd\n)\n\ntidy(fit_logistic)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, p_logistic := \n  predict(fit_logistic, type = \"response\")\n]\n\nggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  geom_line(\n    aes(y = p),\n    data = dd[order(age)],\n    linewidth = 1\n  ) +\n  geom_line(\n    aes(y = p_logistic),\n    data = dd[order(age)],\n    linewidth = 1,\n    linetype = 2,\n    color = \"darkred\"\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome / probability\"\n  )","id":9,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tidy(fit_logistic, exponentiate = TRUE)","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"beta_1 <- coef(fit_logistic)[\"age\"]\n\nbeta_1\nexp(beta_1)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tt <- tidy(fit_logistic)\n\nb <- tt$estimate[tt$term == \"age\"]\nse <- tt$std.error[tt$term == \"age\"]\n\nci_log <- c(\n  b - 1.96 * se,\n  b + 1.96 * se\n)\n\nci_log","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"exp(ci_log)","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"tidy(\n  fit_logistic,\n  exponentiate = TRUE,\n  conf.int = TRUE\n)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"b0 <- coef(fit_logistic)[[\"(Intercept)\"]]\nb1 <- coef(fit_logistic)[[\"age\"]]\n\n1 / (1 + exp(-(b0 + b1 * 50)))","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"newdata <- data.table(\n  age = c(30, 40, 50, 60, 70)\n)\n\nnewdata[, p_hat :=\n  predict(\n    fit_logistic,\n    newdata = newdata,\n    type = \"response\"\n  )\n]\n\nnewdata","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pred <- data.table(\n  age = seq(20, 80, by = 0.1)\n)\n\npred[, p_hat :=\n  predict(\n    fit_logistic,\n    newdata = pred,\n    type = \"response\"\n  )\n]\n\nggplot(dd, aes(x = age, y = hypertension)) +\n  geom_point(alpha = 0.35, size = 0.5) +\n  geom_line(\n    data = pred,\n    aes(x = age, y = p_hat),\n    linewidth = 1\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Hypertension outcome / probability\"\n  )","id":17,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 1000\n\ndd2 <- data.table(\n  age = runif(n, 30, 80)\n)\n\n# older people tend to be less physically active\ndd2[, activity :=\n  8 - 0.06 * age + rnorm(.N, 0, 1)\n]\n\n# hypertension depends on both age and physical activity\ndd2[, p :=\n  1 / (1 + exp(-(-4 + 0.06 * age - 0.35 * activity)))\n]\n\ndd2[, hypertension :=\n  rbinom(.N, size = 1, prob = p)\n]","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd2, aes(x = age, y = activity)) +\n  geom_point(alpha = 0.35, size = 0.7) +\n  geom_smooth(\n    method = \"lm\", \n    formula = y ~ x, \n    se = FALSE\n  ) +\n  labs(\n    x = \"Age\",\n    y = \"Physical activity\"\n  )","id":19,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_crude <- glm(\n  hypertension ~ activity,\n  family = binomial,\n  data = dd2\n)\n\ntidy(\n  fit_crude,\n  exponentiate = TRUE,\n  conf.int = TRUE\n)","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_adjusted <- glm(\n  hypertension ~ activity + age,\n  family = binomial,\n  data = dd2\n)\n\ntidy(\n  fit_adjusted,\n  exponentiate = TRUE,\n  conf.int = TRUE\n)","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pred_adj <- CJ(\n  age = c(40, 55, 70),\n  activity = seq(2, 7, by = 0.1)\n)\n\npred_adj[, p_hat :=\n  predict(\n    fit_adjusted,\n    newdata = pred_adj,\n    type = \"response\"\n  )\n]\n\npred_adj[, age_group := factor(\n  age,\n  levels = c(40, 55, 70),\n  labels = c(\"Age 40\", \"Age 55\", \"Age 70\")\n)]","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  pred_adj,\n  aes(\n    x = activity,\n    y = p_hat,\n    color = age_group\n  )\n) +\n  geom_line(linewidth = 1) +\n  labs(\n    x = \"Physical activity\",\n    y = \"Predicted probability of hypertension\",\n    color = NULL\n  ) +\n  guides(color = guide_legend(reverse = TRUE))","id":23,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd2[, p_hat :=\n  predict(\n    fit_adjusted,\n    type = \"response\"\n  )\n]\n\ndd2[, risk_group :=\n  cut(\n    p_hat,\n    breaks = quantile(\n      p_hat,\n      probs = seq(0, 1, by = 0.1)\n    ),\n    include.lowest = TRUE\n  )\n]","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"gof <- dd2[,\n  .(\n    predicted = mean(p_hat),\n    observed = mean(hypertension)\n  ),\n  by = risk_group\n]","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"lims <- range(c(gof$observed, gof$predicted))\n\nggplot(gof, aes(x = predicted, y = observed)) +\n  geom_point(size = 2) +\n  geom_abline(\n    intercept = 0,\n    slope = 1,\n    linetype = 2,\n    linewidth = 0.2\n  ) +\n  coord_equal(xlim = lims, ylim = lims) +\n  labs(\n    x = \"Mean predicted probability\",\n    y = \"Observed proportion with hypertension\"\n  )","id":26,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"summary(fit_adjusted)","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_null <- glm(\n  hypertension ~ 1,\n  data = dd2,\n  family = binomial\n)\n\ndeviance(fit_null)\ndeviance(fit_adjusted)","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"anova(fit_null, fit_adjusted, test = \"Chisq\")","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"heart <- fread(\"heart.csv\")\nheart[, ck50 := ck / 50]\nheart","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"heart_prop <- heart[,\n  .(proportion = mean(heart_attack), n = .N),\n  by = ck\n]\n\nggplot() +\n  geom_point(\n    data = heart_prop,\n    aes(x = ck, y = proportion, size = n)\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"CK level\",\n    y = \"Probability of heart attack\",\n    size = \"Number of patients\"\n  )","id":31,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_glm <- glm(\n  heart_attack ~ ck50, \n  family = binomial, \n  data = heart\n)\n\ntidy(fit_glm, exponentiate = TRUE, conf.int = TRUE)","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"summary(fit_glm)","id":33,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"pred <- data.table(\n  ck = seq(\n    min(heart$ck), \n    max(heart$ck),\n    length.out = 200\n  )\n)\n\npred[, ck50 := ck / 50]\n\npred[, p_hat := \n  predict(\n    fit_glm, \n    newdata = pred, \n    type = \"response\"\n  )\n]\n\nggplot() +\n  geom_line(\n    data = pred,\n    aes(x = ck, y = p_hat),\n    linewidth = 1\n  ) +\n  geom_point(\n    data = heart_prop,\n    aes(x = ck, y = proportion, size = n)\n  ) +\n  scale_y_continuous(\n    breaks = seq(0, 1, by = 0.2)\n  ) +\n  labs(\n    x = \"CK level\",\n    y = \"Probability of heart attack\",\n    size = \"Number of patients\"\n  )","id":34,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2002,8 +2037,8 @@ E(Y \mid X=x) = \beta_0 + \beta_1 x\]</span></p>
 </ul>
 <p>Can we use the same regression framework when the outcome takes only two possible values?</p>
 </section>
-<section id="a-simulated-population" class="level2">
-<h2 class="anchored" data-anchor-id="a-simulated-population">A simulated population</h2>
+<section id="simulating-a-sample" class="level2">
+<h2 class="anchored" data-anchor-id="simulating-a-sample">Simulating a sample</h2>
 <p>Suppose we are interested in the relationship between <strong>age and hypertension</strong>.</p>
 <p>For each person, define</p>
 <p><span class="math display">\[\large
@@ -2012,18 +2047,16 @@ Y =
 1 &amp; \text{if the person has hypertension} \\
 0 &amp; \text{if the person does not have hypertension}
 \end{cases}\]</span></p>
-<section id="lets-simulate-a-population-in-which-the-probability-of-hypertension-increases-with-age" class="level3">
-<h3 class="anchored" data-anchor-id="lets-simulate-a-population-in-which-the-probability-of-hypertension-increases-with-age">Let’s simulate a population in which the probability of hypertension increases with age</h3>
+<p>Let’s simulate a sample from a population in which the probability of hypertension increases with age</p>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>We know the probability used to generate each person’s outcome because we created the population ourselves.</p>
+<p>Because we specified the population model ourselves, we know the probability used to generate each person’s outcome.</p>
 <div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Each observed outcome is either <strong>0 or 1</strong>. But our scientific question is not really whether a particular individual has hypertension. Instead, we want to know:</p>
 <blockquote class="blockquote">
 <p><strong>How does the probability of hypertension change with age?</strong></p>
 </blockquote>
-</section>
 </section>
 <section id="the-mean-of-a-binary-outcome-is-a-probability" class="level2">
 <h2 class="anchored" data-anchor-id="the-mean-of-a-binary-outcome-is-a-probability">The mean of a binary outcome is a probability</h2>
@@ -2055,14 +2088,14 @@ P(Y=1 \mid X=x)\]</span></p>
 <section id="can-we-use-linear-regression" class="level2">
 <h2 class="anchored" data-anchor-id="can-we-use-linear-regression">Can we use linear regression?</h2>
 <p>We want to model the probability of hypertension as a function of age.</p>
-<p>We already know how to model a conditional mean. Why not just use linear regression?</p>
+<p>We already know how to model a conditional mean. Why not just use linear regression to estimate this model:</p>
+<p><span class="math display">\[
+\large
+E(Y \mid \text{age}) = \hat{\beta}_0 + \hat{\beta}_1 \text{age}
+\]</span></p>
 <div id="qwebr-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The fitted model is</p>
-<p><span class="math display">\[\large
-E(Y \mid \text{age}) = \hat{\beta}_0 + \hat{\beta}_1 \text{age}\]</span></p>
-<p>Since <span class="math inline">\(E(Y \mid \text{age}) = P(Y=1 \mid \text{age})\)</span>, the fitted values from this model are estimates of the probability of hypertension.</p>
-<p>Let’s compare the fitted linear model with the true probabilities we used to generate the data.</p>
+<p>Since <span class="math inline">\(E(Y \mid \text{age}) = P(Y=1 \mid \text{age})\)</span>, the fitted values from this model are estimates of the probability of hypertension. <em>Let’s compare the fitted linear model with the true probabilities we used to generate the data.</em></p>
 <div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The linear model captures the general idea that hypertension becomes more common with age, but it does not capture the shape of the relationship very well.</p>
@@ -2222,23 +2255,19 @@ p
 <p>You do not need to reproduce this algebra. The important point is that the probability curve follows directly from the linear model for the log odds.</p>
 </blockquote>
 <p><strong>This is where the probability statement in our simulation came from</strong>:</p>
-<div id="qwebr-insertion-location-8"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dd[, p <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(<span class="sc">-</span><span class="fl">5.5</span> <span class="sc">+</span> <span class="fl">0.075</span> <span class="sc">*</span> age)))]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <p>where <span class="math inline">\(\beta_0 = -5.5\)</span> and <span class="math inline">\(\beta_1 = 0.075\)</span>.</p>
 </section>
 <section id="fitting-the-logistic-regression-model" class="level2">
 <h2 class="anchored" data-anchor-id="fitting-the-logistic-regression-model">Fitting the logistic regression model</h2>
 <p>We can use the <code>glm()</code> function in <em>R</em> to estimate the logistic regression model using our simulated data.</p>
-<div id="qwebr-insertion-location-9"></div>
+<div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Recall that the population values we used to generate the data were</p>
-<p><span class="math display">\[\large
-\beta_0 = -5.5
-\qquad\text{and}\qquad
-\beta_1 = 0.075\]</span></p>
-<p>Our estimates will not be exactly equal to these values because we are estimating them from a random sample.</p>
+<p>Our estimates will not be exactly equal to the true values (<span class="math inline">\(\beta_0 = -5.5\)</span> and <span class="math inline">\(\beta_1 = 0.075\)</span>) because we are estimating them from a random sample.</p>
 <p>We can obtain the fitted values on the probability scale and compare them with the true population probabilities.</p>
-<div id="qwebr-insertion-location-10"></div>
+<div id="qwebr-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The fitted logistic regression model recovers the underlying probability relationship quite well.</p>
 </section>
@@ -2280,6 +2309,10 @@ p
 {\exp(\beta_0+\beta_1x)}\\
 \\
 &amp;=
+\frac{\exp(\beta_0)\exp(\beta_1x)\exp(\beta_1)}
+{\exp(\beta_0)\exp(\beta_1x)}\\
+\\
+&amp;=
 \exp(\beta_1)
 \end{aligned}\]</span></p>
 <blockquote class="blockquote">
@@ -2288,17 +2321,17 @@ p
 <p>In our population,</p>
 <p><span class="math display">\[\large
 \exp(0.075) = 1.078\]</span></p>
-<p>So each additional year of age multiplies the odds of hypertension by about 1.08.</p>
-<p>Equivalently, each additional year of age is associated with about an <strong>8% increase in the odds of hypertension</strong>.</p>
+<p>So each additional year of age multiplies the odds of hypertension by about 1.078.</p>
+<p>Equivalently, each additional year of age is associated with about an <strong>7.8% increase in the odds of hypertension</strong>.</p>
 <section id="estimated-odds-ratio" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-odds-ratio">Estimated odds ratio</h3>
 <p>Our sample will not give us exactly the population value of 1.078.</p>
 <p>We can exponentiate the coefficients directly when using <code>tidy()</code>:</p>
-<div id="qwebr-insertion-location-11"></div>
+<div id="qwebr-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The exponentiated coefficient for age is our estimated <strong>odds ratio</strong>.</p>
 <p>Exponentiating the coefficient directly gives the same estimate:</p>
-<div id="qwebr-insertion-location-12"></div>
+<div id="qwebr-insertion-location-11"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 </section>
@@ -2306,27 +2339,536 @@ p
 <h2 class="anchored" data-anchor-id="what-does-an-odds-ratio-tell-us-about-probability">What does an odds ratio tell us about probability?</h2>
 <p>In our population model, each one-year increase in age has the same effect on the <strong>log odds</strong> of hypertension:</p>
 <p><span class="math display">\[\large
-\beta_1 = 0.075\]</span></p>
-<p>and therefore the same odds ratio:</p>
+\beta_1 = 0.075
+\]</span></p>
+<p>For a five-year increase in age, the change in log odds is therefore</p>
 <p><span class="math display">\[\large
-\text{OR} = \exp(0.075) = 1.078\]</span></p>
-<p>But does this mean that the <strong>probability</strong> of hypertension increases by the same amount at every age?</p>
-<p>For a binary outcome, we often use the term <strong>risk</strong> to refer to the probability that the outcome occurs.</p>
-<p>Let’s compare the probability of hypertension at ages 30, 50, and 70 with the probability one year later:</p>
-<div id="qwebr-insertion-location-13"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p><strong>The different measures tell us different things:</strong></p>
+5(0.075) = 0.375
+\]</span></p>
+<p>and the corresponding odds ratio is</p>
+<p><span class="math display">\[\large
+\text{OR} = \exp(0.375) = 1.455.
+\]</span></p>
+<p>But does this mean that the <strong>probability</strong> of hypertension increases by the same amount every five years?</p>
+<p>For a binary outcome, we often use the term <strong>risk</strong> to refer to the probability that the outcome occurs. There are several ways we might describe how the probability of an outcome changes, or how the corresponding odds change:</p>
 <ul>
-<li><strong>Risk difference (RD):</strong> the absolute change in probability</li>
-<li><strong>Risk ratio (RR):</strong> the relative change in probability</li>
-<li><strong>Odds ratio (OR):</strong> the relative change in odds</li>
-<li><strong>Log odds ratio:</strong> the absolute change in log odds</li>
+<li><p><strong>Risk difference (RD):</strong> the absolute change in probability, <span class="math inline">\(RD = p_2 - p_1\)</span></p></li>
+<li><p><strong>Risk ratio (RR):</strong> the ratio of probabilities, <span class="math inline">\(RR = \frac{p_2}{p_1}\)</span></p></li>
+<li><p><strong>Odds ratio (OR):</strong> the ratio of odds, <span class="math inline">\(OR = \frac{p_2/(1-p_2)}{p_1/(1-p_1)}\)</span></p></li>
+<li><p><strong>Log odds ratio:</strong> the absolute change in log odds, <span class="math inline">\(\log(OR) = \log\left[\frac{p_2/(1-p_2)}{p_1/(1-p_1)}\right]\)</span></p></li>
 </ul>
-<p>The <strong>risk difference</strong> and <strong>risk ratio</strong> change depending on where we are on the probability curve.</p>
-<p>But the <strong>odds ratio</strong> and <strong>log odds ratio</strong> remain constant.</p>
+<section id="five-year-changes-at-different-ages-on-three-different-scales" class="level3">
+<h3 class="anchored" data-anchor-id="five-year-changes-at-different-ages-on-three-different-scales">Five-year changes at different ages on three different scales</h3>
+<p><img src="images/rdrror.png" class="img-fluid"></p>
+<p>Each black horizontal segment represents the same <strong>five-year increase in age</strong>. Compare the resulting red <strong>vertical distances</strong> across ages.</p>
+<ul>
+<li>On the <strong>probability scale</strong>, the vertical distance gets larger as age increases: the <strong>risk difference increases</strong>.</li>
+<li>On the <strong>log-probability scale</strong>, the vertical distance gets smaller: <strong>log(RR) decreases</strong>, and therefore <strong>the risk ratio decreases</strong>. (Note: <span class="math inline">\(\log\left(\frac{p_2}{p_1}\right) = \log(p_2) - \log(p_1)\)</span>.)</li>
+<li>On the <strong>log-odds scale</strong>, the vertical distance remains constant: <strong>log(OR)</strong> remains constant, and therefore <strong>the odds ratio remains constant</strong>.</li>
+</ul>
+<p>We can see the same pattern numerically:</p>
+<div id="gjqmhvtauh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gjqmhvtauh table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#gjqmhvtauh thead, #gjqmhvtauh tbody, #gjqmhvtauh tfoot, #gjqmhvtauh tr, #gjqmhvtauh td, #gjqmhvtauh th {
+  border-style: none;
+}
+
+#gjqmhvtauh p {
+  margin: 0;
+  padding: 0;
+}
+
+#gjqmhvtauh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#gjqmhvtauh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gjqmhvtauh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gjqmhvtauh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gjqmhvtauh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gjqmhvtauh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gjqmhvtauh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gjqmhvtauh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gjqmhvtauh .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#gjqmhvtauh .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#gjqmhvtauh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gjqmhvtauh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gjqmhvtauh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gjqmhvtauh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gjqmhvtauh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gjqmhvtauh .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#gjqmhvtauh .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#gjqmhvtauh .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#gjqmhvtauh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gjqmhvtauh .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#gjqmhvtauh .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gjqmhvtauh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gjqmhvtauh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gjqmhvtauh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gjqmhvtauh .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gjqmhvtauh .gt_left {
+  text-align: left;
+}
+
+#gjqmhvtauh .gt_center {
+  text-align: center;
+}
+
+#gjqmhvtauh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gjqmhvtauh .gt_font_normal {
+  font-weight: normal;
+}
+
+#gjqmhvtauh .gt_font_bold {
+  font-weight: bold;
+}
+
+#gjqmhvtauh .gt_font_italic {
+  font-style: italic;
+}
+
+#gjqmhvtauh .gt_super {
+  font-size: 65%;
+}
+
+#gjqmhvtauh .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#gjqmhvtauh .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#gjqmhvtauh .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#gjqmhvtauh .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#gjqmhvtauh .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#gjqmhvtauh .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#gjqmhvtauh .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#gjqmhvtauh .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#gjqmhvtauh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="age" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Age</th>
+<th id="p_age" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">P(age)</th>
+<th id="p_next" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">P(age + 5)</th>
+<th id="RD" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">RD</th>
+<th id="RR" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">RR</th>
+<th id="log_RR" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Log RR</th>
+<th id="OR" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">OR</th>
+<th id="log_OR" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Log OR</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="age">30</td>
+<td class="gt_row gt_right" headers="p_age">0.037</td>
+<td class="gt_row gt_right" headers="p_next">0.053</td>
+<td class="gt_row gt_right" headers="RD">0.016</td>
+<td class="gt_row gt_right" headers="RR">1.431</td>
+<td class="gt_row gt_right" headers="log_RR">0.358</td>
+<td class="gt_row gt_right" headers="OR">1.455</td>
+<td class="gt_row gt_right" headers="log_OR">0.375</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="age">50</td>
+<td class="gt_row gt_right" headers="p_age">0.148</td>
+<td class="gt_row gt_right" headers="p_next">0.202</td>
+<td class="gt_row gt_right" headers="RD">0.054</td>
+<td class="gt_row gt_right" headers="RR">1.363</td>
+<td class="gt_row gt_right" headers="log_RR">0.310</td>
+<td class="gt_row gt_right" headers="OR">1.455</td>
+<td class="gt_row gt_right" headers="log_OR">0.375</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="age">70</td>
+<td class="gt_row gt_right" headers="p_age">0.438</td>
+<td class="gt_row gt_right" headers="p_next">0.531</td>
+<td class="gt_row gt_right" headers="RD">0.093</td>
+<td class="gt_row gt_right" headers="RR">1.213</td>
+<td class="gt_row gt_right" headers="log_RR">0.193</td>
+<td class="gt_row gt_right" headers="OR">1.455</td>
+<td class="gt_row gt_right" headers="log_OR">0.375</td>
+</tr>
+</tbody>
+</table>
+
+</div>
 <blockquote class="blockquote">
 <p><strong>Logistic regression assumes a constant effect on the log-odds scale — and therefore a constant odds ratio — not a constant risk difference or risk ratio.</strong></p>
 </blockquote>
+</section>
 </section>
 <section id="uncertainty-in-the-estimated-odds-ratio" class="level2">
 <h2 class="anchored" data-anchor-id="uncertainty-in-the-estimated-odds-ratio">Uncertainty in the estimated odds ratio</h2>
@@ -2335,17 +2877,17 @@ p
 <p><span class="math display">\[\large
 \hat{\beta}_1 \pm 1.96 \times SE(\hat{\beta}_1)\]</span></p>
 <p>Let’s calculate this interval for the age coefficient.</p>
-<div id="qwebr-insertion-location-14"></div>
+<div id="qwebr-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>This confidence interval is on the <strong>log-odds scale</strong>.</p>
 <p>Since exponentiating <span class="math inline">\(\hat{\beta}_1\)</span> gives us the odds ratio, we can exponentiate both endpoints to get a confidence interval for the odds ratio:</p>
-<div id="qwebr-insertion-location-15"></div>
+<div id="qwebr-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>So the same uncertainty can be expressed either on the log-odds scale or on the odds-ratio scale.</p>
 <section id="confidence-intervals-using-tidy" class="level3">
 <h3 class="anchored" data-anchor-id="confidence-intervals-using-tidy">Confidence intervals using <code>tidy()</code></h3>
 <p>In practice, we can ask <code>tidy()</code> to report the odds ratio and its confidence interval directly:</p>
-<div id="qwebr-insertion-location-16"></div>
+<div id="qwebr-insertion-location-14"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p>For logistic regression, tidy() obtains confidence intervals using a likelihood-based method, which can differ slightly from the method based on the estimated coefficient and standard error.</p>
@@ -2379,32 +2921,26 @@ p =
 \frac{1}
 {1+\exp[-(\beta_0+\beta_1X)]}\]</span></p>
 <p>We can therefore substitute our estimated coefficients and an age of 50 into this expression.</p>
-<div id="qwebr-insertion-location-17"></div>
+<div id="qwebr-insertion-location-15"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>This gives us the <strong>estimated probability of hypertension at age 50</strong>.</p>
 <section id="letting-r-do-the-transformation" class="level3">
 <h3 class="anchored" data-anchor-id="letting-r-do-the-transformation">Letting R do the transformation</h3>
-<p>We usually don’t need to perform this calculation ourselves.</p>
-<div id="qwebr-insertion-location-18"></div>
+<p>We usually don’t need to perform this calculation ourselves. We can ask R to calculate predicted probabilities for any values of age that interest us.</p>
+<div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The argument <code>type = "response"</code> asks <strong>R</strong> to return the prediction on the <strong>probability scale</strong>.</p>
-<p>Without <code>type = "response"</code>, <code>predict()</code> returns the prediction on the scale of the linear predictor:</p>
+<p>The argument <code>type = "response"</code> asks <strong>R</strong> to return predictions on the <strong>probability scale</strong>.</p>
+<p>Notice that the predicted probability at age 50 is the same value we calculated by hand above.</p>
+<p>Without <code>type = "response"</code>, <code>predict()</code> returns predictions on the scale of the linear predictor:</p>
 <p><span class="math display">\[\large
-\hat{\beta}_0+\hat{\beta}_1X\]</span></p>
-<p>which, for logistic regression, is the log-odds scale.</p>
-</section>
-<section id="probabilities-at-different-ages" class="level3">
-<h3 class="anchored" data-anchor-id="probabilities-at-different-ages">Probabilities at different ages</h3>
-<p>We can calculate predicted probabilities for any values of age that interest us.</p>
-<div id="qwebr-insertion-location-19"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Notice that the probability does not increase by the same amount for each 10-year increase in age.</p>
-<p>The logistic regression model is linear on the <strong>log-odds scale</strong>, not on the probability scale.</p>
+\hat{\beta}_0+\hat{\beta}_1X
+\]</span></p>
+<p>which, for logistic regression, is the <strong>log-odds scale</strong>.</p>
 </section>
 <section id="the-fitted-probability-curve" class="level3">
 <h3 class="anchored" data-anchor-id="the-fitted-probability-curve">The fitted probability curve</h3>
 <p>Rather than calculating probabilities at just a few selected ages, we can calculate them across the full range of ages.</p>
-<div id="qwebr-insertion-location-20"></div>
+<div id="qwebr-insertion-location-17"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The fitted logistic regression model gives us an estimated probability of hypertension at every age while ensuring that those probabilities remain between 0 and 1.</p>
 <blockquote class="blockquote">
@@ -2414,18 +2950,19 @@ p =
 </section>
 <section id="multiple-logistic-regression-and-adjustment" class="level2">
 <h2 class="anchored" data-anchor-id="multiple-logistic-regression-and-adjustment">Multiple logistic regression and adjustment</h2>
-<p>Just as with linear regression, logistic regression can include more than one predictor:</p>
-<p><span class="math display">\[\large
-\log\left(\frac{p}{1-p}\right)
-=
-\beta_0+\beta_1X_1+\beta_2X_2\]</span></p>
-<p>The interpretation of each coefficient is <strong>conditional on the other variables in the model</strong>.</p>
+<p>Just as with linear regression, we may want to account for other variables when describing a relationship.</p>
 <p>For example, suppose we are interested in the association between <strong>physical activity</strong> and hypertension, but age is associated with both:</p>
 <ul>
 <li>older people tend to be less physically active</li>
 <li>older people are more likely to have hypertension</li>
 </ul>
 <p>Age is a potential <strong>confounder</strong>: it is associated with physical activity, predicts hypertension, and is not a consequence of physical activity.</p>
+<p>The model we would fit is</p>
+<p><span class="math display">\[\large
+\log\left(\frac{p}{1-p}\right)
+=
+\beta_0+\beta_1 physical\_activity+\beta_2 age\]</span></p>
+<p>The interpretation of each coefficient is <strong>conditional on the other variables in the model</strong>.</p>
 <p>As with linear regression, adjustment allows us to compare people who differ in the predictor of interest but are similar with respect to the confounder.</p>
 <blockquote class="blockquote">
 <p><strong>The purpose of adjustment has not changed. What has changed is how we model the outcome.</strong></p>
@@ -2433,11 +2970,11 @@ p =
 </section>
 <section id="a-simulated-example-of-confounding" class="level2">
 <h2 class="anchored" data-anchor-id="a-simulated-example-of-confounding">A simulated example of confounding</h2>
-<p>Let’s simulate a population in which age is associated with both physical activity and hypertension.</p>
-<div id="qwebr-insertion-location-21"></div>
+<p>Let’s simulate a sample from a population in which age is associated with both physical activity and hypertension.</p>
+<div id="qwebr-insertion-location-18"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>First, let’s look at the relationship between age and physical activity.</p>
-<div id="qwebr-insertion-location-22"></div>
+<div id="qwebr-insertion-location-19"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Older people tend to be less physically active.</p>
 <p>But age also directly affects the probability of hypertension in our simulated population.</p>
@@ -2445,14 +2982,14 @@ p =
 <section id="ignoring-the-confounder" class="level3">
 <h3 class="anchored" data-anchor-id="ignoring-the-confounder">Ignoring the confounder</h3>
 <p>First, fit a logistic regression model using physical activity alone:</p>
-<div id="qwebr-insertion-location-23"></div>
+<div id="qwebr-insertion-location-20"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>This estimates the association between physical activity and hypertension <strong>without accounting for age</strong>.</p>
 </section>
 <section id="adjusting-for-age" class="level3">
 <h3 class="anchored" data-anchor-id="adjusting-for-age">Adjusting for age</h3>
 <p>Now include age in the model:</p>
-<div id="qwebr-insertion-location-24"></div>
+<div id="qwebr-insertion-location-21"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The coefficient for physical activity now describes its association with the odds of hypertension <strong>holding age constant</strong>.</p>
 <p>Because we generated the population ourselves, we know the true conditional effect of physical activity:</p>
@@ -2473,9 +3010,9 @@ OR_{\text{activity}}
 <h3 class="anchored" data-anchor-id="seeing-adjustment-on-the-probability-scale">Seeing adjustment on the probability scale</h3>
 <p>We can make the idea of “holding age constant” more concrete by looking at predicted probabilities.</p>
 <p>Let’s estimate the relationship between physical activity and hypertension at several fixed ages.</p>
-<div id="qwebr-insertion-location-25"></div>
+<div id="qwebr-insertion-location-22"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-26"></div>
+<div id="qwebr-insertion-location-23"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Each curve shows the estimated relationship between physical activity and hypertension <strong>at a fixed age</strong>.</p>
 <p>At any given age, higher physical activity is associated with a lower probability of hypertension.</p>
@@ -2487,53 +3024,78 @@ OR_{\text{activity}}
 </section>
 <section id="checking-the-fit-of-the-model" class="level2">
 <h2 class="anchored" data-anchor-id="checking-the-fit-of-the-model">Checking the fit of the model</h2>
-<p>Our fitted model gives us a smooth relationship between the predictors and the probability of hypertension.</p>
-<p>But the curves show us <strong>what the model predicts</strong>. We should also ask whether those predictions are consistent with what we actually observe in the data.</p>
-<p>One simple way to do this is to group people with similar predicted probabilities and compare:</p>
+<p>Our fitted model gives each person a <strong>predicted probability of hypertension</strong> based on their age and physical activity.</p>
+<p>But these probabilities are <strong>what the model predicts</strong>. We should also ask whether they are reasonably consistent with what we actually observe in the data.</p>
+<p>One simple way to do this is to:</p>
+<ol type="1">
+<li>calculate the predicted probability for each person</li>
+<li>order people by their predicted probabilities and divide them into <strong>10 groups of roughly equal size</strong></li>
+<li>within each group, compare:
 <ul>
-<li>the <strong>average probability predicted by the model</strong></li>
+<li>the <strong>average predicted probability</strong></li>
 <li>the <strong>proportion who actually had hypertension</strong></li>
-</ul>
-<div id="qwebr-insertion-location-27"></div>
+</ul></li>
+</ol>
+<p>First, we calculate each person’s predicted probability and create the 10 groups:</p>
+<div id="qwebr-insertion-location-24"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-28"></div>
+<p>Then, within each group, we calculate the average predicted probability and the observed proportion with hypertension:</p>
+<div id="qwebr-insertion-location-25"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>If the model describes the data well, the observed proportions should be reasonably close to the predicted probabilities.</p>
-<p>For example, among people for whom the model predicts probabilities around 0.20, we would expect roughly 20% to have hypertension.</p>
+<p>Now we can compare the <strong>predicted</strong> and <strong>observed</strong> probabilities for the 10 groups:</p>
+<div id="qwebr-insertion-location-26"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Each point represents one of the 10 groups. The <strong>x-coordinate</strong> is the group’s average predicted probability, and the <strong>y-coordinate</strong> is the proportion of people in that group who actually had hypertension.</p>
+<p>If the model describes the data well, the points should be reasonably close to the dashed line, where the observed and predicted probabilities are equal.</p>
+<p>For example, if a group has an <strong>average predicted probability of 0.20</strong>, we would expect roughly <strong>20% of the people in that group</strong> to have hypertension.</p>
 <blockquote class="blockquote">
 <p><strong>A fitted model should not only produce sensible predictions — those predictions should also be reasonably consistent with the observed data.</strong></p>
 </blockquote>
-<section id="deviance" class="level3">
-<h3 class="anchored" data-anchor-id="deviance">Deviance</h3>
-<p>Another measure of model fit that appears in logistic regression output is the <strong>deviance</strong>.</p>
-<p>Deviance measures how far the fitted model is from a hypothetical model that fits the observed data as closely as possible. For the same data, <strong>smaller deviance indicates better fit</strong>.</p>
-<p>In the <code>glm()</code> output, you will see two deviances:</p>
-<ul>
-<li><strong>Null deviance:</strong> deviance for a model containing only an intercept</li>
-<li><strong>Residual deviance:</strong> deviance after including the predictors in our model</li>
-</ul>
-<div id="qwebr-insertion-location-29"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The reduction from the null deviance to the residual deviance tells us how much the fit improves when we include our predictors.</p>
+<section id="does-adding-age-and-physical-activity-improve-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="does-adding-age-and-physical-activity-improve-the-model">Does adding age and physical activity improve the model?</h3>
+<p>Consider two models for hypertension.</p>
+<p>The simplest possible model ignores age and physical activity:</p>
+<p><span class="math display">\[\large
+\log\left(\frac{p}{1-p}\right) = \beta_0
+\]</span></p>
+<p>This model gives <strong>everyone the same predicted probability of hypertension</strong>, regardless of their characteristics.</p>
+<p>Our fitted model allows that probability to vary with age and physical activity:</p>
+<p><span class="math display">\[\large
+\log\left(\frac{p}{1-p}\right)
+=
+\beta_0+\beta_1 physical\_activity+\beta_2 age\]</span></p>
+<p>The more complicated model will almost certainly fit our observed data somewhat better.</p>
 <blockquote class="blockquote">
-<p>Here, the deviance decreases from 827.9 for the intercept-only model to 668.7 after including physical activity and age. This tells us that including these predictors improves the fit of the model. The residual deviance by itself, however, does not tell us whether the model provides an adequate description of the data.</p>
+<p><strong>But does it improve the fit more than we would expect from ordinary sampling variation if age and physical activity actually provided no additional information?</strong></p>
 </blockquote>
 </section>
-<section id="is-the-improvement-larger-than-we-would-expect-by-chance" class="level3">
-<h3 class="anchored" data-anchor-id="is-the-improvement-larger-than-we-would-expect-by-chance">Is the improvement larger than we would expect by chance?</h3>
-<p>The reduction in deviance can be used to formally compare <strong>nested models</strong>.</p>
-<p>For our model,</p>
-<p><span class="math display">\[\large
-827.9 - 668.7 = 159.2\]</span></p>
-<p>Under the null hypothesis that the additional predictors do not improve the model, this difference is <strong><em>approximately chi-square distributed</em></strong>.</p>
-<div id="qwebr-insertion-location-30"></div>
+<section id="comparing-the-two-models" class="level3">
+<h3 class="anchored" data-anchor-id="comparing-the-two-models">Comparing the two models</h3>
+<p>Logistic regression uses a quantity called <strong>deviance</strong> to measure how well a model fits the observed outcomes.</p>
+<p>For models fit to the same data, <strong>smaller deviance indicates better fit</strong>.</p>
+<p>The <code>summary()</code> output for our fitted model will give us both deviances:</p>
+<ul>
+<li><strong>Null deviance</strong>: the deviance for an intercept-only model, which gives everyone the same predicted probability</li>
+<li><strong>Residual deviance</strong>: the deviance for our fitted model, which allows probability to vary with age and physical activity</li>
+</ul>
+<div id="qwebr-insertion-location-27"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>This is called a <strong>likelihood-ratio test</strong>.</p>
+<p>But we can also get the deviance directly from each model separately:</p>
+<div id="qwebr-insertion-location-28"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The deviance decreases from about <strong>827.9</strong> for the intercept-only model to <strong>668.7</strong> after including age and physical activity:</p>
+<p><span class="math display">\[\large
+827.9 - 668.7 = 159.2
+\]</span></p>
+<p>So the model with age and physical activity fits the observed data substantially better.</p>
+<p>But we still need to ask whether an improvement this large could reasonably arise from <strong>sampling variation</strong> if the additional predictors actually provided no information.</p>
+<div id="qwebr-insertion-location-29"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>This is a <strong>likelihood-ratio test</strong>.</p>
 <blockquote class="blockquote">
-<p><strong>The likelihood-ratio test asks whether adding the predictors improves model fit compared with the simpler model.</strong></p>
+<p><strong>The likelihood-ratio test asks whether the improvement in fit is larger than we would expect if the additional predictors did not actually improve the model.</strong></p>
 </blockquote>
-<p>For the comparison above, the very small p-value indicates that adding physical activity and age improves model fit beyond what we would expect if neither predictor were associated with the outcome.</p>
-<p>The residual deviance by itself, however, does <strong>not</strong> tell us whether the model provides an adequate description of the data.</p>
+<p>Here, the very small p-value provides strong evidence that including age and physical activity improves the model.</p>
 </section>
 </section>
 <section id="an-example-ck-and-heart-attack" class="level2">
@@ -2543,16 +3105,16 @@ OR_{\text{activity}}
 <blockquote class="blockquote">
 <p><strong>How is CK level associated with the probability that a patient has had a heart attack?</strong></p>
 </blockquote>
-<div id="qwebr-insertion-location-31"></div>
+<div id="qwebr-insertion-location-30"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Let’s first look at the observed proportion of patients who had a heart attack at each CK level.</p>
-<div id="qwebr-insertion-location-32"></div>
+<div id="qwebr-insertion-location-31"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The observed proportion with heart attack increases substantially with CK level.</p>
 <section id="fitting-the-logistic-regression-model-1" class="level3">
 <h3 class="anchored" data-anchor-id="fitting-the-logistic-regression-model-1">Fitting the logistic regression model</h3>
 <p>We can model the probability of heart attack as a function of CK using logistic regression:</p>
-<div id="qwebr-insertion-location-33"></div>
+<div id="qwebr-insertion-location-32"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Because CK is expressed in units of 50, the odds ratio for <code>ck50</code> compares patients whose CK levels differ by 50 units.</p>
 <p>The estimated odds ratio is</p>
@@ -2562,14 +3124,14 @@ OR = 5.78\]</span></p>
 <blockquote class="blockquote">
 <p><strong>For every 50-unit increase in CK, the estimated odds of heart attack are about 5.8 times as high (95% CI: 4.0 to 8.9).</strong></p>
 </blockquote>
-<div id="qwebr-insertion-location-34"></div>
+<div id="qwebr-insertion-location-33"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The reduction in deviance tells us that including CK substantially improves model fit compared with the intercept-only model. But it doesn’t show us how well the fitted probabilities describe the observed pattern. We can see that more directly by comparing the fitted model with the observed data.</p>
 </section>
 <section id="comparing-the-model-with-the-observed-data" class="level3">
 <h3 class="anchored" data-anchor-id="comparing-the-model-with-the-observed-data">Comparing the model with the observed data</h3>
 <p>We can compare the fitted probabilities with the proportions actually observed at each CK level.</p>
-<div id="qwebr-insertion-location-35"></div>
+<div id="qwebr-insertion-location-34"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The points show the <strong>observed proportion</strong> of patients who had a heart attack at each CK level. The curve shows the <strong>probability predicted by the logistic regression model</strong>.</p>
 <p>The model captures the strong increase in the probability of heart attack as CK increases and provides a reasonable description of the observed pattern.</p>

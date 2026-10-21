@@ -1990,14 +1990,14 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </section>
 <section id="comparing-more-than-two-groups" class="level2">
 <h2 class="anchored" data-anchor-id="comparing-more-than-two-groups">Comparing more than two groups</h2>
-<p>So far, we have considered comparisons between <strong>two population means</strong>.</p>
+<p>So far, we have considered comparisons between <strong>two group means</strong>.</p>
 <p>For example, we might ask whether mean blood pressure differs between two treatment groups:</p>
 <p><span class="math display">\[\large
 H_0: \mu_A = \mu_B\]</span></p>
-<p>But many studies involve more than two groups. Suppose instead that we have three treatment groups, and we want to compare their population means:</p>
+<p>But many studies involve more than two groups. Suppose instead that we have three treatment groups, and we want to compare their group means:</p>
 <p><span class="math display">\[\large \mu_A,\quad \mu_B,\quad \mu_C\]</span></p>
 <p><strong>How should we make this comparison?</strong></p>
-<p>Let’s start by considering what we might observe when the three population means are actually the same.</p>
+<p>Let’s start by considering what we might observe when the three group means are actually the same.</p>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-4"></div>
@@ -2005,8 +2005,8 @@ H_0: \mu_A = \mu_B\]</span></p>
 <section id="two-things-to-note" class="level3">
 <h3 class="anchored" data-anchor-id="two-things-to-note">Two things to note</h3>
 <ul>
-<li><p>Even when the population means are equal, the sample means will differ because of sampling variability.</p></li>
-<li><p>When the population means differ, the observed differences among the sample means reflect both the population differences and sampling variability.</p></li>
+<li><p>Even when the underlying group means are equal, the sample means will differ because of sampling variability.</p></li>
+<li><p>When the group means differ, the observed differences among the sample means reflect both the group differences and sampling variability.</p></li>
 </ul>
 <blockquote class="blockquote">
 <p><em>The question we need to answer is: are the observed differences among the sample means larger than we would expect from sampling variability alone?</em></p>
@@ -2015,20 +2015,20 @@ H_0: \mu_A = \mu_B\]</span></p>
 </section>
 <section id="analysis-of-variance" class="level2">
 <h2 class="anchored" data-anchor-id="analysis-of-variance">Analysis of variance</h2>
-<p><strong>Analysis of variance (ANOVA)</strong> provides a way to compare the means of more than two populations.</p>
+<p><strong>Analysis of variance (ANOVA)</strong> provides a way to compare the means of more than two groups.</p>
 <p>For three groups, we can express the question as:</p>
 <p><span class="math display">\[\large
 H_0:\mu_A=\mu_B=\mu_C\]</span></p>
 <p><span class="math display">\[\large
-H_A:\text{the population means are not all equal}\]</span></p>
+H_A:\text{the group means are not all equal}\]</span></p>
 <p>ANOVA compares two types of variability:</p>
 <ul>
 <li><strong>Within-group variability:</strong> How much do <u>individual observations</u> vary <em>within each group</em>?</li>
 <li><strong>Between-group variability:</strong> How much do the <u>group means</u> vary <em>from one another</em>?</li>
 </ul>
-<p>If the population means are equal, we still expect some variation among the sample means because of sampling variability.</p>
+<p>If the group means are equal, we still expect some variation among the sample means because of sampling variability.</p>
 <blockquote class="blockquote">
-<p>But if the sample means vary substantially <strong>relative to the variability within the groups</strong>, that suggests that the population means may not all be equal.</p>
+<p>But if the sample means vary substantially <strong>relative to the variability within the groups</strong>, that suggests that the group means may not all be equal.</p>
 </blockquote>
 <p>This leads to the <strong>F-statistic</strong>:</p>
 <p><span class="math display">\[\large
@@ -2047,14 +2047,14 @@ F \approx
 </ul>
 <p>Both can be measured using the same basic idea we use to calculate a variance: <strong>squared distances from a mean</strong>.</p>
 </section>
-<section id="suppose-the-population-means-are-equal" class="level3">
-<h3 class="anchored" data-anchor-id="suppose-the-population-means-are-equal">Suppose the population means are equal</h3>
+<section id="suppose-the-group-means-are-equal" class="level3">
+<h3 class="anchored" data-anchor-id="suppose-the-group-means-are-equal">Suppose the group means are equal</h3>
 <p>Under the null hypothesis,</p>
 <p><span class="math display">\[
 \large
 H_0:\mu_1=\mu_2=\cdots=\mu_k
 \]</span></p>
-<p>Classical ANOVA also assumes that the groups share a common population variance <span class="math inline">\(\sigma^2\)</span>.</p>
+<p>Classical ANOVA also assumes that the groups share a common variance <span class="math inline">\(\sigma^2\)</span>.</p>
 <p>Under this model, ANOVA gives us <strong>two different ways to estimate the same <span class="math inline">\(\sigma^2\)</span></strong>.</p>
 </section>
 <section id="variability-within-the-groups" class="level3">
@@ -2093,8 +2093,8 @@ E(MS_{\text{within}})=\sigma^2
 </section>
 <section id="variability-among-the-group-means" class="level3">
 <h3 class="anchored" data-anchor-id="variability-among-the-group-means">2. Variability among the group means</h3>
-<p>Even if the population means are identical, the <strong>sample means will not be identical</strong>.</p>
-<p>Suppose for the moment that each group has <span class="math inline">\(n\)</span> observations. Each group mean varies around the common population mean, with</p>
+<p>Even if the group means are identical, the <strong>sample means will not be identical</strong>.</p>
+<p>Suppose for the moment that each group has <span class="math inline">\(n\)</span> observations. Each group mean varies around the common overall mean, with</p>
 <p><span class="math display">\[
 \large
 \operatorname{Var}(\bar X_j)
@@ -2227,7 +2227,7 @@ F
      {MS_{\text{within}}}.
 \]</span></p>
 <p>If <span class="math inline">\(H_0\)</span> is true, both are estimating the same <span class="math inline">\(\sigma^2\)</span>, so their ratio should generally be somewhere around 1.</p>
-<p>If the population means differ, <span class="math inline">\(MS_{\text{between}}\)</span> also reflects those differences and tends to become larger relative to <span class="math inline">\(MS_{\text{within}}\)</span>.</p>
+<p>If the group means differ, <span class="math inline">\(MS_{\text{between}}\)</span> also reflects those differences and tends to become larger relative to <span class="math inline">\(MS_{\text{within}}\)</span>.</p>
 <div id="qwebr-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
@@ -2259,12 +2259,13 @@ F_{0.05}=3.10.
 <blockquote class="blockquote">
 <p>If <span class="math inline">\(H_0\)</span> is true, only about 5% of samples would produce an <span class="math inline">\(F\)</span>-statistic greater than 3.10.</p>
 </blockquote>
+<!-- NOTE: Would be nice to simulate all of this to show the distrubtion of esimated MS_w and MS_b, F-statistics under the two scenarios (either as sidebar or as part of lecture - I think we had enough time.) -->
 </section>
 <section id="fitting-the-anova-model" class="level3">
 <h3 class="anchored" data-anchor-id="fitting-the-anova-model">Fitting the ANOVA model</h3>
 <p>Let’s analyze our simulated data using <code>R</code>. Again, here are the hypotheses:</p>
 <p><span class="math display">\[\large H_0:\mu_A=\mu_B=\mu_C\]</span></p>
-<p><span class="math display">\[\large H_A:\text{the population means are not all equal}\]</span></p>
+<p><span class="math display">\[\large H_A:\text{the group means are not all equal}\]</span></p>
 <p>The model can be estimated in <strong>R</strong> using the function <code>aov()</code>:</p>
 <div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
@@ -2272,18 +2273,18 @@ F_{0.05}=3.10.
 <div id="qwebr-insertion-location-17"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
-<section id="now-lets-change-the-population" class="level3">
-<h3 class="anchored" data-anchor-id="now-lets-change-the-population">Now let’s change the population</h3>
-<p>Return to the beginning and change the population mean for Group C from 10 to 15. What do you expect to happen to <span class="math inline">\(MS_{\text{within}}\)</span>, <span class="math inline">\(MS_{\text{between}}\)</span>, and <span class="math inline">\(F\)</span>?</p>
+<section id="now-lets-change-the-one-of-the-group-mean" class="level3">
+<h3 class="anchored" data-anchor-id="now-lets-change-the-one-of-the-group-mean">Now let’s change the one of the group mean</h3>
+<p>Return to the beginning and change the group mean for Group C from 10 to 15. What do you expect to happen to <span class="math inline">\(MS_{\text{within}}\)</span>, <span class="math inline">\(MS_{\text{between}}\)</span>, and <span class="math inline">\(F\)</span>?</p>
 </section>
 <section id="which-groups-differ" class="level3">
 <h3 class="anchored" data-anchor-id="which-groups-differ">Which groups differ?</h3>
-<p>When the ANOVA analysis suggests that the population means are not all equal, it does not tell us which groups differ.</p>
+<p>When the ANOVA analysis suggests that the group means are not all equal, it does not tell us which groups differ.</p>
 <p>We could compare each pair of groups separately. With three groups, there are</p>
 <p><span class="math display">\[\large
 {3 \choose 2}=3\]</span></p>
 <p>possible pairwise comparisons (A/B, A/C, B/C).</p>
-<p>However, making multiple comparisons creates a problem: the more comparisons we make, the greater the chance that <strong>at least one comparison</strong> will appear statistically significant, even if none of the population means differ.</p>
+<p>However, making multiple comparisons creates a problem: the more comparisons we make, the greater the chance that <strong>at least one comparison</strong> will appear statistically significant, even if none of the group means differ.</p>
 </section>
 <section id="tukeys-method" class="level3">
 <h3 class="anchored" data-anchor-id="tukeys-method">Tukey’s method …</h3>
@@ -2308,11 +2309,11 @@ F_{0.05}=3.10.
 <ul>
 <li><p><strong>Independent observations:</strong> <em>independence</em> comes from the study design and data structure. Paired, repeated, or clustered observations require a different approach.</p></li>
 <li><p><strong>Normality:</strong> as with the <span class="math inline">\(t\)</span>-test, the <span class="math inline">\(F\)</span>-test used in ANOVA is generally <strong>robust to moderate departures from normality</strong>. The normality assumption concerns the distributions <em>within the groups</em> (or equivalently, the model residuals), not the overall distribution after combining all groups.</p></li>
-<li><p><strong>Equal population variances:</strong> classical ANOVA assumes that all groups share the same population variance <span class="math inline">\(\sigma^2\)</span>. This is the assumption that allowed us to view <span class="math inline">\(MS_{\text{within}}\)</span> and <span class="math inline">\(MS_{\text{between}}\)</span> as two estimates of the <strong>same <span class="math inline">\(\sigma^2\)</span></strong> under <span class="math inline">\(H_0\)</span>.</p></li>
+<li><p><strong>Equal variances:</strong> classical ANOVA assumes that all groups share the same variance <span class="math inline">\(\sigma^2\)</span>. This is the assumption that allowed us to view <span class="math inline">\(MS_{\text{within}}\)</span> and <span class="math inline">\(MS_{\text{between}}\)</span> as two estimates of the <strong>same <span class="math inline">\(\sigma^2\)</span></strong> under <span class="math inline">\(H_0\)</span>.</p></li>
 </ul>
-<p>The classical ANOVA <span class="math inline">\(F\)</span>-test is reasonably robust to moderate differences in population variances, particularly when the group sizes are similar.</p>
+<p>The classical ANOVA <span class="math inline">\(F\)</span>-test is reasonably robust to moderate differences in group variances, particularly when the group sizes are similar.</p>
 <p>Equal sample sizes are <strong>not required</strong>.</p>
-<p>However, when population variances differ substantially – especially when group sizes are also unequal – <strong>Welch’s ANOVA</strong> does not require a common population variance. This is the same idea we encountered with the two-sample (t)-test: Welch’s method allows the population variances to differ.</p>
+<p>However, when group variances differ substantially – especially when group sizes are also unequal – <strong>Welch’s ANOVA</strong> does not require a common variance. This is the same idea we encountered with the two-sample (t)-test: Welch’s method allows the group variances to differ.</p>
 <div id="qwebr-insertion-location-19"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
@@ -2349,19 +2350,19 @@ F_{0.05}=3.10.
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <ul>
 <li><p>The small p-value suggests that the groups differ in where their observations tend to fall in the overall ranking.</p></li>
-<li><p>As with the Wilcoxon rank-sum test, Kruskal–Wallis is <strong>not simply a test of population medians</strong>, nor should it be viewed simply as “ANOVA for non-normal data.”</p></li>
+<li><p>As with the Wilcoxon rank-sum test, Kruskal–Wallis is <strong>not simply a test of group medians</strong>, nor should it be viewed simply as “ANOVA for non-normal data.”</p></li>
 <li><p>If the group distributions have similar shapes, the test can be interpreted as a comparison of their locations.</p></li>
 </ul>
 </section>
 </section>
 <section id="power" class="level2">
 <h2 class="anchored" data-anchor-id="power">Power</h2>
-<p>Suppose we are comparing two populations and there really <strong>is</strong> a difference between their means:</p>
+<p>Suppose we are comparing two groups and there really <strong>is</strong> a difference between their means:</p>
 <p><span class="math display">\[\large
 \mu_A = 10
 \qquad\text{and}\qquad
 \mu_B = 12\]</span></p>
-<p>so that the true population difference is</p>
+<p>so that the true group difference is</p>
 <p><span class="math display">\[\large
 \mu_B-\mu_A=2.\]</span></p>
 <p>If we conduct a study comparing these two groups, will we necessarily detect the difference?</p>
@@ -2372,17 +2373,17 @@ F_{0.05}=3.10.
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-31"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>We know that the population means differ by 2. But because of <strong>sampling variability</strong>, the estimated difference will vary from study to study.</p>
-<p>Our probability model implies that the estimated difference between the groups will vary from sample to sample. Even when a population difference exists, some possible datasets will produce <span class="math inline">\(p &lt; 0.05\)</span> and others will not.</p>
+<p>We know that the group means differ by 2. But because of <strong>sampling variability</strong>, the estimated difference will vary from study to study.</p>
+<p>Our probability model implies that the estimated difference between the groups will vary from sample to sample. Even when a group difference exists, some possible datasets will produce <span class="math inline">\(p &lt; 0.05\)</span> and others will not.</p>
 <blockquote class="blockquote">
-<p><strong>If a population difference really exists, how likely is our study to detect it?</strong></p>
+<p><strong>If a group difference really exists, how likely is our study to detect it?</strong></p>
 </blockquote>
 <section id="simulating-possible-studies" class="level3">
 <h3 class="anchored" data-anchor-id="simulating-possible-studies">Simulating possible studies</h3>
 <p>We can use our probability model to generate many possible datasets that could arise from a study of this size.</p>
 <p>For each simulated dataset, we will:</p>
 <ol type="1">
-<li>sample <span class="math inline">\(n\)</span> observations from each population;</li>
+<li>sample <span class="math inline">\(n\)</span> observations from each group;</li>
 <li>estimate the difference between the group means;</li>
 <li>conduct a two-sample t-test;</li>
 <li>record whether <span class="math inline">\(p &lt; 0.05\)</span>.</li>
@@ -2393,7 +2394,7 @@ F_{0.05}=3.10.
 <div id="qwebr-insertion-location-33"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p>The gray observations represent simulated studies that fail to reject <span class="math inline">\(H_0\)</span>, <em>even though the population means really are different</em>. The probability of failing to reject the null hypothesis when that alternative is true is the <strong>Type II error probability</strong>, denoted by <span class="math inline">\(\beta\)</span>:</p>
+<p>The gray observations represent simulated studies that fail to reject <span class="math inline">\(H_0\)</span>, <em>even though the group means really are different</em>. The probability of failing to reject the null hypothesis when that alternative is true is the <strong>Type II error probability</strong>, denoted by <span class="math inline">\(\beta\)</span>:</p>
 </blockquote>
 <p><span class="math display">\[\large
 \beta
@@ -2414,7 +2415,7 @@ P(\text{reject } H_0 \mid \mu_B - \mu_A = 2),
 <div id="qwebr-insertion-location-34"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p><strong>A study does not have a single power independent of the effect. Power depends on the particular population difference we want the study to be able to detect.</strong></p>
+<p><strong>A study does not have a single power independent of the effect. Power depends on the particular group difference we want the study to be able to detect.</strong></p>
 </blockquote>
 </section>
 <section id="type-i-error-type-ii-error-and-power" class="level3">
@@ -2457,7 +2458,7 @@ P(\text{reject } H_0 \mid \mu_B - \mu_A = 2),
 </section>
 <section id="factors-that-determine-power" class="level3">
 <h3 class="anchored" data-anchor-id="factors-that-determine-power">Factors that determine power</h3>
-<p><strong>Power depends on sample size, population variability, and the population difference we want to detect.</strong> Power also depends on the significance level <span class="math inline">\(\alpha\)</span>: making the threshold for rejecting <span class="math inline">\(H_0\)</span> more stringent reduces power.</p>
+<p><strong>Power depends on sample size, variability, and the group difference we want to detect.</strong> Power also depends on the significance level <span class="math inline">\(\alpha\)</span>: making the threshold for rejecting <span class="math inline">\(H_0\)</span> more stringent reduces power.</p>
 <div id="qwebr-insertion-location-35"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <section id="sample-size" class="level4">
@@ -2475,13 +2476,13 @@ SE(\bar Y_B-\bar Y_A)
 </section>
 <section id="variability" class="level4">
 <h4 class="anchored" data-anchor-id="variability">Variability</h4>
-<p>Decreasing population standard deviations (<span class="math inline">\(\large \sigma_A\)</span> and <span class="math inline">\(\large \sigma_B\)</span>) reduces the sampling variability of the estimated difference:</p>
+<p>Decreasing standard deviations (<span class="math inline">\(\large \sigma_A\)</span> and <span class="math inline">\(\large \sigma_B\)</span>) reduces the sampling variability of the estimated difference:</p>
 <div id="qwebr-insertion-location-37"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="effect-sizes" class="level4">
 <h4 class="anchored" data-anchor-id="effect-sizes">Effect sizes</h4>
-<p>Increasing the population difference (<span class="math inline">\(\mu_B - \mu_A\)</span>) increases power:</p>
+<p>Increasing the group difference (<span class="math inline">\(\mu_B - \mu_A\)</span>) increases power:</p>
 <div id="qwebr-insertion-location-38"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
@@ -2490,52 +2491,52 @@ SE(\bar Y_B-\bar Y_A)
 <h3 class="anchored" data-anchor-id="power-curves">Power curves</h3>
 <p>We can put these relationships together in a set of <em>power curves</em>:</p>
 <p><img src="images/power_curves.png" class="img-fluid"></p>
-<p><em>A power curve shows the probability of rejecting the null hypothesis across a range of possible population differences.</em></p>
-<p>For any particular population difference, power depends on the sample size and the variability of the outcome.</p>
+<p><em>A power curve shows the probability of rejecting the null hypothesis across a range of possible group differences.</em></p>
+<p>For any particular group difference, power depends on the sample size and the variability of the outcome.</p>
 <blockquote class="blockquote">
 <p>Power also depends on the threshold we use for rejecting the null hypothesis. Increasing <span class="math inline">\(\alpha\)</span> makes it easier to reject <span class="math inline">\(H_0\)</span> and therefore increases power—but at the cost of increasing the probability of a <strong>Type I error</strong>. We generally specify <span class="math inline">\(\alpha\)</span> in advance rather than choosing it as a way to increase power.</p>
 </blockquote>
 </section>
 <section id="standardized-effect-size" class="level3">
 <h3 class="anchored" data-anchor-id="standardized-effect-size">Standardized effect size</h3>
-<p>The simulations show that power depends both on the size of the population difference and on the variability of the outcome.</p>
-<p>A difference of 2 units is relatively large when the population standard deviation is 3, but relatively small when the standard deviation is 10.</p>
+<p>The simulations show that power depends both on the size of the group difference and on the variability of the outcome.</p>
+<p>A difference of 2 units is relatively large when the standard deviation is 3, but relatively small when the standard deviation is 10.</p>
 <p>One way to express the size of a difference relative to the variability is the <strong>standardized mean difference</strong>:</p>
 <p><span class="math display">\[\large d = \frac{\mu_B-\mu_A}{\sigma}\]</span></p>
 <p>For our example,</p>
 <p><span class="math display">\[\large d = \frac{12-10}{3} = 0.67.\]</span></p>
 <p>This standardized effect size is often called <strong>Cohen’s</strong> <span class="math inline">\(d\)</span>.</p>
-<p>Standardized effect sizes express the population difference relative to the variability of the outcome and are particularly useful in power and sample-size calculations.</p>
+<p>Standardized effect sizes express the group difference relative to the variability of the outcome and are particularly useful in power and sample-size calculations.</p>
 <p>However, when the original units are scientifically meaningful, a difference expressed in those units is often easier to interpret.</p>
 </section>
 <section id="from-power-to-sample-size" class="level3">
 <h3 class="anchored" data-anchor-id="from-power-to-sample-size">From power to sample size</h3>
 <p>Before conducting a study, we usually face the problem in the opposite direction.</p>
-<p>We specify a population difference that would be important to detect and ask:</p>
+<p>We specify a group difference that would be important to detect and ask:</p>
 <blockquote class="blockquote">
 <p><strong>How large a sample do we need to have a reasonable chance of detecting that difference?</strong></p>
 </blockquote>
 <p>We can calculate the required sample size using <code>power.t.test()</code> in <strong>R</strong>.</p>
-<p>Suppose a difference of 2 units is scientifically meaningful, we expect the population SD to be approximately 3, and we want an 80% probability of rejecting <span class="math inline">\(H_0\)</span> if the true population difference is 2, using <span class="math inline">\(\alpha = 0.05\)</span>. <strong>What is the target sample size for each group?</strong></p>
+<p>Suppose a difference of 2 units is scientifically meaningful, we expect the standard deviation to be approximately 3, and we want an 80% probability of rejecting <span class="math inline">\(H_0\)</span> if the true group difference is 2, using <span class="math inline">\(\alpha = 0.05\)</span>. <strong>What is the target sample size for each group?</strong></p>
 <div id="qwebr-insertion-location-39"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p><code>power.t.test()</code> calculates analytically the same quantity that we estimated through simulation.</p>
-<p>Alternatively, the <code>pwr.t.test()</code> function in the <code>pwr</code> package specifies the population difference using Cohen’s <span class="math inline">\(d\)</span>. In this case,</p>
+<p>Alternatively, the <code>pwr.t.test()</code> function in the <code>pwr</code> package specifies the group difference using Cohen’s <span class="math inline">\(d\)</span>. In this case,</p>
 <p><span class="math display">\[\large
 d = \frac{\Delta}{\sigma} = \frac{2}{3}.\]</span></p>
 <div id="qwebr-insertion-location-40"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The two approaches give essentially the same result; Cohen’s <span class="math inline">\(d\)</span> simply combines the population difference and SD into a single standardized quantity.</p>
+<p>The two approaches give essentially the same result; Cohen’s <span class="math inline">\(d\)</span> simply combines the group difference and SD into a single standardized quantity.</p>
 <blockquote class="blockquote">
-<p>Sample size calculations require us to specify what population difference matters scientifically and how likely we want the study to be to detect that difference.</p>
+<p>Sample size calculations require us to specify what group difference matters scientifically and how likely we want the study to be to detect that difference.</p>
 </blockquote>
 </section>
-<section id="but-what-if-we-arent-sure-about-the-population-variability" class="level3">
-<h3 class="anchored" data-anchor-id="but-what-if-we-arent-sure-about-the-population-variability">But what if we aren’t sure about the population variability?</h3>
+<section id="but-what-if-we-arent-sure-about-the-variability" class="level3">
+<h3 class="anchored" data-anchor-id="but-what-if-we-arent-sure-about-the-variability">But what if we aren’t sure about the variability?</h3>
 <div id="qwebr-insertion-location-41"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p>Sample-size calculations depend on assumptions about quantities such as the population variability, which we usually do not know exactly when designing a study.</p>
+<p>Sample-size calculations depend on assumptions about quantities such as the variability, which we usually do not know exactly when designing a study.</p>
 </blockquote>
 
 

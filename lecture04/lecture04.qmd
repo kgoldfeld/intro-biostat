@@ -50,20 +50,20 @@ These ideas connect how we **analyze** a study with how we **design** one.
 
 ## Comparing more than two groups
 
-So far, we have considered comparisons between **two population means**.
+So far, we have considered comparisons between **two group means**.
 
 For example, we might ask whether mean blood pressure differs between two treatment groups:
 
 $$\large
 H_0: \mu_A = \mu_B$$
 
-But many studies involve more than two groups. Suppose instead that we have three treatment groups, and we want to compare their population means:
+But many studies involve more than two groups. Suppose instead that we have three treatment groups, and we want to compare their group means:
 
 $$\large \mu_A,\quad \mu_B,\quad \mu_C$$
 
 **How should we make this comparison?**
 
-Let's start by considering what we might observe when the three population means are actually the same.
+Let's start by considering what we might observe when the three group means are actually the same.
 
 ```{webr-r}
 set.seed(1987)
@@ -109,9 +109,9 @@ ggplot(data = dd, aes(x = group, y = y)) +
 
 ### Two things to note
 
-- Even when the population means are equal, the sample means will differ because of sampling variability.
+- Even when the underlying group means are equal, the sample means will differ because of sampling variability.
 
-- When the population means differ, the observed differences among the sample means reflect both the population differences and sampling variability.
+- When the group means differ, the observed differences among the sample means reflect both the group differences and sampling variability.
 
 > *The question we need to answer is: are the observed differences among the sample means larger than we would expect from sampling variability alone?*
 
@@ -119,7 +119,7 @@ ggplot(data = dd, aes(x = group, y = y)) +
 ## Analysis of variance
 
 
-**Analysis of variance (ANOVA)** provides a way to compare the means of more than two populations.
+**Analysis of variance (ANOVA)** provides a way to compare the means of more than two groups.
 
 For three groups, we can express the question as:
 
@@ -127,16 +127,16 @@ $$\large
 H_0:\mu_A=\mu_B=\mu_C$$
 
 $$\large
-H_A:\text{the population means are not all equal}$$
+H_A:\text{the group means are not all equal}$$
 
 ANOVA compares two types of variability:
 
 - **Within-group variability:** How much do [individual observations]{.underline} vary *within each group*?
 - **Between-group variability:** How much do the [group means]{.underline} vary *from one another*?
 
-If the population means are equal, we still expect some variation among the sample means because of sampling variability.
+If the group means are equal, we still expect some variation among the sample means because of sampling variability.
 
-> But if the sample means vary substantially **relative to the variability within the groups**, that suggests that the population means may not all be equal.
+> But if the sample means vary substantially **relative to the variability within the groups**, that suggests that the group means may not all be equal.
 
 This leads to the **F-statistic**:
 
@@ -182,7 +182,7 @@ ANOVA considers two sources of variability:
 Both can be measured using the same basic idea we use to calculate a variance: **squared distances from a mean**.
 
 
-### Suppose the population means are equal
+### Suppose the group means are equal
 
 Under the null hypothesis,
 
@@ -191,7 +191,7 @@ $$
 H_0:\mu_1=\mu_2=\cdots=\mu_k
 $$
 
-Classical ANOVA also assumes that the groups share a common population variance $\sigma^2$.
+Classical ANOVA also assumes that the groups share a common variance $\sigma^2$.
 
 Under this model, ANOVA gives us **two different ways to estimate the same $\sigma^2$**.
 
@@ -264,9 +264,9 @@ ms_within
 
 ### 2. Variability among the group means
 
-Even if the population means are identical, the **sample means will not be identical**.
+Even if the group means are identical, the **sample means will not be identical**.
 
-Suppose for the moment that each group has $n$ observations. Each group mean varies around the common population mean, with
+Suppose for the moment that each group has $n$ observations. Each group mean varies around the common overall mean, with
 
 $$
 \large
@@ -459,7 +459,7 @@ $$
 
 If $H_0$ is true, both are estimating the same $\sigma^2$, so their ratio should generally be somewhere around 1.
 
-If the population means differ, $MS_{\text{between}}$ also reflects those differences and tends to become larger relative to $MS_{\text{within}}$.
+If the group means differ, $MS_{\text{between}}$ also reflects those differences and tends to become larger relative to $MS_{\text{within}}$.
 
 ```{webr-r}
 # F statistic
@@ -621,13 +621,15 @@ $$
 
 > If $H_0$ is true, only about 5% of samples would produce an $F$-statistic greater than 3.10.
 
+<!-- NOTE: Would be nice to simulate all of this to show the distrubtion of esimated MS_w and MS_b, F-statistics under the two scenarios (either as sidebar or as part of lecture - I think we had enough time.) -->
+
 ### Fitting the ANOVA model
 
 Let's analyze our simulated data using `R`. Again, here are the hypotheses:
 
 $$\large H_0:\mu_A=\mu_B=\mu_C$$
 
-$$\large H_A:\text{the population means are not all equal}$$
+$$\large H_A:\text{the group means are not all equal}$$
 
 The model can be estimated in **R** using the function `aov()`:
 
@@ -650,13 +652,13 @@ plot_F(
 )
 ```
 
-### Now let's change the population
+### Now let's change the one of the group mean
 
-Return to the beginning and change the population mean for Group C from 10 to 15. What do you expect to happen to $MS_{\text{within}}$, $MS_{\text{between}}$, and $F$?
+Return to the beginning and change the group mean for Group C from 10 to 15. What do you expect to happen to $MS_{\text{within}}$, $MS_{\text{between}}$, and $F$?
 
 ### Which groups differ?
 
-When the ANOVA analysis suggests that the population means are not all equal, it does not tell us which groups differ.
+When the ANOVA analysis suggests that the group means are not all equal, it does not tell us which groups differ.
 
 We could compare each pair of groups separately. With three groups, there are
 
@@ -665,7 +667,7 @@ $$\large
 
 possible pairwise comparisons (A/B, A/C, B/C).
 
-However, making multiple comparisons creates a problem: the more comparisons we make, the greater the chance that **at least one comparison** will appear statistically significant, even if none of the population means differ.
+However, making multiple comparisons creates a problem: the more comparisons we make, the greater the chance that **at least one comparison** will appear statistically significant, even if none of the group means differ.
 
 ### Tukey's method ...
 
@@ -695,13 +697,13 @@ The classical one-way ANOVA has several assumptions, with some important caveats
 
 - **Normality:** as with the $t$-test, the $F$-test used in ANOVA is generally **robust to moderate departures from normality**. The normality assumption concerns the distributions *within the groups* (or equivalently, the model residuals), not the overall distribution after combining all groups.
 
-- **Equal population variances:** classical ANOVA assumes that all groups share the same population variance $\sigma^2$. This is the assumption that allowed us to view $MS_{\text{within}}$ and $MS_{\text{between}}$ as two estimates of the **same $\sigma^2$** under $H_0$.
+- **Equal variances:** classical ANOVA assumes that all groups share the same variance $\sigma^2$. This is the assumption that allowed us to view $MS_{\text{within}}$ and $MS_{\text{between}}$ as two estimates of the **same $\sigma^2$** under $H_0$.
 
-The classical ANOVA $F$-test is reasonably robust to moderate differences in population variances, particularly when the group sizes are similar.
+The classical ANOVA $F$-test is reasonably robust to moderate differences in group variances, particularly when the group sizes are similar.
 
 Equal sample sizes are **not required**. 
 
-However, when population variances differ substantially -- especially when group sizes are also unequal -- **Welch's ANOVA** does not require a common population variance. This is the same idea we encountered with the two-sample \(t\)-test: Welch's method allows the population variances to differ.
+However, when group variances differ substantially -- especially when group sizes are also unequal -- **Welch's ANOVA** does not require a common variance. This is the same idea we encountered with the two-sample \(t\)-test: Welch's method allows the group variances to differ.
 
 ```{webr-r}
 oneway.test(
@@ -796,20 +798,20 @@ kruskal.test(WeightChange ~ Group, data = data)
 
 - The small p-value suggests that the groups differ in where their observations tend to fall in the overall ranking.
 
-- As with the Wilcoxon rank-sum test, Kruskal–Wallis is **not simply a test of population medians**, nor should it be viewed simply as "ANOVA for non-normal data."
+- As with the Wilcoxon rank-sum test, Kruskal–Wallis is **not simply a test of group medians**, nor should it be viewed simply as "ANOVA for non-normal data."
 
 - If the group distributions have similar shapes, the test can be interpreted as a comparison of their locations.
 
 ## Power
 
-Suppose we are comparing two populations and there really **is** a difference between their means:
+Suppose we are comparing two groups and there really **is** a difference between their means:
 
 $$\large
 \mu_A = 10
 \qquad\text{and}\qquad
 \mu_B = 12$$
 
-so that the true population difference is
+so that the true group difference is
 
 $$\large
 \mu_B-\mu_A=2.$$
@@ -857,11 +859,11 @@ ggplot(dd, aes(x = group, y = y)) +
 t.test(y ~ group, data = dd)
 ```
 
-We know that the population means differ by 2. But because of **sampling variability**, the estimated difference will vary from study to study.
+We know that the group means differ by 2. But because of **sampling variability**, the estimated difference will vary from study to study.
 
-Our probability model implies that the estimated difference between the groups will vary from sample to sample. Even when a population difference exists, some possible datasets will produce $p < 0.05$ and others will not.
+Our probability model implies that the estimated difference between the groups will vary from sample to sample. Even when a group difference exists, some possible datasets will produce $p < 0.05$ and others will not.
 
-> **If a population difference really exists, how likely is our study to detect it?**
+> **If a group difference really exists, how likely is our study to detect it?**
 
 ### Simulating possible studies
 
@@ -869,7 +871,7 @@ We can use our probability model to generate many possible datasets that could a
 
 For each simulated dataset, we will:
 
-1. sample $n$ observations from each population;
+1. sample $n$ observations from each group;
 2. estimate the difference between the group means;
 3. conduct a two-sample t-test;
 4. record whether $p < 0.05$.
@@ -939,7 +941,7 @@ ggplot(results, aes(x = t)) +
   ylim(0, 600)
 ```
 
-> The gray observations represent simulated studies that fail to reject $H_0$, *even though the population means really are different*. The probability of failing to reject the null hypothesis when that alternative is true is the **Type II error probability**, denoted by $\beta$:
+> The gray observations represent simulated studies that fail to reject $H_0$, *even though the group means really are different*. The probability of failing to reject the null hypothesis when that alternative is true is the **Type II error probability**, denoted by $\beta$:
 
 $$\large
 \beta
@@ -967,7 +969,7 @@ results[, .(
 )]
 ```
 
-> **A study does not have a single power independent of the effect. Power depends on the particular population difference we want the study to be able to detect.**
+> **A study does not have a single power independent of the effect. Power depends on the particular group difference we want the study to be able to detect.**
 
 ### Type I error, Type II error, and power
 
@@ -990,7 +992,7 @@ Whether we make an error depends on **what is true in the population** and on **
 
 ### Factors that determine power
 
-**Power depends on sample size, population variability, and the population difference we want to detect.** Power also depends on the significance level $\alpha$: making the threshold for rejecting $H_0$ more stringent reduces power.
+**Power depends on sample size, variability, and the group difference we want to detect.** Power also depends on the significance level $\alpha$: making the threshold for rejecting $H_0$ more stringent reduces power.
 
 ```{webr-r}
 estimate_power <- function(
@@ -1039,7 +1041,7 @@ estimate_power(n = 100)
 
 #### Variability
 
-Decreasing population standard deviations ($\large \sigma_A$ and $\large \sigma_B$) reduces the sampling variability of the estimated difference:
+Decreasing standard deviations ($\large \sigma_A$ and $\large \sigma_B$) reduces the sampling variability of the estimated difference:
 
 ```{webr-r}
 set.seed(4321)
@@ -1052,7 +1054,7 @@ estimate_power(n = 35, sd = 2)
 
 #### Effect sizes
 
-Increasing the population difference ($\mu_B - \mu_A$) increases power:
+Increasing the group difference ($\mu_B - \mu_A$) increases power:
 
 ```{webr-r}
 set.seed(4321)
@@ -1068,18 +1070,18 @@ We can put these relationships together in a set of *power curves*:
 
 ![](images/power_curves.png)
 
-*A power curve shows the probability of rejecting the null hypothesis across a range of possible population differences.*
+*A power curve shows the probability of rejecting the null hypothesis across a range of possible group differences.*
 
-For any particular population difference, power depends on the sample size and the variability of the outcome.
+For any particular group difference, power depends on the sample size and the variability of the outcome.
 
 > Power also depends on the threshold we use for rejecting the null hypothesis. Increasing $\alpha$ makes it easier to reject $H_0$ and therefore increases power—but at the cost of increasing the probability of a **Type I error**. We generally specify $\alpha$ in advance rather than choosing it as a way to increase power.
 
 
 ### Standardized effect size
 
-The simulations show that power depends both on the size of the population difference and on the variability of the outcome.
+The simulations show that power depends both on the size of the group difference and on the variability of the outcome.
 
-A difference of 2 units is relatively large when the population standard deviation is 3, but relatively small when the standard deviation is 10.
+A difference of 2 units is relatively large when the standard deviation is 3, but relatively small when the standard deviation is 10.
 
 One way to express the size of a difference relative to the variability is the **standardized mean difference**:
 
@@ -1091,7 +1093,7 @@ $$\large d = \frac{12-10}{3} = 0.67.$$
 
 This standardized effect size is often called **Cohen's** $d$.
 
-Standardized effect sizes express the population difference relative to the variability of the outcome and are particularly useful in power and sample-size calculations.
+Standardized effect sizes express the group difference relative to the variability of the outcome and are particularly useful in power and sample-size calculations.
 
 However, when the original units are scientifically meaningful, a difference expressed in those units is often easier to interpret.
 
@@ -1100,13 +1102,13 @@ However, when the original units are scientifically meaningful, a difference exp
 
 Before conducting a study, we usually face the problem in the opposite direction.
 
-We specify a population difference that would be important to detect and ask:
+We specify a group difference that would be important to detect and ask:
 
 > **How large a sample do we need to have a reasonable chance of detecting that difference?**
 
 We can calculate the required sample size using `power.t.test()` in **R**.
 
-Suppose a difference of 2 units is scientifically meaningful, we expect the population SD to be approximately 3, and we want an 80% probability of rejecting $H_0$ if the true population difference is 2, using $\alpha = 0.05$. **What is the target sample size for each group?**
+Suppose a difference of 2 units is scientifically meaningful, we expect the standard deviation to be approximately 3, and we want an 80% probability of rejecting $H_0$ if the true group difference is 2, using $\alpha = 0.05$. **What is the target sample size for each group?**
 
 ```{webr-r}
 power.t.test(
@@ -1120,7 +1122,7 @@ power.t.test(
 
 `power.t.test()` calculates analytically the same quantity that we estimated through simulation.
 
-Alternatively, the `pwr.t.test()` function in the `pwr` package specifies the population difference using Cohen's $d$. In this case,
+Alternatively, the `pwr.t.test()` function in the `pwr` package specifies the group difference using Cohen's $d$. In this case,
 
 $$\large
 d = \frac{\Delta}{\sigma} = \frac{2}{3}.$$
@@ -1135,11 +1137,11 @@ pwr::pwr.t.test(
 )
 ```
 
-The two approaches give essentially the same result; Cohen's $d$ simply combines the population difference and SD into a single standardized quantity.
+The two approaches give essentially the same result; Cohen's $d$ simply combines the group difference and SD into a single standardized quantity.
 
-> Sample size calculations require us to specify what population difference matters scientifically and how likely we want the study to be to detect that difference.
+> Sample size calculations require us to specify what group difference matters scientifically and how likely we want the study to be to detect that difference.
 
-### But what if we aren't sure about the population variability?
+### But what if we aren't sure about the variability?
 
 ```{webr-r}
 sample_sizes <- data.table(
@@ -1162,5 +1164,5 @@ sample_sizes[, n := sapply(sd, function(s) {
 sample_sizes
 ```
 
-> Sample-size calculations depend on assumptions about quantities such as the population variability, which we usually do not know exactly when designing a study.
+> Sample-size calculations depend on assumptions about quantities such as the variability, which we usually do not know exactly when designing a study.
 
