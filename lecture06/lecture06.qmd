@@ -1131,7 +1131,9 @@ This is a **likelihood-ratio test**.
 
 > **The likelihood-ratio test asks whether the improvement in fit is larger than we would expect if the additional predictors did not actually improve the model.**
 
-Here, the very small p-value provides strong evidence that including age and physical activity improves the model.
+Here, the very small p-value suggests that including age and physical activity improves the model.
+
+<!-- NOTE: Sidebar here to explain deviance a bit -->
 
 ## An example: CK and heart attack
 
