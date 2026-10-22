@@ -1933,7 +1933,7 @@ What we do depends on what the problem is.
 
 - A systematic pattern in the residuals may indicate that we need a different model for the mean.
 - Nonconstant variability may require a different approach to estimating uncertainty.
-- Moderate departures from normality often require no action, particularly in \larger samples.
+- Moderate departures from normality often require no action, particularly in larger samples.
 - Unusual or influential observations should be investigated, not automatically removed.
 
 > **Diagnostics help us identify ways in which a model may be inadequate. The appropriate response depends on the nature of the problem and the question we are asking.**
