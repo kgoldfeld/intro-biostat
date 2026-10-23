@@ -99,12 +99,12 @@ reject_null
 sum(reject_null)
 ```
 
-> **One simulated study doesn't tell us how often this happens. What if we repeat the entire study many times?**
+> **One simulated sample doesn't tell us how often this happens. What if we repeat the sampling many times?**
 
 
-### Let's repeat the study many times . . .
+### Let's repeatedly sample many times . . .
 
-In every simulated study:
+In every simulated smaple:
 
 - all 20 null hypotheses are true
 - we test each outcome using $\alpha=0.05$
@@ -136,7 +136,7 @@ table(sim_results)
 mean(sim_results > 0)
 ```
 
-- In about **64% of studies**, at least one of the 20 tests is statistically significant.
+- In about **64% of samples**, at least one of the 20 tests is statistically significant.
 
 - Each individual test still has a 5% Type I error rate.
 
@@ -154,17 +154,19 @@ $$\large
 
 so
 
-$$\large
+$$
+\large
 P(\text{at least one Type I error})
 =1-0.95^{20}
-\approx0.64.$$
+\approx0.64.
+$$
 
 
 ### Visualizing the problem
 
 It is easier to see what is happening if we consider a smaller family of **5 outcomes**.
 
-The figure shows 100 simulated studies. In each study:
+The figure shows 100 simulated samples. In each sample:
 
 - all 5 null hypotheses are true
 - each vertical line is a 95% confidence interval
@@ -323,16 +325,15 @@ These six comparisons form another **family of hypothesis tests**, so we again n
 
 > **If all the population means were equal, *how far apart* might the most separated sample means be simply because of sampling variability?**
 
-- Tukey uses this distribution to choose a critical value for the pairwise differences. This produces wider confidence intervals — and larger adjusted p-values — than we would get by treating each comparison separately, while controlling the FWER.
+- By taking advantage of the structure of all the pairwise comparisons, Tukey controls the FWER while avoiding the need to apply a general-purpose correction to each comparison separately.
 
-
+> When our goal is to compare all pairs of group means, Tukey is a natural choice. If we are interested in only a particular set of comparisons, a general method such as Holm may be more appropriate.
 
 ## False discovery rate
 
-
 So far, we have focused on the **family-wise error rate**:
 
-> **FWER: How likely are we to make any false discoveries?**
+> **FWER: How *likely* are we to make *any* false discoveries?**
 
 But there is another way to think about errors when we conduct many tests:
 
@@ -359,7 +360,7 @@ Among the results we call statistically significant — our **discoveries** — 
 - **true discoveries** — there really is an effect
 - **false discoveries** — Type I errors
 
-For a particular study, the **false discovery proportion (FDP)** is
+For a particular sample, the **false discovery proportion (FDP)** is
 
 $$\large
 \text{FDP}
@@ -372,20 +373,22 @@ For example, if 8 of 100 discoveries are false:
 $$\large
 \text{FDP}=\frac{8}{100}=0.08.$$
 
-But FDP describes what happened in **one particular study**.
+But FDP describes what happened in **one particular sample**.
 
-The **false discovery rate (FDR)** is the expected FDP across repeated studies:
+The **false discovery rate (FDR)** is the expected FDP across repeated samples:
 
 $$\large
 \text{FDR}=E(\text{FDP}).$$
 
-This gives us two different ways of controlling errors across repeated studies:
+This gives us two different ways of thinking about errors across repeated studies:
 
 - **FWER:** How likely are we to make *any* false discoveries?
 
 - **FDR:** What is the expected proportion of our discoveries that will be false?
 
-**Controlling the FDR at 5% does not mean that exactly 5% of the discoveries in every study will be false.**
+Let's see what happens if we do not adjust for multiple testing, and simply use (p<0.05) for every test.
+
+> What false discovery rate does this testing procedure produce?
 
 ```{webr-r}
 set.seed(1234)
@@ -433,11 +436,11 @@ FDP
 > **Would the false discovery proportion always be about 39%?**
 
 
-### Repeating the study
+### Repeating this experiment
 
-Now let's repeat the entire study many times.
+Now let's repeat the sampling process many times.
 
-For each simulated study, we calculate the **false discovery proportion**.
+For each sample, we calculate the **false discovery proportion**.
 
 ```{webr-r}
 set.seed(123)
@@ -473,7 +476,7 @@ sim_FDP <- replicate(n_sims, {
 head(sim_FDP)
 ```
 
-The **false discovery rate** is the expected FDP across repeated studies:
+The **false discovery rate** is the expected FDP across repeated samples:
 
 $$\large
 \text{FDR}=E(\text{FDP})$$
@@ -482,6 +485,7 @@ $$\large
 mean(sim_FDP)
 ```
 
+With no adjustment for multiple testing, the average FDP can be quite large.
 
 ### Controlling the false discovery rate
 
@@ -498,29 +502,76 @@ n <- 100
 n_tests <- 1000
 n_effects <- 100
 
-effect <- c(rep(0, n_tests - n_effects), rep(1, n_effects))
+effect <- c(
+  rep(0, n_tests - n_effects), 
+  rep(1, n_effects)
+)
 
+effect
+```
+
+We have 1,000 tests:
+
+- 900 have no true population difference
+- 100 have a true population difference of 1
+
+First, generate the data and calculate the p-value for each test:
+
+```{webr-r}
 p_values <- sapply(effect, function(delta) {
+  
   treatment <- rnorm(n, 45 + delta, 3)
   control <- rnorm(n, 45, 3)
+  
   t.test(treatment, control)$p.value
 })
 
-p_values_BH <- p.adjust(p_values, method = "BH")
+round(p_values, 2)
+```
 
-d_result_BH <- data.table(
-  effect = effect, 
-  reject_null = as.integer(p_values_BH < 0.05)
+How many discoveries would we make using the usual \(p<0.05\) criterion?
+
+```{webr-r}
+sum(p_values < 0.05)
+```
+
+Now apply the **Benjamini-Hochberg procedure**:
+
+```{webr-r}
+p_values_BH <- p.adjust(p_values, method = "BH")
+```
+
+Let's look at some of the smallest original p-values and their BH-adjusted values:
+
+```{webr-r}
+p_results <- data.table(
+  effect = effect,
+  p_value = p_values,
+  p_value_BH = p_values_BH
 )
 
+p_results[order(p_value)][1:10]
+```
+
+Using BH, we call a result statistically significant when its **BH-adjusted p-value is less than 0.05**:
+
+```{webr-r}
+p_results[, reject_null := as.integer(p_value_BH < 0.05)]
+
+p_results[, sum(reject_null)]
+```
+
+Now we can ask how many of these discoveries are **true** and how many are **false**:
+
+```{webr-r}
 false_discoveries <- 
-  d_result_BH[effect == 0, sum(reject_null)]
+  p_results[effect == 0, sum(reject_null)]
 
 true_discoveries <- 
-  d_result_BH[effect != 0, sum(reject_null)]
+  p_results[effect != 0, sum(reject_null)]
 
 total_discoveries <- 
-  d_result_BH[, sum(reject_null)]
+  p_results[, sum(reject_null)]
 
 c(
   false = false_discoveries,
@@ -529,51 +580,12 @@ c(
 )
 ```
 
+Finally, the false discovery proportion in this particular sample is
+
 ```{webr-r}
 FDP <- false_discoveries / total_discoveries
 FDP
 ```
-
-> *The FDP describes this particular study. What happens if we repeat the study many times?*
-
-```{webr-r}
-set.seed(123)
-
-n_sims <- 100
-
-sim_FDP_BH <- replicate(n_sims, {
-  
-  p_values <- sapply(effect, function(delta) {
-    treatment <- rnorm(n, 45 + delta, 3)
-    control <- rnorm(n, 45, 3)
-    t.test(treatment, control)$p.value
-  })
-  
-  p_values_BH <- p.adjust(p_values, method = "BH")
-  
-  d_results <- data.table(
-    effect = effect,
-    reject_null = as.integer(p_values_BH < 0.05)
-  )
-  
-  false_discoveries <- 
-    d_results[effect == 0, sum(reject_null)]
-  
-  total_discoveries <- 
-    d_results[, sum(reject_null)]
-  
-  ifelse(
-    total_discoveries == 0, 
-    0, 
-    false_discoveries / total_discoveries
-  )
-})
-
-mean(sim_FDP_BH)
-```
-
-Across repeated studies, the average FDP — the **false discovery rate** — is approximately 5%.
-
 
 ### The Benjamini-Hochberg procedure
 
@@ -620,18 +632,66 @@ The largest p-value satisfying the criterion is $p_{(3)}=0.027$, so BH rejects t
 
 > Unlike Holm, BH does **not** stop when an individual p-value fails its threshold.
 
-The idea behind the increasing thresholds is that **BH permits a larger p-value cutoff because FDR allows some false discoveries when there are more discoveries overall**.
+Because the BH threshold increases with $i$, it can be less stringent than methods designed to prevent even a single false discovery.
 
-Here, BH supports three discoveries, so the cutoff is
+Here, the largest p-value satisfying its BH threshold is the third:
 
-$$\large
-\frac{3}{5}(0.05)=0.03.$$
+$$
+\large
+p_{(3)}=0.027
+<
+\frac{3}{5}(0.05)=0.03.
+$$
 
-All three smallest p-values are below 0.03, so all three null hypotheses are rejected.
+BH therefore rejects the hypotheses corresponding to the **three smallest p-values**.
 
-More generally, BH searches for the **largest set of discoveries** that satisfies the FDR criterion.
+> **BH finds the largest $i$ for which $p_{(i)}\leq(i/m)$, and rejects the first $i$ hypotheses.**
 
-> **Unlike FWER control, the goal is not to avoid every false discovery — it is to control the expected proportion of discoveries that are false.**
+**Unlike FWER control, the goal is not to avoid every false discovery — it is to control the expected proportion of discoveries that are false.**
+
+### Does BH actually control the FDR?
+
+The FDP describes what happened in one particular sample. What happens if we generate many possible samples and apply BH each time?
+
+```{webr-r}
+set.seed(123)
+
+n_sims <- 100
+
+sim_FDP_BH <- replicate(n_sims, {
+  
+  p_values <- sapply(effect, function(delta) {
+    treatment <- rnorm(n, 45 + delta, 3)
+    control <- rnorm(n, 45, 3)
+    t.test(treatment, control)$p.value
+  })
+  
+  p_values_BH <- p.adjust(p_values, method = "BH")
+  
+  d_results <- data.table(
+    effect = effect,
+    reject_null = as.integer(p_values_BH < 0.05)
+  )
+  
+  false_discoveries <- 
+    d_results[effect == 0, sum(reject_null)]
+  
+  total_discoveries <- 
+    d_results[, sum(reject_null)]
+  
+  ifelse(
+    total_discoveries == 0, 
+    0, 
+    false_discoveries / total_discoveries
+  )
+})
+
+mean(sim_FDP_BH)
+```
+
+Across repeated samples, the average FDP — the **false discovery rate** — is about 5% or less.
+
+> Controlling the FDR at 5% means keeping the expected false discovery proportion at or below 5% — not making exactly 5% of the discoveries false.
 
 
 
@@ -701,17 +761,18 @@ dd[, .(
 ggplot(data = dd, aes(x = health, y = outcome)) +
   geom_hline(
     yintercept = dd[, mean(outcome)],
-    linetype = 2,
-    linewidth = 1
+    color = "#356d9e"
   ) + 
   geom_hline(
     yintercept = 50, 
-    color = "grey80"
-  ) + 
-  geom_point(size = 1, color = "grey50")
+    color = "black",
+    linetype = 2,
+    linewidth = .5) +
+  geom_point(size = 1, color = "#4587c1") +
+  xlab("baseline health status")
 ```
 
-The gray line shows the true population mean of 50; the dashed line shows the mean in our simulated sample.
+The dashed line shows the true population mean of 50; the blue line shows the mean in our simulated sample.
 
 
 ### What if outcomes disappear randomly?
@@ -729,6 +790,10 @@ dd[, missing := rbinom(.N, 1, 0.30)]
 dd[, 
   outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
 
+dd
+```
+
+```{webr-r}
 dd[, .(
   n_observed = sum(!is.na(outcome_obs)),
   mean_health = mean(health[!is.na(outcome_obs)]),
@@ -739,25 +804,35 @@ dd[, .(
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = dd, aes(x = health, y = outcome, color = factor(missing))) +
+ggplot(data = 
+  dd, 
+  aes(
+    x = health, 
+    y = outcome, 
+    color = factor(missing)
+  )
+) +
   geom_hline(
     yintercept = dd[missing == 0, mean(outcome)],
-    linetype = 2,
-    linewidth = 1
+    color = "#356d9e"
   ) + 
-  geom_hline(yintercept = 50, color = "grey80") + 
-  geom_point(size = 1) +
+geom_hline(
+    yintercept = 50, 
+    color = "black",
+    linetype = 2,
+    linewidth = .5)  +
+geom_point(size = 1) +
   scale_color_manual(
-    values = c("grey50", "#ef6b6b"),
+    values = c("#4587c1", "#d47e81"),
     labels = c("Observed", "Missing"),
     name = NULL
-  )
+  ) +
+  xlab("baseline health status")
 ```
 
-The dashed line now shows the mean among **participants whose outcomes are observed**.
+The blue line now shows the mean among **participants whose outcomes are observed**.
 
-
-#### Repeating the study
+#### Re-sampling repeatedly
 
 Now let's repeat the sampling many times.
 
@@ -785,11 +860,11 @@ sim_means <- replicate(n_sims, {
     outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
   
   est_complete <- d_sim[, mean(outcome)]
-  est_missing <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
+  est_incomplete <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
   
   c(
     complete = est_complete,
-    missing = est_missing
+    incomplete = est_incomplete
   )
 })
 
@@ -823,7 +898,8 @@ Because baseline health is observed for everyone, we know something about why th
 dd[, p_missing := plogis(-1 - 2 * health)]
 dd[, missing := rbinom(.N, 1, p_missing)]
 dd[, 
-  outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+  outcome_obs := fifelse(missing == 1, NA_real_, outcome)
+]
 
 dd[, .(
   n_observed = sum(!is.na(outcome_obs)),
@@ -835,28 +911,34 @@ dd[, .(
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = dd, 
+ggplot(data = 
+  dd, 
   aes(
     x = health, 
     y = outcome, 
     color = factor(missing)
-  )) +
+  )
+) +
   geom_hline(
     yintercept = dd[missing == 0, mean(outcome)],
-    linetype = 2,
-    linewidth = 1
+    color = "#356d9e"
   ) + 
-  geom_hline(yintercept = 50, color = "grey80") + 
-  geom_point(size = 1) +
+geom_hline(
+    yintercept = 50, 
+    color = "black",
+    linetype = 2,
+    linewidth = .5)  +
+geom_point(size = 1) +
   scale_color_manual(
-    values = c("grey50", "#ef6b6b"),
+    values = c("#4587c1", "#d47e81"),
     labels = c("Observed", "Missing"),
     name = NULL
-  )
+  )+
+  xlab("baseline health status")
 ```
 
 
-#### Repeating the study
+#### Re-sampling
 
 Because baseline health predicts the outcome, systematically losing participants with lower health scores may also change the mean outcome among those we observe.
 
@@ -879,11 +961,11 @@ sim_means <- replicate(n_sims, {
     outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
   
   est_complete <- d_sim[, mean(outcome)]
-  est_missing <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
+  est_incomplete <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
   
   c(
     complete = est_complete,
-    missing = est_missing
+    incomplete = est_incomplete
   )
 })
 
@@ -969,24 +1051,30 @@ dd[, .(
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = dd, 
+ggplot(data = 
+  dd, 
   aes(
     x = health, 
     y = outcome, 
     color = factor(missing)
-  )) +
+  )
+) +
   geom_hline(
     yintercept = dd[missing == 0, mean(outcome)],
-    linetype = 2,
-    linewidth = 1
+    color = "#356d9e"
   ) + 
-  geom_hline(yintercept = 50, color = "grey80") + 
-  geom_point(size = 1) +
+geom_hline(
+    yintercept = 50, 
+    color = "black",
+    linetype = 2,
+    linewidth = .5)  +
+geom_point(size = 1) +
   scale_color_manual(
-    values = c("grey50", "#ef6b6b"),
+    values = c("#4587c1", "#d47e81"),
     labels = c("Observed", "Missing"),
     name = NULL
-  )
+  )+
+  xlab("baseline health status")
 ```
 
 Here, participants with lower outcomes are systematically more likely to be missing, **inflating our estimate of the population mean**.
@@ -996,7 +1084,7 @@ But there is an important difference from our previous example:
 > ***For participants whose outcomes are missing, we do not observe the information that explains why they are missing.***
 
 
-#### Repeating the study
+#### Re-sampling
 
 Let's again repeat the sampling process many times.
 
@@ -1043,7 +1131,7 @@ Usually, **we cannot determine from the observed data whether missingness is MAR
 
 For participants with missing outcomes, we do not know what those outcomes would have been. Therefore, we cannot directly determine whether missingness depends on those unobserved values.
 
-However, an MAR assumption may be more reasonable when we have good observed information about:
+However, a MAR assumption may be more reasonable when we have good observed information about:
 
 - factors that predict whether data are missing
 - factors that predict the missing outcome
@@ -1082,10 +1170,10 @@ More formal statistical methods for MNAR follow the same basic principle: they r
 ### Missing data: putting it together
 
 - **MCAR:** Missingness does not depend on observed or unobserved data.
-  - Analyzing the observed data may cost precision; in our example, it does not systematically shift the estimate.
+  - Analyzing the observed data only may reduce precision; in our example, it does not systematically shift the estimate.
 - **MAR:** Missingness can depend on information we observed.
   - We can use that observed information to help account for the missing data.
 - **MNAR:** Missingness still depends on information we did not observe.
   - Observed information may help, but additional assumptions are needed to account fully for the missing data.
 
-> ***The consequences of missing data depend on why the data are missing — not simply on how much data are missing.***
+> ***The consequences of missing data depend on why the data are missing — not just on how much data are missing.***

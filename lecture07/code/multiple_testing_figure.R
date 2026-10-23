@@ -1,3 +1,6 @@
+library(data.table)
+library(ggplot2)
+
 set.seed(123)
 
 n <- 100
@@ -71,13 +74,13 @@ p <- ggplot(results, aes(x = index)) +
       "%.0f%% of studies rejected at least one null hypothesis",
       pct_any_reject
     ),
-    x = "Simulated study",
+    x = "Simulated sample",
     y = "95% confidence interval"
   ) +
   theme(strip.text = element_text(face = "bold", size = 10))
 
 ggsave(
-  "lectures/images/lecture07/multiple_testing_ci.png",
+  "lecture07/images/multiple_testing_ci.png",
   width = 8,
   height = 5,
   dpi = 300,
