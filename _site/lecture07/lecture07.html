@@ -369,7 +369,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\nlibrary(broom)\nlibrary(gt)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 100\nn_outcomes <- 20\n\nreject_null <- replicate(n_outcomes, {\n  treatment <- rnorm(n, 45, 3)\n  control <- rnorm(n, 45, 3)\n  p_value <- t.test(treatment, control)$p.value\n  as.integer(p_value < 0.05)\n})\n\nreject_null","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sum(reject_null)","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn <- 100\nn_outcomes <- 20\nn_sims <- 1000\n\nsim_results <- replicate(n_sims, {\n  \n  reject_null <- replicate(n_outcomes, {\n    treatment <- rnorm(n, 45, 3)\n    control <- rnorm(n, 45, 3)\n    p_value <- t.test(treatment, control)$p.value\n    as.integer(p_value < 0.05)\n  })\n  \n  sum(reject_null)\n})\n\ntable(sim_results)","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sim_results > 0)","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"1 - (1-0.05)^5","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn_sims <- 1000\n\nn <- 100\nn_outcomes <- 20\n\nalpha_bonf <- 0.05 / n_outcomes\n\nsim_results_bonf <- replicate(n_sims, {\n  \n  reject_null <- replicate(n_outcomes, {\n    treatment <- rnorm(n, 45, 3)\n    control <- rnorm(n, 45, 3)\n    p_value <- t.test(treatment, control)$p.value\n    as.integer(p_value < alpha_bonf)\n  })\n  \n  sum(reject_null)\n})\n\nmean(sim_results_bonf > 0)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_values <- c(0.003, 0.009, 0.015, 0.031, 0.20)\n\np.adjust(p_values, method = \"bonferroni\")\np.adjust(p_values, method = \"holm\")","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 100\nn_tests <- 1000\nn_effects <- 100\n\neffect <- c(rep(0, n_tests - n_effects), rep(1, n_effects))\n\np_values <- sapply(effect, function(delta) {\n  treatment <- rnorm(n, 45 + delta, 3)\n  control <- rnorm(n, 45, 3)\n  t.test(treatment, control)$p.value\n})\n\nd_result <- data.table(\n  effect = effect, \n  reject_null = as.integer(p_values < 0.05)\n)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"false_discoveries <- d_result[effect == 0, sum(reject_null)]\ntrue_discoveries <- d_result[effect == 1, sum(reject_null)]\ntotal_discoveries <- d_result[, sum(reject_null)]\n\nc(\n  false = false_discoveries,\n  true = true_discoveries,\n  total = total_discoveries\n)","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"FDP <- ifelse(\n  total_discoveries == 0, \n  0, \n  false_discoveries / total_discoveries\n)\n\nFDP","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn_sims <- 100\n\nsim_FDP <- replicate(n_sims, {\n  \n  p_values <- sapply(effect, function(delta) {\n    treatment <- rnorm(n, 45 + delta, 3)\n    control <- rnorm(n, 45, 3)\n    t.test(treatment, control)$p.value\n  })\n  \n  d_result <- data.table(\n    effect = effect, \n    reject_null = as.integer(p_values < 0.05)\n  )\n\n  false_discoveries <- \n    d_result[effect == 0, sum(reject_null)]\n  \n  total_discoveries <- \n    d_result[, sum(reject_null)]\n  \n  ifelse(\n    total_discoveries == 0, \n    0, \n    false_discoveries / total_discoveries\n  )\n})\n\nhead(sim_FDP)","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sim_FDP)","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 100\nn_tests <- 1000\nn_effects <- 100\n\neffect <- c(\n  rep(0, n_tests - n_effects), \n  rep(1, n_effects)\n)\n\neffect","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_values <- sapply(effect, function(delta) {\n  \n  treatment <- rnorm(n, 45 + delta, 3)\n  control <- rnorm(n, 45, 3)\n  \n  t.test(treatment, control)$p.value\n})\n\nround(p_values, 2)","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sum(p_values < 0.05)","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_values_BH <- p.adjust(p_values, method = \"BH\")","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_results <- data.table(\n  effect = effect,\n  p_value = p_values,\n  p_value_BH = p_values_BH\n)\n\np_results[order(p_value)][1:10]","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_results[, reject_null := as.integer(p_value_BH < 0.05)]\n\np_results[, sum(reject_null)]","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"false_discoveries <- \n  p_results[effect == 0, sum(reject_null)]\n\ntrue_discoveries <- \n  p_results[effect != 0, sum(reject_null)]\n\ntotal_discoveries <- \n  p_results[, sum(reject_null)]\n\nc(\n  false = false_discoveries,\n  true = true_discoveries,\n  total = total_discoveries\n)","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"FDP <- false_discoveries / total_discoveries\nFDP","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn_sims <- 100\n\nsim_FDP_BH <- replicate(n_sims, {\n  \n  p_values <- sapply(effect, function(delta) {\n    treatment <- rnorm(n, 45 + delta, 3)\n    control <- rnorm(n, 45, 3)\n    t.test(treatment, control)$p.value\n  })\n  \n  p_values_BH <- p.adjust(p_values, method = \"BH\")\n  \n  d_results <- data.table(\n    effect = effect,\n    reject_null = as.integer(p_values_BH < 0.05)\n  )\n  \n  false_discoveries <- \n    d_results[effect == 0, sum(reject_null)]\n  \n  total_discoveries <- \n    d_results[, sum(reject_null)]\n  \n  ifelse(\n    total_discoveries == 0, \n    0, \n    false_discoveries / total_discoveries\n  )\n})\n\nmean(sim_FDP_BH)","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn <- 1000\n\ndd <- data.table(\n  id = 1:n,\n  health = rnorm(n)\n)\n\ndd[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]\n\ndd[, .(\n  n = .N,\n  mean_health = mean(health),\n  mean_outcome = mean(outcome)\n)]","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = dd, aes(x = health, y = outcome)) +\n  geom_hline(\n    yintercept = dd[, mean(outcome)],\n    color = \"#356d9e\"\n  ) + \n  geom_hline(\n    yintercept = 50, \n    color = \"black\",\n    linetype = 2,\n    linewidth = .5) +\n  geom_point(size = 1, color = \"#4587c1\") +\n  xlab(\"baseline health status\")","id":24,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, missing := rbinom(.N, 1, 0.30)]\n\ndd[, \n  outcome_obs := fifelse(missing == 1, NA_real_, outcome)]\n\ndd","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, .(\n  n_observed = sum(!is.na(outcome_obs)),\n  mean_health = mean(health[!is.na(outcome_obs)]),\n  mean_outcome = mean(outcome_obs, na.rm = TRUE)\n)]","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = \n  dd, \n  aes(\n    x = health, \n    y = outcome, \n    color = factor(missing)\n  )\n) +\n  geom_hline(\n    yintercept = dd[missing == 0, mean(outcome)],\n    color = \"#356d9e\"\n  ) + \ngeom_hline(\n    yintercept = 50, \n    color = \"black\",\n    linetype = 2,\n    linewidth = .5)  +\ngeom_point(size = 1) +\n  scale_color_manual(\n    values = c(\"#4587c1\", \"#d47e81\"),\n    labels = c(\"Observed\", \"Missing\"),\n    name = NULL\n  ) +\n  xlab(\"baseline health status\")","id":27,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn <- 1000\nn_sims <- 1000\n\nsim_means <- replicate(n_sims, {\n  \n  d_sim <- data.table(\n    health = rnorm(n)\n  )\n  \n  d_sim[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]\n  \n  d_sim[, missing := rbinom(.N, 1, 0.30)]\n  d_sim[, \n    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]\n  \n  est_complete <- d_sim[, mean(outcome)]\n  est_incomplete <- d_sim[, mean(outcome_obs, na.rm = TRUE)]\n  \n  c(\n    complete = est_complete,\n    incomplete = est_incomplete\n  )\n})\n\nrowMeans(sim_means)","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"apply(sim_means, 1, sd)","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, p_missing := plogis(-1 - 2 * health)]\ndd[, missing := rbinom(.N, 1, p_missing)]\ndd[, \n  outcome_obs := fifelse(missing == 1, NA_real_, outcome)\n]\n\ndd[, .(\n  n_observed = sum(!is.na(outcome_obs)),\n  mean_health = mean(health[!is.na(outcome_obs)]),\n  mean_outcome = mean(outcome_obs, na.rm = TRUE)\n)]","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = \n  dd, \n  aes(\n    x = health, \n    y = outcome, \n    color = factor(missing)\n  )\n) +\n  geom_hline(\n    yintercept = dd[missing == 0, mean(outcome)],\n    color = \"#356d9e\"\n  ) + \ngeom_hline(\n    yintercept = 50, \n    color = \"black\",\n    linetype = 2,\n    linewidth = .5)  +\ngeom_point(size = 1) +\n  scale_color_manual(\n    values = c(\"#4587c1\", \"#d47e81\"),\n    labels = c(\"Observed\", \"Missing\"),\n    name = NULL\n  )+\n  xlab(\"baseline health status\")","id":31,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn_sims <- 100\n\nsim_means <- replicate(n_sims, {\n  \n  d_sim <- data.table(\n    health = rnorm(n)\n  )\n  \n  d_sim[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]\n  \n  d_sim[, p_missing := plogis(-1 - 2 * health)]\n  d_sim[, missing := rbinom(.N, 1, p_missing)]\n  d_sim[, \n    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]\n  \n  est_complete <- d_sim[, mean(outcome)]\n  est_incomplete <- d_sim[, mean(outcome_obs, na.rm = TRUE)]\n  \n  c(\n    complete = est_complete,\n    incomplete = est_incomplete\n  )\n})\n\nrowMeans(sim_means)","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"apply(sim_means, 1, sd)","id":33,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- lm(outcome_obs ~ health, data = dd)\n\ncoef(fit)","id":34,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, outcome_pred := predict(fit, newdata = dd)]\n\ndd[, mean(outcome_pred)]","id":35,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, p_missing := plogis(3.5 - 0.1 * outcome)]\ndd[, missing := rbinom(.N, 1, p_missing)]\ndd[, \n  outcome_obs := fifelse(missing == 1, NA_real_, outcome)]\n\ndd[, .(\n  n_observed = sum(!is.na(outcome_obs)),\n  mean_health = mean(health[!is.na(outcome_obs)]),\n  mean_outcome = mean(outcome_obs, na.rm = TRUE)\n)]","id":36,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-36","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(data = \n  dd, \n  aes(\n    x = health, \n    y = outcome, \n    color = factor(missing)\n  )\n) +\n  geom_hline(\n    yintercept = dd[missing == 0, mean(outcome)],\n    color = \"#356d9e\"\n  ) + \ngeom_hline(\n    yintercept = 50, \n    color = \"black\",\n    linetype = 2,\n    linewidth = .5)  +\ngeom_point(size = 1) +\n  scale_color_manual(\n    values = c(\"#4587c1\", \"#d47e81\"),\n    labels = c(\"Observed\", \"Missing\"),\n    name = NULL\n  )+\n  xlab(\"baseline health status\")","id":37,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-37","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn_sims <- 100\n\nsim_means <- replicate(n_sims, {\n  \n  d_sim <- data.table(\n    health = rnorm(n)\n  )\n  \n  d_sim[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]\n  \n  d_sim[, p_missing := plogis(3.5 - 0.1 * outcome)]\n  d_sim[, missing := rbinom(.N, 1, p_missing)]\n  d_sim[, \n    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]\n  \n  est_complete <- d_sim[, mean(outcome)]\n  est_missing <- d_sim[, mean(outcome_obs, na.rm = TRUE)]\n  \n  c(\n    complete = est_complete,\n    missing = est_missing\n  )\n})\n\nrowMeans(sim_means)","id":38,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-38","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- lm(outcome_obs ~ health, data = dd)\n\ndd[, outcome_pred := predict(fit, newdata = dd)]\n\ndd[, mean(outcome_pred)]","id":39,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-39","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\nlibrary(broom)\nlibrary(gt)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1237)\n\nn_per_arm <- 100\nn_outcomes <- 5\n\nmu_1 <- c(25, 21, 17, 10, 21)\nmu_0 <- c(25, 21, 17, 10, 21)\n\nsd_1 <- c(3, 4, 2, 1.5, 2.5)\nsd_0 <- c(3, 4, 2, 1.5, 2.5)\n\nparams <- data.table(\n  outcome = paste0(\"Outcome \", 1:n_outcomes),\n  mu_1, mu_0, sd_1, sd_0\n)\n\ndd <- rbindlist(lapply(1:n_outcomes, function(j) {\n  \n  data.table(\n    id = rep(1:(2 * n_per_arm)),\n    group = rep(c(\"Control\", \"Treatment\"), each = n_per_arm),\n    outcome = params[j, outcome],\n    value = c(\n      rnorm(n_per_arm, params[j, mu_0], params[j, sd_0]),\n      rnorm(n_per_arm, params[j, mu_1], params[j, sd_1])\n    )\n  )\n  \n}))\n\ndd","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = group, y = value)) +\n  geom_boxplot(\n    width = .35, \n    outliers = FALSE,\n    aes(fill = outcome)) +\n  facet_grid(~ outcome) +\n  labs(\n    x = NULL,\n    y = \"Outcome\"\n  ) +\n  theme_minimal() +\n  theme(legend.position = \"none\")","id":3,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"results <- dd[, .(\n  mean_control = mean(value[group == \"Control\"]),\n  mean_treatment = mean(value[group == \"Treatment\"]),\n  difference = mean(value[group == \"Treatment\"]) -\n               mean(value[group == \"Control\"]),\n  p_value = t.test(\n    value[group == \"Treatment\"],\n    value[group == \"Control\"]\n  )$p.value\n), by = outcome]\n\nresults[, reject_null := p_value < 0.05]\n\nresults","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1239)\n\nn_sims <- 1000\n\nsim_results <- replicate(n_sims, {\n\n  # Generate one study\n  dd <- rbindlist(lapply(1:n_outcomes, function(j) {\n    \n    data.table(\n      id = rep(1:(2 * n_per_arm)),\n      group = rep(c(\"Control\", \"Treatment\"), each = n_per_arm),\n      outcome = params[j, outcome],\n      value = c(\n        rnorm(n_per_arm, params[j, mu_0], params[j, sd_0]),\n        rnorm(n_per_arm, params[j, mu_1], params[j, sd_1])\n      )\n    )\n    \n  }))\n  \n  # Analyze the five outcomes\n  \n  results <- dd[, .(\n    p_value = t.test(\n      value[group == \"Treatment\"],\n      value[group == \"Control\"]\n    )$p.value\n  ), by = outcome]\n  \n  # Number of null hypotheses rejected\n  \n  sum(results$p_value < 0.05)\n  \n})\n\ntable(sim_results)","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sim_results > 0)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"1 - (0.95)^5","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1239)\n\nn_sims <- 1000\n\nalpha_bonf <- 0.05 / n_outcomes\n\nsim_results_bonf <- replicate(n_sims, {\n\n  # Generate one study\n  dd <- rbindlist(lapply(1:n_outcomes, function(j) {\n    \n    data.table(\n      id = rep(1:(2 * n_per_arm)),\n      group = rep(c(\"Control\", \"Treatment\"), each = n_per_arm),\n      outcome = params[j, outcome],\n      value = c(\n        rnorm(n_per_arm, params[j, mu_0], params[j, sd_0]),\n        rnorm(n_per_arm, params[j, mu_1], params[j, sd_1])\n      )\n    )\n    \n  }))\n  \n  # Analyze the five outcomes\n  \n  results <- dd[, .(\n    p_value = t.test(\n      value[group == \"Treatment\"],\n      value[group == \"Control\"]\n    )$p.value\n  ), by = outcome]\n  \n  # Number of null hypotheses rejected\n  \n  sum(results$p_value < alpha_bonf)\n  \n})\n\ntable(sim_results_bonf)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sim_results_bonf > 0)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_values <- c(0.003, 0.009, 0.015, 0.031, 0.20)\n\np.adjust(p_values, method = \"bonferroni\")\np.adjust(p_values, method = \"holm\")","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 100\nn_tests <- 1000\nn_effects <- 100\n\neffect <- c(rep(0, n_tests - n_effects), rep(1, n_effects))\n\np_values <- sapply(effect, function(delta) {\n  treatment <- rnorm(n, 45 + delta, 3)\n  control <- rnorm(n, 45, 3)\n  t.test(treatment, control)$p.value\n})\n\nd_result <- data.table(\n  effect = effect, \n  reject_null = as.integer(p_values < 0.05)\n)","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"false_discoveries <- d_result[effect == 0, sum(reject_null)]\ntrue_discoveries <- d_result[effect == 1, sum(reject_null)]\ntotal_discoveries <- d_result[, sum(reject_null)]\n\nc(\n  false = false_discoveries,\n  true = true_discoveries,\n  total = total_discoveries\n)","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"FDP <- ifelse(\n  total_discoveries == 0, \n  0, \n  false_discoveries / total_discoveries\n)\n\nFDP","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn_sims <- 100\n\nsim_FDP <- replicate(n_sims, {\n  \n  p_values <- sapply(effect, function(delta) {\n    treatment <- rnorm(n, 45 + delta, 3)\n    control <- rnorm(n, 45, 3)\n    t.test(treatment, control)$p.value\n  })\n  \n  d_result <- data.table(\n    effect = effect, \n    reject_null = as.integer(p_values < 0.05)\n  )\n\n  false_discoveries <- \n    d_result[effect == 0, sum(reject_null)]\n  \n  total_discoveries <- \n    d_result[, sum(reject_null)]\n  \n  ifelse(\n    total_discoveries == 0, \n    0, \n    false_discoveries / total_discoveries\n  )\n})\n\nhead(sim_FDP)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(sim_FDP)","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn <- 100\nn_tests <- 1000\nn_effects <- 100\n\neffect <- c(\n  rep(0, n_tests - n_effects), \n  rep(1, n_effects)\n)\n\neffect","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_values <- sapply(effect, function(delta) {\n  \n  treatment <- rnorm(n, 45 + delta, 3)\n  control <- rnorm(n, 45, 3)\n  \n  t.test(treatment, control)$p.value\n})\n\nround(p_values, 2)","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sum(p_values < 0.05)","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_values_BH <- p.adjust(p_values, method = \"BH\")","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_results <- data.table(\n  effect = effect,\n  p_value = p_values,\n  p_value_BH = p_values_BH\n)\n\np_results[order(p_value)][1:10]","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"p_results[, reject_null := as.integer(p_value_BH < 0.05)]\n\np_results[, sum(reject_null)]","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"false_discoveries <- \n  p_results[effect == 0, sum(reject_null)]\n\ntrue_discoveries <- \n  p_results[effect != 0, sum(reject_null)]\n\ntotal_discoveries <- \n  p_results[, sum(reject_null)]\n\nc(\n  false = false_discoveries,\n  true = true_discoveries,\n  total = total_discoveries\n)","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"FDP <- false_discoveries / total_discoveries\nFDP","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn_sims <- 100\n\nsim_FDP_BH <- replicate(n_sims, {\n  \n  p_values <- sapply(effect, function(delta) {\n    treatment <- rnorm(n, 45 + delta, 3)\n    control <- rnorm(n, 45, 3)\n    t.test(treatment, control)$p.value\n  })\n  \n  p_values_BH <- p.adjust(p_values, method = \"BH\")\n  \n  d_results <- data.table(\n    effect = effect,\n    reject_null = as.integer(p_values_BH < 0.05)\n  )\n  \n  false_discoveries <- \n    d_results[effect == 0, sum(reject_null)]\n  \n  total_discoveries <- \n    d_results[, sum(reject_null)]\n  \n  ifelse(\n    total_discoveries == 0, \n    0, \n    false_discoveries / total_discoveries\n  )\n})\n\nmean(sim_FDP_BH)","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn <- 1000\n\ndd <- data.table(\n  id = 1:n,\n  baseline_pf = rnorm(n)\n)\n\ndd[, followup_pf := \n     50 + 5 * baseline_pf + rnorm(n, 0, 10)]\n\ndd[, .(\n  n = .N,\n  mean_baseline = mean(baseline_pf),\n  mean_followup = mean(followup_pf)\n)]","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(dd, aes(x = baseline_pf, y = followup_pf)) +\n  geom_hline(\n    yintercept = dd[, mean(followup_pf)],\n    color = \"#356d9e\"\n  ) +\n  geom_hline(\n    yintercept = 50,\n    color = \"black\",\n    linetype = 2,\n    linewidth = .5\n  ) +\n  geom_point(size = 1, color = \"#4587c1\") +\n  xlab(\"Baseline physical functioning\") +\n  ylab(\"Six-month physical functioning\")","id":26,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, missing := rbinom(.N, 1, 0.30)]\n\ndd[, \n  followup_pf_obs := \n    fifelse(missing == 1, NA_real_, followup_pf)\n]\n\ndd","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, .(\n  n_observed = \n    sum(!is.na(followup_pf_obs)),\n  mean_baseline = \n    mean(baseline_pf[!is.na(followup_pf_obs)]),\n  mean_followup = \n    mean(followup_pf_obs, na.rm = TRUE)\n)]","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  data = dd, \n  aes(\n    x = baseline_pf, \n    y = followup_pf, \n    color = factor(missing)\n  )\n) +\n  geom_hline(\n    yintercept = \n      dd[missing == 0, mean(followup_pf)],\n    color = \"#356d9e\"\n  ) + \n  geom_hline(\n    yintercept = 50, \n    color = \"black\",\n    linetype = 2,\n    linewidth = .5\n  ) +\n  geom_point(size = 1) +\n  scale_color_manual(\n    values = c(\"#4587c1\", \"#d47e81\"),\n    labels = c(\"Observed\", \"Missing\"),\n    name = NULL\n  ) +\n  xlab(\"Baseline physical functioning\") +\n  ylab(\"Six-month physical functioning\")","id":29,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn <- 1000\nn_sims <- 1000\n\nsim_means <- replicate(n_sims, {\n  \n  d_sim <- data.table(\n    baseline_pf = rnorm(n)\n  )\n  \n  d_sim[, followup_pf := \n    50 + 5 * baseline_pf + rnorm(n, 0, 10)]\n  \n  d_sim[, missing := rbinom(.N, 1, 0.30)]\n  \n  d_sim[, \n    followup_pf_obs := fifelse(\n      missing == 1, NA_real_, followup_pf\n    )\n  ]\n  \n  est_complete <- \n    d_sim[, mean(followup_pf)]\n  est_incomplete <- \n    d_sim[, mean(followup_pf_obs, na.rm = TRUE)]\n  \n  c(\n    complete = est_complete,\n    incomplete = est_incomplete\n  )\n})\n\nrowMeans(sim_means)","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"apply(sim_means, 1, sd)","id":31,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, p_missing := plogis(-1 - 2 * baseline_pf)]\n\ndd[, missing := rbinom(.N, 1, p_missing)]\n\ndd[, \n  followup_pf_obs := fifelse(\n    missing == 1, NA_real_, followup_pf\n  )\n]\n\ndd[, .(\n  n_observed = sum(!is.na(followup_pf_obs)),\n  mean_baseline = \n    mean(baseline_pf[!is.na(followup_pf_obs)]),\n  mean_followup = \n    mean(followup_pf_obs, na.rm = TRUE)\n)]","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  data = dd, \n  aes(\n    x = baseline_pf, \n    y = followup_pf, \n    color = factor(missing)\n  )\n) +\n  geom_hline(\n    yintercept = \n      dd[missing == 0, mean(followup_pf)],\n    color = \"#356d9e\"\n  ) + \n  geom_hline(\n    yintercept = 50, \n    color = \"black\",\n    linetype = 2,\n    linewidth = .5\n  ) +\n  geom_point(size = 1) +\n  scale_color_manual(\n    values = c(\"#4587c1\", \"#d47e81\"),\n    labels = c(\"Observed\", \"Missing\"),\n    name = NULL\n  ) +\n  xlab(\"Baseline physical functioning\") +\n  ylab(\"Six-month physical functioning\")","id":33,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(1234)\n\nn_sims <- 100\n\nsim_means <- replicate(n_sims, {\n  \n  d_sim <- data.table(\n    baseline_pf = rnorm(n)\n  )\n  \n  d_sim[, followup_pf := \n    50 + 5 * baseline_pf + rnorm(n, 0, 10)]\n  \n  d_sim[, p_missing := plogis(-1 - 2 * baseline_pf)]\n  d_sim[, missing := rbinom(.N, 1, p_missing)]\n  \n  d_sim[, \n    followup_pf_obs := fifelse(\n      missing == 1, NA_real_, followup_pf\n    )\n  ]\n  \n  est_complete <- \n    d_sim[, mean(followup_pf)]\n  est_incomplete <- \n    d_sim[, mean(followup_pf_obs, na.rm = TRUE)]\n  \n  c(\n    complete = est_complete,\n    incomplete = est_incomplete\n  )\n})\n\nrowMeans(sim_means)","id":34,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"apply(sim_means, 1, sd)","id":35,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- lm(followup_pf_obs ~ baseline_pf, data = dd)\n\ncoef(fit)","id":36,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-36","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, \n   followup_pf_pred := \n     predict(fit, newdata = dd)\n]\n\ndd[, mean(followup_pf_pred)]","id":37,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-37","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, \n   p_missing := \n     plogis(3.5 - 0.1 * followup_pf)]\n\ndd[, missing := rbinom(.N, 1, p_missing)]\n\ndd[, \n  followup_pf_obs := fifelse(\n    missing == 1, NA_real_, followup_pf\n  )\n]\n\ndd[, .(\n  n_observed = sum(!is.na(followup_pf_obs)),\n  mean_baseline = \n    mean(baseline_pf[!is.na(followup_pf_obs)]),\n  mean_followup = \n    mean(followup_pf_obs, na.rm = TRUE)\n)]","id":38,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-38","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  data = dd, \n  aes(\n    x = baseline_pf, \n    y = followup_pf, \n    color = factor(missing)\n  )\n) +\n  geom_hline(\n    yintercept = \n      dd[missing == 0, mean(followup_pf)],\n    color = \"#356d9e\"\n  ) + \n  geom_hline(\n    yintercept = 50, \n    color = \"black\",\n    linetype = 2,\n    linewidth = .5\n  ) +\n  geom_point(size = 1) +\n  scale_color_manual(\n    values = c(\"#4587c1\", \"#d47e81\"),\n    labels = c(\"Observed\", \"Missing\"),\n    name = NULL\n  ) +\n  xlab(\"Baseline physical functioning\") +\n  ylab(\"Six-month physical functioning\")","id":39,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-39","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)\n\nn_sims <- 100\n\nsim_means <- replicate(n_sims, {\n  \n  d_sim <- data.table(\n    baseline_pf = rnorm(n)\n  )\n  \n  d_sim[, followup_pf := \n    50 + 5 * baseline_pf + rnorm(n, 0, 10)]\n  \n  d_sim[, \n    p_missing := plogis(3.5 - 0.1 * followup_pf)\n  ]\n  d_sim[, missing := rbinom(.N, 1, p_missing)]\n  \n  d_sim[, \n    followup_pf_obs := fifelse(\n      missing == 1, NA_real_, followup_pf\n    )\n  ]\n  \n  est_complete <- d_sim[, mean(followup_pf)]\n  est_missing <- d_sim[, \n    mean(followup_pf_obs, na.rm = TRUE)\n  ]\n  \n  c(\n    complete = est_complete,\n    missing = est_missing\n  )\n})\n\nrowMeans(sim_means)","id":40,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-40","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- lm(followup_pf_obs ~ baseline_pf, data = dd)\n\ndd[, followup_pf_pred := predict(fit, newdata = dd)]\n\ndd[, mean(followup_pf_pred)]","id":41,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-41","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1989,31 +1989,40 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <section id="multiple-testing" class="level2">
 <h2 class="anchored" data-anchor-id="multiple-testing">Multiple testing</h2>
 <p>Suppose we conduct a randomized study comparing a treatment with a control group.</p>
-<p>We have <strong>20 different outcomes</strong> and a separate research question for each:</p>
+<p>We have <strong>5 different outcomes</strong> and a separate research question for each:</p>
 <blockquote class="blockquote">
 <p><strong>Does treatment affect this outcome?</strong></p>
 </blockquote>
 <p>For each outcome <span class="math inline">\(j\)</span>:</p>
 <p><span class="math display">\[\large
 H_{0j}: \mu_{j1} - \mu_{j0} = 0,
-\qquad j=1,\ldots,20\]</span></p>
+\qquad j=1,\ldots,5\]</span></p>
 <p>where <span class="math inline">\(\mu_{j1}\)</span> and <span class="math inline">\(\mu_{j0}\)</span> are the population means for outcome <span class="math inline">\(j\)</span> in the treatment and control groups.</p>
-<p>Suppose <strong>all 20 null hypotheses are true</strong> — treatment has no effect on any of the outcomes.</p>
+<p>Suppose <strong>all 5 null hypotheses are true</strong> — treatment has no effect on any of the outcomes.</p>
 <p>For any one test with <span class="math inline">\(\alpha=0.05\)</span>, the probability of a <strong>Type I error</strong> is 5%.</p>
-<p>But we are conducting <strong>20 tests</strong>.</p>
+<p>But we are conducting <strong>5 tests</strong>.</p>
 <blockquote class="blockquote">
 <p><strong>How likely are we to find at least one statistically significant effect and conclude that the treatment “works”?</strong></p>
 </blockquote>
 <section id="simulating-the-study" class="level3">
 <h3 class="anchored" data-anchor-id="simulating-the-study">Simulating the study</h3>
-<p>Let’s simulate this study under the assumption that <strong>all 20 null hypotheses are true</strong>.</p>
+<p>Let’s simulate this study under the assumption that <strong>all 5 null hypotheses are true</strong>.</p>
 <p>For each outcome, we will generate data from the same population distribution for the treatment and control groups:</p>
-<p><span class="math display">\[\large
-Y_{j1},Y_{j0} \sim N(45,3)\]</span></p>
-<p>We will then test for a treatment effect separately for each of the 20 outcomes.</p>
+<p><span class="math display">\[
+\begin{align}
+Y_{11},Y_{10} &amp;\sim N(25,3^2) \\
+Y_{21},Y_{20} &amp;\sim N(21,4^2) \\
+Y_{31},Y_{30} &amp;\sim N(17,2^2) \\
+Y_{41},Y_{40} &amp;\sim N(10,1.5^2) \\
+Y_{51},Y_{50} &amp;\sim N(31,2.5^2) \\
+\end{align}
+\]</span></p>
+<p>We will then test for a treatment effect separately for each of the 5 outcomes.</p>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><strong>One simulated sample doesn’t tell us how often this happens. What if we repeat the sampling many times?</strong></p>
@@ -2023,36 +2032,35 @@ Y_{j1},Y_{j0} \sim N(45,3)\]</span></p>
 <h3 class="anchored" data-anchor-id="lets-repeatedly-sample-many-times-.-.-.">Let’s repeatedly sample many times . . .</h3>
 <p>In every simulated smaple:</p>
 <ul>
-<li>all 20 null hypotheses are true</li>
+<li>all 5 null hypotheses are true</li>
 <li>we test each outcome using <span class="math inline">\(\alpha=0.05\)</span></li>
 <li>we record how many null hypotheses are rejected</li>
 </ul>
-<div id="qwebr-insertion-location-4"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-6"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <ul>
-<li><p>In about <strong>64% of samples</strong>, at least one of the 20 tests is statistically significant.</p></li>
+<li><p>In about <strong>22% of samples</strong>, at least one of the 5 tests is statistically significant.</p></li>
 <li><p>Each individual test still has a 5% Type I error rate.</p></li>
-<li><p>But across the <strong>family of 20 tests</strong>, the probability of making at least one Type I error is much larger than 5%.</p></li>
+<li><p>But across the <strong>family of 5 tests</strong>, the probability of making at least one Type I error is much larger than 5%.</p></li>
 <li><p>The probability of making at least one Type I error across the family is called the <strong>family-wise error rate (FWER)</strong>:</p></li>
 </ul>
 <p><span class="math display">\[\large
 \text{FWER} = P(\text{at least one Type I error})\]</span></p>
-<p>For 20 independent tests, the probability that we make <strong>no</strong> Type I errors is</p>
+<p>For 5 independent tests, the probability that we make <strong>no</strong> Type I errors is</p>
 <p><span class="math display">\[\large
-(1-0.05)^{20}=0.95^{20}\approx0.36\]</span></p>
+0.95^{5}\approx0.773\]</span></p>
 <p>so</p>
 <p><span class="math display">\[
 \large
 P(\text{at least one Type I error})
-=1-0.95^{20}
-\approx0.64.
+=1-0.95^{5}
+\approx 0.226.
 \]</span></p>
 </section>
 <section id="visualizing-the-problem" class="level3">
 <h3 class="anchored" data-anchor-id="visualizing-the-problem">Visualizing the problem</h3>
-<p>It is easier to see what is happening if we consider a smaller family of <strong>5 outcomes</strong>.</p>
 <p>The figure shows 100 simulated samples. In each sample:</p>
 <ul>
 <li>all 5 null hypotheses are true</li>
@@ -2062,12 +2070,12 @@ P(\text{at least one Type I error})
 </ul>
 <p><img src="./images/multiple_testing_ci.png" class="img-fluid"></p>
 <p>The expected Type 1 error rate with 5 outcomes is:</p>
-<div id="qwebr-insertion-location-6"></div>
+<div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="controlling-the-family-wise-error-rate" class="level3">
 <h3 class="anchored" data-anchor-id="controlling-the-family-wise-error-rate">Controlling the family-wise error rate</h3>
-<p>We would like the probability of making <strong>at least one Type I error across all 20 tests</strong> to be no more than 5%.</p>
+<p>We would like the probability of making <strong>at least one Type I error across all 5 tests</strong> to be no more than 5%.</p>
 <blockquote class="blockquote">
 <p><strong>Can we change the significance level for each individual test so that the FWER is controlled at 5%?</strong></p>
 </blockquote>
@@ -2076,23 +2084,25 @@ P(\text{at least one Type I error})
 <p><span class="math display">\[\large
 \alpha^*=\frac{\alpha}{m}\]</span></p>
 <p>where <span class="math inline">\(m\)</span> is the number of tests.</p>
-<p>For our 20 outcomes:</p>
+<p>For our 5 outcomes:</p>
 <p><span class="math display">\[\large
-\alpha^*=\frac{0.05}{20}=0.0025\]</span></p>
-<p>We now reject an individual null hypothesis only when <span class="math inline">\(p &lt; 0.0025\)</span>:</p>
-<div id="qwebr-insertion-location-7"></div>
+\alpha^*=\frac{0.05}{5}=0.01\]</span></p>
+<p>We now reject an individual null hypothesis only when <span class="math inline">\(p &lt; 0.01\)</span>:</p>
+<div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The Bonferroni correction controls the FWER because each individual test now has a Type I error probability of only 0.0025:</p>
+<div id="qwebr-insertion-location-9"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The Bonferroni correction controls the FWER because each individual test now has a Type I error probability of only 0.01:</p>
 <p><span class="math display">\[\large
 \text{FWER}
 \leq
-20(0.0025)
+5(0.01)
 =
 0.05\]</span></p>
 <p>The <span class="math inline">\(\leq\)</span> is important:</p>
 <ul>
 <li>Bonferroni guarantees that the FWER is <strong>no greater than 5%</strong> — it does not have to be exactly 5%.</li>
-<li>Unlike <span class="math inline">\(1-(0.95)^{20}\)</span>, Bonferroni <strong>does not require the tests to be independent</strong>.</li>
+<li>Unlike <span class="math inline">\(1-(0.95)^{5}\)</span>, Bonferroni <strong>does not require the tests to be independent</strong>.</li>
 <li>This is useful because outcomes in the same study are often correlated.</li>
 </ul>
 <p>But there is a tradeoff:</p>
@@ -2156,7 +2166,7 @@ P(\text{at least one Type I error})
 <blockquote class="blockquote">
 <p><strong>Holm controls the FWER just as Bonferroni does, but can have greater power.</strong></p>
 </blockquote>
-<div id="qwebr-insertion-location-8"></div>
+<div id="qwebr-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Once the p-values have been adjusted, we compare them with the original significance level. In this case:</p>
 <blockquote class="blockquote">
@@ -2242,11 +2252,11 @@ p &lt; \frac{0.05}{10{,}000}=0.000005.\]</span></p>
 <blockquote class="blockquote">
 <p>What false discovery rate does this testing procedure produce?</p>
 </blockquote>
-<div id="qwebr-insertion-location-9"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-10"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-11"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-12"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><strong>Would the false discovery proportion always be about 39%?</strong></p>
@@ -2256,12 +2266,12 @@ p &lt; \frac{0.05}{10{,}000}=0.000005.\]</span></p>
 <h3 class="anchored" data-anchor-id="repeating-this-experiment">Repeating this experiment</h3>
 <p>Now let’s repeat the sampling process many times.</p>
 <p>For each sample, we calculate the <strong>false discovery proportion</strong>.</p>
-<div id="qwebr-insertion-location-12"></div>
+<div id="qwebr-insertion-location-14"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The <strong>false discovery rate</strong> is the expected FDP across repeated samples:</p>
 <p><span class="math display">\[\large
 \text{FDR}=E(\text{FDP})\]</span></p>
-<div id="qwebr-insertion-location-13"></div>
+<div id="qwebr-insertion-location-15"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>With no adjustment for multiple testing, the average FDP can be quite large.</p>
 </section>
@@ -2272,7 +2282,7 @@ p &lt; \frac{0.05}{10{,}000}=0.000005.\]</span></p>
 </blockquote>
 <p>The <strong>Benjamini-Hochberg (BH) procedure</strong> is designed to do just that.</p>
 <p>Let’s first see what it does before looking at how it works.</p>
-<div id="qwebr-insertion-location-14"></div>
+<div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>We have 1,000 tests:</p>
 <ul>
@@ -2280,25 +2290,25 @@ p &lt; \frac{0.05}{10{,}000}=0.000005.\]</span></p>
 <li>100 have a true population difference of 1</li>
 </ul>
 <p>First, generate the data and calculate the p-value for each test:</p>
-<div id="qwebr-insertion-location-15"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>How many discoveries would we make using the usual (p&lt;0.05) criterion?</p>
-<div id="qwebr-insertion-location-16"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Now apply the <strong>Benjamini-Hochberg procedure</strong>:</p>
 <div id="qwebr-insertion-location-17"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Let’s look at some of the smallest original p-values and their BH-adjusted values:</p>
+<p>How many discoveries would we make using the usual (p&lt;0.05) criterion?</p>
 <div id="qwebr-insertion-location-18"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Using BH, we call a result statistically significant when its <strong>BH-adjusted p-value is less than 0.05</strong>:</p>
+<p>Now apply the <strong>Benjamini-Hochberg procedure</strong>:</p>
 <div id="qwebr-insertion-location-19"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Now we can ask how many of these discoveries are <strong>true</strong> and how many are <strong>false</strong>:</p>
+<p>Let’s look at some of the smallest original p-values and their BH-adjusted values:</p>
 <div id="qwebr-insertion-location-20"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Finally, the false discovery proportion in this particular sample is</p>
+<p>Using BH, we call a result statistically significant when its <strong>BH-adjusted p-value is less than 0.05</strong>:</p>
 <div id="qwebr-insertion-location-21"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Now we can ask how many of these discoveries are <strong>true</strong> and how many are <strong>false</strong>:</p>
+<div id="qwebr-insertion-location-22"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Finally, the false discovery proportion in this particular sample is</p>
+<div id="qwebr-insertion-location-23"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="the-benjamini-hochberg-procedure" class="level3">
@@ -2409,7 +2419,7 @@ p_{(3)}=0.027
 <section id="does-bh-actually-control-the-fdr" class="level3">
 <h3 class="anchored" data-anchor-id="does-bh-actually-control-the-fdr">Does BH actually control the FDR?</h3>
 <p>The FDP describes what happened in one particular sample. What happens if we generate many possible samples and apply BH each time?</p>
-<div id="qwebr-insertion-location-22"></div>
+<div id="qwebr-insertion-location-24"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Across repeated samples, the average FDP — the <strong>false discovery rate</strong> — is about 5% or less.</p>
 <blockquote class="blockquote">
@@ -2419,71 +2429,91 @@ p_{(3)}=0.027
 </section>
 <section id="missing-data" class="level2">
 <h2 class="anchored" data-anchor-id="missing-data">Missing data</h2>
-<p>Suppose we want to estimate the average outcome in a population.</p>
-<p>Our research question is:</p>
-<blockquote class="blockquote">
-<p><strong><em>What is the population mean outcome?</em></strong></p>
-</blockquote>
-<p>Ideally, we would observe all of the variables we planned to collect for every participant.</p>
-<p>But in real studies, some data are often missing:</p>
+<p>Ideally, we would observe all of the measures we planned to collect for every participant.</p>
+<p>But in real studies, data may be missing:</p>
 <ul>
 <li>some participants may be missing the <strong>outcome</strong></li>
 <li>others may be missing <strong>baseline characteristics or other covariates</strong></li>
+<li>some may be missing both</li>
 </ul>
 <blockquote class="blockquote">
 <p><strong><em>When does missing data create a problem for our analysis?</em></strong></p>
 </blockquote>
-<section id="starting-with-missing-outcomes" class="level3">
-<h3 class="anchored" data-anchor-id="starting-with-missing-outcomes">Starting with missing outcomes</h3>
-<p>Let’s start with a simple sampling process in which the outcome is missing for some participants.</p>
-<p>We will simulate 1,000 participants:</p>
+</section>
+<section id="focusing-on-missing-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="focusing-on-missing-outcomes">Focusing on missing outcomes</h2>
+<p>To understand the basic issues, we’ll focus on a common situation:</p>
 <ul>
-<li>a baseline health score <span class="math inline">\(X\)</span>, observed for everyone</li>
-<li>mean outcome of 50 for a participant with <span class="math inline">\(X=0\)</span></li>
-<li>outcome standard deviation of 10</li>
+<li>baseline information is available for everyone</li>
+<li>the outcome is missing for some participants</li>
 </ul>
-<p>The baseline health score is related to the outcome:</p>
+<p>Suppose we are interested in estimating the <strong>average physical functioning score six months after enrollment</strong> in a population.</p>
+<p>We have a representative sample of 1,000 participants.</p>
+<p>For everyone, we measure physical functioning at baseline. Six months later, we attempt to measure physical functioning again.</p>
+</section>
+<section id="generating-the-complete-data" class="level2">
+<h2 class="anchored" data-anchor-id="generating-the-complete-data">Generating the complete data</h2>
+<p>Suppose baseline physical functioning is standardized, with mean 0 and standard deviation 1.</p>
+<p>Participants with better physical functioning at baseline tend to have better physical functioning six months later.</p>
+<p>We generate:</p>
+<ul>
+<li>standardized baseline physical functioning <span class="math inline">\(X\)</span></li>
+<li>six-month physical functioning <span class="math inline">\(Y\)</span></li>
+<li>a population mean six-month score of 50</li>
+<li>a 5-point higher expected six-month score for each 1-SD higher baseline score</li>
+</ul>
 <p><span class="math display">\[\large
-X_i \sim N(0,1)\]</span></p>
+X_i \sim N(0,1)
+\]</span></p>
 <p><span class="math display">\[\large
 Y_i = 50 + 5X_i + \epsilon_i,
 \qquad
-\epsilon_i \sim N(0,10)\]</span></p>
-<p>Because we are simulating the data, we know the true population mean is 50.</p>
-<div id="qwebr-insertion-location-23"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-24"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The dashed line shows the true population mean of 50; the blue line shows the mean in our simulated sample.</p>
+\epsilon_i \sim N(0,10)
+\]</span></p>
+<p>Because baseline physical functioning has a population mean of 0, the population mean six-month score is 50.</p>
 </section>
-<section id="what-if-outcomes-disappear-randomly" class="level3">
-<h3 class="anchored" data-anchor-id="what-if-outcomes-disappear-randomly">What if outcomes disappear randomly?</h3>
-<p>Suppose each participant has a 30% chance of having a missing outcome.</p>
-<p>The probability of missingness is unrelated to:</p>
-<ul>
-<li>baseline health</li>
-<li>the value of the outcome</li>
-</ul>
+<section id="our-complete-data" class="level2">
+<h2 class="anchored" data-anchor-id="our-complete-data">Our complete data</h2>
 <div id="qwebr-insertion-location-25"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="baseline-and-six-month-physical-functioning" class="level2">
+<h2 class="anchored" data-anchor-id="baseline-and-six-month-physical-functioning">Baseline and six-month physical functioning</h2>
 <div id="qwebr-insertion-location-26"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The dashed line shows the true population mean of 50.</p>
+<p>The blue line shows the mean in our sample.</p>
+<blockquote class="blockquote">
+<p><strong><em>What happens when some of the six-month outcomes are missing?</em></strong></p>
+</blockquote>
+<section id="what-if-some-of-the-six-month-outcomes-disappear-randomly" class="level3">
+<h3 class="anchored" data-anchor-id="what-if-some-of-the-six-month-outcomes-disappear-randomly">What if some of the six-month outcomes disappear randomly?</h3>
+<p>Suppose each participant has a 30% chance of having a missing six-month physical functioning score.</p>
+<p>The probability of missingness is unrelated to:</p>
+<ul>
+<li>baseline physical functioning</li>
+<li>six-month physical functioning</li>
+</ul>
 <div id="qwebr-insertion-location-27"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The blue line now shows the mean among <strong>participants whose outcomes are observed</strong>.</p>
+<div id="qwebr-insertion-location-28"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-29"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>The blue line now shows the mean six-month physical functioning score among <strong>participants whose outcomes are observed</strong>.</p>
 <section id="re-sampling-repeatedly" class="level4">
 <h4 class="anchored" data-anchor-id="re-sampling-repeatedly">Re-sampling repeatedly</h4>
 <p>Now let’s repeat the sampling many times.</p>
-<p>In each simulated study, we estimate the population mean using:</p>
+<p>In each simulated study, we estimate the population mean six-month physical functioning score using:</p>
 <ul>
 <li>the <strong>complete data</strong></li>
 <li>the <strong>observed data after 30% of outcomes are missing</strong></li>
 </ul>
-<div id="qwebr-insertion-location-28"></div>
+<div id="qwebr-insertion-location-30"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>On average, both analyses recover the true population mean of 50.</p>
 <p>But the estimates based on the incomplete data vary more from study to study:</p>
-<div id="qwebr-insertion-location-29"></div>
+<div id="qwebr-insertion-location-31"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><em>Randomly losing outcomes costs us information and precision, but does not systematically shift the estimate of the population mean.</em></p>
@@ -2496,19 +2526,19 @@ Y_i = 50 + 5X_i + \epsilon_i,
 </section>
 <section id="what-if-missingness-depends-on-something-we-observed" class="level3">
 <h3 class="anchored" data-anchor-id="what-if-missingness-depends-on-something-we-observed">What if missingness depends on something we observed?</h3>
-<p>Now suppose the probability that the outcome is missing depends on the participant’s baseline health score.</p>
-<p>Participants with <strong>lower baseline health scores</strong> are more likely to have a missing outcome.</p>
-<p>Because baseline health is observed for everyone, we know something about why the outcome is missing.</p>
-<div id="qwebr-insertion-location-30"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-31"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<section id="re-sampling" class="level4">
-<h4 class="anchored" data-anchor-id="re-sampling">Re-sampling</h4>
-<p>Because baseline health predicts the outcome, systematically losing participants with lower health scores may also change the mean outcome among those we observe.</p>
+<p>Now suppose the probability that the six-month outcome is missing depends on the participant’s baseline physical functioning.</p>
+<p>Participants with <strong>lower baseline physical functioning</strong> are more likely to have a missing six-month outcome.</p>
+<p>Because baseline physical functioning is observed for everyone, we know something about why the outcome is missing.</p>
 <div id="qwebr-insertion-location-32"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div id="qwebr-insertion-location-33"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<section id="re-sampling" class="level4">
+<h4 class="anchored" data-anchor-id="re-sampling">Re-sampling</h4>
+<p>Because baseline physical functioning predicts six-month physical functioning, systematically losing participants with lower baseline scores may also change the mean outcome among those we observe.</p>
+<div id="qwebr-insertion-location-34"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div id="qwebr-insertion-location-35"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><strong><em>When missingness depends on an observed variable that is related to the outcome, simply analyzing the observed outcomes can produce a biased estimate of the population mean.</em></strong></p>
@@ -2524,43 +2554,33 @@ Y_i = 50 + 5X_i + \epsilon_i,
 <p>Under MAR, we have information that helps explain why some outcomes are missing.</p>
 <p>In our example:</p>
 <ul>
-<li>baseline health is observed for <strong>everyone</strong></li>
-<li>baseline health predicts the outcome</li>
-<li>baseline health also predicts whether the outcome is missing</li>
+<li>baseline physical functioning is observed for <strong>everyone</strong></li>
+<li>baseline physical functioning predicts six-month physical functioning</li>
+<li>baseline physical functioning also predicts whether the outcome is missing</li>
 </ul>
 <blockquote class="blockquote">
-<p><strong><em>Can we use baseline health to recover the population mean?</em></strong></p>
+<p><strong><em>Can we use baseline physical functioning to recover the population mean?</em></strong></p>
 </blockquote>
-<p>First, we estimate the relationship between baseline health and the outcome using participants whose outcomes were observed:</p>
-<div id="qwebr-insertion-location-34"></div>
+<p>First, we estimate the relationship between baseline and six-month physical functioning using participants whose outcomes were observed:</p>
+<div id="qwebr-insertion-location-36"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>We can then use this model to predict the outcome for <em>everyone</em> in our sample based on their observed baseline health:</p>
-<div id="qwebr-insertion-location-35"></div>
+<p>We can then use this model to predict the six-month outcome for <em>everyone</em> in our sample based on their observed baseline physical functioning:</p>
+<div id="qwebr-insertion-location-37"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><strong><em>Instead of averaging only over the selected group with observed outcomes, we used information from the full sample to estimate the population mean.</em></strong></p>
 </blockquote>
 <p>This is one example of a <strong>model-based approach</strong> to handling missing data under MAR.</p>
 </section>
-<section id="multiple-imputation" class="level3">
-<h3 class="anchored" data-anchor-id="multiple-imputation">Multiple imputation</h3>
-<p>Another common approach for handling missing data under MAR is <strong>multiple imputation</strong>.</p>
-<p>Multiple imputation uses the observed data to create several plausible completed datasets, rather than treating any single prediction for a missing value as if it were known.</p>
-<p>Each completed dataset is analyzed separately, and the results are then combined.</p>
-<p>Because the missing values differ across the completed datasets, the final analysis reflects uncertainty about the data we did not observe.</p>
-<blockquote class="blockquote">
-<p><strong><em>Multiple imputation does not recover the missing values — it represents plausible values and our uncertainty about them using the information we did observe.</em></strong></p>
-</blockquote>
-</section>
 <section id="what-if-missingness-depends-on-what-we-did-not-observe" class="level3">
 <h3 class="anchored" data-anchor-id="what-if-missingness-depends-on-what-we-did-not-observe">What if missingness depends on what we did not observe?</h3>
-<p>Now suppose the probability that an outcome is missing depends on the value of the outcome itself.</p>
-<p>Participants with lower outcome values are more likely to have a missing outcome.</p>
-<div id="qwebr-insertion-location-36"></div>
+<p>Now suppose the probability that a six-month physical functioning score is missing depends on the value of the six-month score itself.</p>
+<p>Participants with <strong>lower six-month physical functioning</strong> are more likely to have a missing outcome.</p>
+<div id="qwebr-insertion-location-38"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-37"></div>
+<div id="qwebr-insertion-location-39"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Here, participants with lower outcomes are systematically more likely to be missing, <strong>inflating our estimate of the population mean</strong>.</p>
+<p>Here, participants with lower six-month physical functioning are systematically more likely to be missing, <strong>inflating our estimate of the population mean</strong>.</p>
 <p>But there is an important difference from our previous example:</p>
 <blockquote class="blockquote">
 <p><strong><em>For participants whose outcomes are missing, we do not observe the information that explains why they are missing.</em></strong></p>
@@ -2568,7 +2588,7 @@ Y_i = 50 + 5X_i + \epsilon_i,
 <section id="re-sampling-1" class="level4">
 <h4 class="anchored" data-anchor-id="re-sampling-1">Re-sampling</h4>
 <p>Let’s again repeat the sampling process many times.</p>
-<div id="qwebr-insertion-location-38"></div>
+<div id="qwebr-insertion-location-40"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><strong><em>When the probability of missingness depends on the missing outcome itself, the observed outcomes may systematically differ from the outcomes we did not observe.</em></strong></p>
@@ -2588,7 +2608,7 @@ Y_i = 50 + 5X_i + \epsilon_i,
 <li>factors that predict whether data are missing</li>
 <li>factors that predict the missing outcome</li>
 </ul>
-<p>For example, if participants in poorer health are more likely to have missing outcomes, detailed measures of their health before the outcome is missing may help make an MAR assumption more plausible.</p>
+<p>For example, if participants with poorer physical functioning are more likely to have missing outcomes, detailed measures of their physical functioning before the outcome is missing may help make an MAR assumption more plausible.</p>
 <blockquote class="blockquote">
 <p><strong><em>We cannot prove that data are MAR, but collecting and using variables that help explain both the outcome and missingness can make the assumption more reasonable.</em></strong></p>
 </blockquote>
@@ -2596,7 +2616,7 @@ Y_i = 50 + 5X_i + \epsilon_i,
 <section id="can-observed-information-solve-the-problem" class="level3">
 <h3 class="anchored" data-anchor-id="can-observed-information-solve-the-problem">Can observed information solve the problem?</h3>
 <p>We can try the same model-based approach we used under MAR:</p>
-<div id="qwebr-insertion-location-39"></div>
+<div id="qwebr-insertion-location-41"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p>Under MNAR, observed variables may help, but they cannot fully account for missingness that still depends on the unobserved value itself.</p>

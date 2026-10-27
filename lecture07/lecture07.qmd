@@ -47,7 +47,7 @@ These issues require us to think carefully about what our data can—and cannot�
 
 Suppose we conduct a randomized study comparing a treatment with a control group.
 
-We have **20 different outcomes** and a separate research question for each:
+We have **5 different outcomes** and a separate research question for each:
 
 > **Does treatment affect this outcome?**
 
@@ -55,49 +55,105 @@ For each outcome $j$:
 
 $$\large
 H_{0j}: \mu_{j1} - \mu_{j0} = 0,
-\qquad j=1,\ldots,20$$
+\qquad j=1,\ldots,5$$
 
 where $\mu_{j1}$ and $\mu_{j0}$ are the population means for outcome $j$ in the treatment and control groups.
 
-Suppose **all 20 null hypotheses are true** — treatment has no effect on any of the outcomes.
+Suppose **all 5 null hypotheses are true** — treatment has no effect on any of the outcomes.
 
 For any one test with $\alpha=0.05$, the probability of a **Type I error** is 5%.
 
-But we are conducting **20 tests**.
+But we are conducting **5 tests**.
 
 > **How likely are we to find at least one statistically significant effect and conclude that the treatment "works"?**
 
 
 ### Simulating the study
 
-Let's simulate this study under the assumption that **all 20 null hypotheses are true**.
+Let's simulate this study under the assumption that **all 5 null hypotheses are true**.
 
 For each outcome, we will generate data from the same population distribution for the treatment and control groups:
 
-$$\large
-Y_{j1},Y_{j0} \sim N(45,3)$$
+$$
+\begin{align}
+Y_{11},Y_{10} &\sim N(25,3^2) \\
+Y_{21},Y_{20} &\sim N(21,4^2) \\
+Y_{31},Y_{30} &\sim N(17,2^2) \\
+Y_{41},Y_{40} &\sim N(10,1.5^2) \\
+Y_{51},Y_{50} &\sim N(31,2.5^2) \\
+\end{align}
+$$
 
-We will then test for a treatment effect separately for each of the 20 outcomes.
+We will then test for a treatment effect separately for each of the 5 outcomes.
 
 ```{webr-r}
-set.seed(1234)
+set.seed(1237)
 
-n <- 100
-n_outcomes <- 20
+n_per_arm <- 100
+n_outcomes <- 5
 
-reject_null <- replicate(n_outcomes, {
-  treatment <- rnorm(n, 45, 3)
-  control <- rnorm(n, 45, 3)
-  p_value <- t.test(treatment, control)$p.value
-  as.integer(p_value < 0.05)
-})
+mu_1 <- c(25, 21, 17, 10, 21)
+mu_0 <- c(25, 21, 17, 10, 21)
 
-reject_null
+sd_1 <- c(3, 4, 2, 1.5, 2.5)
+sd_0 <- c(3, 4, 2, 1.5, 2.5)
+
+params <- data.table(
+  outcome = paste0("Outcome ", 1:n_outcomes),
+  mu_1, mu_0, sd_1, sd_0
+)
+
+dd <- rbindlist(lapply(1:n_outcomes, function(j) {
+  
+  data.table(
+    id = rep(1:(2 * n_per_arm)),
+    group = rep(c("Control", "Treatment"), each = n_per_arm),
+    outcome = params[j, outcome],
+    value = c(
+      rnorm(n_per_arm, params[j, mu_0], params[j, sd_0]),
+      rnorm(n_per_arm, params[j, mu_1], params[j, sd_1])
+    )
+  )
+  
+}))
+
+dd
 ```
 
 ```{webr-r}
-sum(reject_null)
+#| classes: webr-plot
+
+ggplot(dd, aes(x = group, y = value)) +
+  geom_boxplot(
+    width = .35, 
+    outliers = FALSE,
+    aes(fill = outcome)) +
+  facet_grid(~ outcome) +
+  labs(
+    x = NULL,
+    y = "Outcome"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
 ```
+
+```{webr-r}
+results <- dd[, .(
+  mean_control = mean(value[group == "Control"]),
+  mean_treatment = mean(value[group == "Treatment"]),
+  difference = mean(value[group == "Treatment"]) -
+               mean(value[group == "Control"]),
+  p_value = t.test(
+    value[group == "Treatment"],
+    value[group == "Control"]
+  )$p.value
+), by = outcome]
+
+results[, reject_null := p_value < 0.05]
+
+results
+```
+
 
 > **One simulated sample doesn't tell us how often this happens. What if we repeat the sampling many times?**
 
@@ -106,27 +162,45 @@ sum(reject_null)
 
 In every simulated smaple:
 
-- all 20 null hypotheses are true
+- all 5 null hypotheses are true
 - we test each outcome using $\alpha=0.05$
 - we record how many null hypotheses are rejected
 
 ```{webr-r}
-set.seed(123)
+set.seed(1239)
 
-n <- 100
-n_outcomes <- 20
 n_sims <- 1000
 
 sim_results <- replicate(n_sims, {
+
+  # Generate one study
+  dd <- rbindlist(lapply(1:n_outcomes, function(j) {
+    
+    data.table(
+      id = rep(1:(2 * n_per_arm)),
+      group = rep(c("Control", "Treatment"), each = n_per_arm),
+      outcome = params[j, outcome],
+      value = c(
+        rnorm(n_per_arm, params[j, mu_0], params[j, sd_0]),
+        rnorm(n_per_arm, params[j, mu_1], params[j, sd_1])
+      )
+    )
+    
+  }))
   
-  reject_null <- replicate(n_outcomes, {
-    treatment <- rnorm(n, 45, 3)
-    control <- rnorm(n, 45, 3)
-    p_value <- t.test(treatment, control)$p.value
-    as.integer(p_value < 0.05)
-  })
+  # Analyze the five outcomes
   
-  sum(reject_null)
+  results <- dd[, .(
+    p_value = t.test(
+      value[group == "Treatment"],
+      value[group == "Control"]
+    )$p.value
+  ), by = outcome]
+  
+  # Number of null hypotheses rejected
+  
+  sum(results$p_value < 0.05)
+  
 })
 
 table(sim_results)
@@ -136,35 +210,33 @@ table(sim_results)
 mean(sim_results > 0)
 ```
 
-- In about **64% of samples**, at least one of the 20 tests is statistically significant.
+- In about **22% of samples**, at least one of the 5 tests is statistically significant.
 
 - Each individual test still has a 5% Type I error rate.
 
-- But across the **family of 20 tests**, the probability of making at least one Type I error is much larger than 5%.
+- But across the **family of 5 tests**, the probability of making at least one Type I error is much larger than 5%.
 
 - The probability of making at least one Type I error across the family is called the **family-wise error rate (FWER)**:
 
 $$\large
 \text{FWER} = P(\text{at least one Type I error})$$
 
-For 20 independent tests, the probability that we make **no** Type I errors is
+For 5 independent tests, the probability that we make **no** Type I errors is
 
 $$\large
-(1-0.05)^{20}=0.95^{20}\approx0.36$$
+0.95^{5}\approx0.773$$
 
 so
 
 $$
 \large
 P(\text{at least one Type I error})
-=1-0.95^{20}
-\approx0.64.
+=1-0.95^{5}
+\approx 0.226.
 $$
 
 
 ### Visualizing the problem
-
-It is easier to see what is happening if we consider a smaller family of **5 outcomes**.
 
 The figure shows 100 simulated samples. In each sample:
 
@@ -178,13 +250,13 @@ The figure shows 100 simulated samples. In each sample:
 The expected Type 1 error rate with 5 outcomes is:
 
 ```{webr-r}
-1 - (1-0.05)^5
+1 - (0.95)^5
 ```
 
 
 ### Controlling the family-wise error rate
 
-We would like the probability of making **at least one Type I error across all 20 tests** to be no more than 5%.
+We would like the probability of making **at least one Type I error across all 5 tests** to be no more than 5%.
 
 > **Can we change the significance level for each individual test so that the FWER is controlled at 5%?**
 
@@ -197,51 +269,72 @@ $$\large
 
 where $m$ is the number of tests.
 
-For our 20 outcomes:
+For our 5 outcomes:
 
 $$\large
-\alpha^*=\frac{0.05}{20}=0.0025$$
+\alpha^*=\frac{0.05}{5}=0.01$$
 
-We now reject an individual null hypothesis only when $p < 0.0025$:
+We now reject an individual null hypothesis only when $p < 0.01$:
 
 ```{webr-r}
-set.seed(123)
+set.seed(1239)
 
 n_sims <- 1000
-
-n <- 100
-n_outcomes <- 20
 
 alpha_bonf <- 0.05 / n_outcomes
 
 sim_results_bonf <- replicate(n_sims, {
+
+  # Generate one study
+  dd <- rbindlist(lapply(1:n_outcomes, function(j) {
+    
+    data.table(
+      id = rep(1:(2 * n_per_arm)),
+      group = rep(c("Control", "Treatment"), each = n_per_arm),
+      outcome = params[j, outcome],
+      value = c(
+        rnorm(n_per_arm, params[j, mu_0], params[j, sd_0]),
+        rnorm(n_per_arm, params[j, mu_1], params[j, sd_1])
+      )
+    )
+    
+  }))
   
-  reject_null <- replicate(n_outcomes, {
-    treatment <- rnorm(n, 45, 3)
-    control <- rnorm(n, 45, 3)
-    p_value <- t.test(treatment, control)$p.value
-    as.integer(p_value < alpha_bonf)
-  })
+  # Analyze the five outcomes
   
-  sum(reject_null)
+  results <- dd[, .(
+    p_value = t.test(
+      value[group == "Treatment"],
+      value[group == "Control"]
+    )$p.value
+  ), by = outcome]
+  
+  # Number of null hypotheses rejected
+  
+  sum(results$p_value < alpha_bonf)
+  
 })
 
+table(sim_results_bonf)
+```
+
+```{webr-r}
 mean(sim_results_bonf > 0)
 ```
 
-The Bonferroni correction controls the FWER because each individual test now has a Type I error probability of only 0.0025:
+The Bonferroni correction controls the FWER because each individual test now has a Type I error probability of only 0.01:
 
 $$\large
 \text{FWER}
 \leq
-20(0.0025)
+5(0.01)
 =
 0.05$$
 
 The $\leq$ is important:
 
 - Bonferroni guarantees that the FWER is **no greater than 5%** — it does not have to be exactly 5%.
-- Unlike $1-(0.95)^{20}$, Bonferroni **does not require the tests to be independent**.
+- Unlike $1-(0.95)^{5}$, Bonferroni **does not require the tests to be independent**.
 - This is useful because outcomes in the same study are often correlated.
 
 But there is a tradeoff:
@@ -693,48 +786,66 @@ Across repeated samples, the average FDP — the **false discovery rate** — is
 
 > Controlling the FDR at 5% means keeping the expected false discovery proportion at or below 5% — not making exactly 5% of the discoveries false.
 
-
-
 ## Missing data
 
+Ideally, we would observe all of the measures we planned to collect 
+for every participant.
 
-Suppose we want to estimate the average outcome in a population.
-
-Our research question is:
-
-> ***What is the population mean outcome?***
-
-Ideally, we would observe all of the variables we planned to collect for every participant.
-
-But in real studies, some data are often missing:
+But in real studies, data may be missing:
 
 - some participants may be missing the **outcome**
 - others may be missing **baseline characteristics or other covariates**
+- some may be missing both
 
 > ***When does missing data create a problem for our analysis?***
 
 
-### Starting with missing outcomes
+## Focusing on missing outcomes
 
-Let's start with a simple sampling process in which the outcome is missing for some participants.
+To understand the basic issues, we'll focus on a common situation:
 
-We will simulate 1,000 participants:
+- baseline information is available for everyone
+- the outcome is missing for some participants
 
-- a baseline health score $X$, observed for everyone
-- mean outcome of 50 for a participant with $X=0$
-- outcome standard deviation of 10
+Suppose we are interested in estimating the **average physical functioning score 
+six months after enrollment** in a population.
 
-The baseline health score is related to the outcome:
+We have a representative sample of 1,000 participants.
+
+For everyone, we measure physical functioning at baseline. Six months later, 
+we attempt to measure physical functioning again.
+
+
+## Generating the complete data
+
+Suppose baseline physical functioning is standardized, with mean 0 and 
+standard deviation 1.
+
+Participants with better physical functioning at baseline tend to have better 
+physical functioning six months later.
+
+We generate:
+
+- standardized baseline physical functioning $X$
+- six-month physical functioning $Y$
+- a population mean six-month score of 50
+- a 5-point higher expected six-month score for each 1-SD higher baseline score
 
 $$\large
-X_i \sim N(0,1)$$ 
+X_i \sim N(0,1)
+$$
 
 $$\large
 Y_i = 50 + 5X_i + \epsilon_i,
 \qquad
-\epsilon_i \sim N(0,10)$$
+\epsilon_i \sim N(0,10)
+$$
 
-Because we are simulating the data, we know the true population mean is 50.
+Because baseline physical functioning has a population mean of 0, the 
+population mean six-month score is 50.
+
+
+## Our complete data
 
 ```{webr-r}
 set.seed(123)
@@ -743,100 +854,121 @@ n <- 1000
 
 dd <- data.table(
   id = 1:n,
-  health = rnorm(n)
+  baseline_pf = rnorm(n)
 )
 
-dd[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]
+dd[, followup_pf := 
+     50 + 5 * baseline_pf + rnorm(n, 0, 10)]
 
 dd[, .(
   n = .N,
-  mean_health = mean(health),
-  mean_outcome = mean(outcome)
+  mean_baseline = mean(baseline_pf),
+  mean_followup = mean(followup_pf)
 )]
 ```
+
+## Baseline and six-month physical functioning
 
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = dd, aes(x = health, y = outcome)) +
+ggplot(dd, aes(x = baseline_pf, y = followup_pf)) +
   geom_hline(
-    yintercept = dd[, mean(outcome)],
+    yintercept = dd[, mean(followup_pf)],
     color = "#356d9e"
-  ) + 
+  ) +
   geom_hline(
-    yintercept = 50, 
+    yintercept = 50,
     color = "black",
     linetype = 2,
-    linewidth = .5) +
+    linewidth = .5
+  ) +
   geom_point(size = 1, color = "#4587c1") +
-  xlab("baseline health status")
+  xlab("Baseline physical functioning") +
+  ylab("Six-month physical functioning")
 ```
 
-The dashed line shows the true population mean of 50; the blue line shows the mean in our simulated sample.
+The dashed line shows the true population mean of 50.
+
+The blue line shows the mean in our sample.
+
+> ***What happens when some of the six-month outcomes are missing?***
 
 
-### What if outcomes disappear randomly?
+### What if some of the six-month outcomes disappear randomly?
 
-Suppose each participant has a 30% chance of having a missing outcome.
+Suppose each participant has a 30% chance of having a missing six-month 
+physical functioning score.
 
 The probability of missingness is unrelated to:
 
-- baseline health
-- the value of the outcome
+- baseline physical functioning
+- six-month physical functioning
 
 ```{webr-r}
 dd[, missing := rbinom(.N, 1, 0.30)]
 
 dd[, 
-  outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+  followup_pf_obs := 
+    fifelse(missing == 1, NA_real_, followup_pf)
+]
 
 dd
 ```
 
 ```{webr-r}
 dd[, .(
-  n_observed = sum(!is.na(outcome_obs)),
-  mean_health = mean(health[!is.na(outcome_obs)]),
-  mean_outcome = mean(outcome_obs, na.rm = TRUE)
+  n_observed = 
+    sum(!is.na(followup_pf_obs)),
+  mean_baseline = 
+    mean(baseline_pf[!is.na(followup_pf_obs)]),
+  mean_followup = 
+    mean(followup_pf_obs, na.rm = TRUE)
 )]
 ```
 
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = 
-  dd, 
+ggplot(
+  data = dd, 
   aes(
-    x = health, 
-    y = outcome, 
+    x = baseline_pf, 
+    y = followup_pf, 
     color = factor(missing)
   )
 ) +
   geom_hline(
-    yintercept = dd[missing == 0, mean(outcome)],
+    yintercept = 
+      dd[missing == 0, mean(followup_pf)],
     color = "#356d9e"
   ) + 
-geom_hline(
+  geom_hline(
     yintercept = 50, 
     color = "black",
     linetype = 2,
-    linewidth = .5)  +
-geom_point(size = 1) +
+    linewidth = .5
+  ) +
+  geom_point(size = 1) +
   scale_color_manual(
     values = c("#4587c1", "#d47e81"),
     labels = c("Observed", "Missing"),
     name = NULL
   ) +
-  xlab("baseline health status")
+  xlab("Baseline physical functioning") +
+  ylab("Six-month physical functioning")
 ```
 
-The blue line now shows the mean among **participants whose outcomes are observed**.
+The blue line now shows the mean six-month physical functioning score among 
+**participants whose outcomes are observed**.
+
 
 #### Re-sampling repeatedly
 
 Now let's repeat the sampling many times.
 
-In each simulated study, we estimate the population mean using:
+In each simulated study, we estimate the population mean six-month physical 
+functioning score using:
 
 - the **complete data**
 - the **observed data after 30% of outcomes are missing**
@@ -850,17 +982,24 @@ n_sims <- 1000
 sim_means <- replicate(n_sims, {
   
   d_sim <- data.table(
-    health = rnorm(n)
+    baseline_pf = rnorm(n)
   )
   
-  d_sim[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]
+  d_sim[, followup_pf := 
+    50 + 5 * baseline_pf + rnorm(n, 0, 10)]
   
   d_sim[, missing := rbinom(.N, 1, 0.30)]
-  d_sim[, 
-    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
   
-  est_complete <- d_sim[, mean(outcome)]
-  est_incomplete <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
+  d_sim[, 
+    followup_pf_obs := fifelse(
+      missing == 1, NA_real_, followup_pf
+    )
+  ]
+  
+  est_complete <- 
+    d_sim[, mean(followup_pf)]
+  est_incomplete <- 
+    d_sim[, mean(followup_pf_obs, na.rm = TRUE)]
   
   c(
     complete = est_complete,
@@ -888,59 +1027,73 @@ This type of missingness is called **Missing Completely at Random (MCAR)**:
 
 ### What if missingness depends on something we observed?
 
-Now suppose the probability that the outcome is missing depends on the participant's baseline health score.
+Now suppose the probability that the six-month outcome is missing depends on 
+the participant's baseline physical functioning.
 
-Participants with **lower baseline health scores** are more likely to have a missing outcome.
+Participants with **lower baseline physical functioning** are more likely to 
+have a missing six-month outcome.
 
-Because baseline health is observed for everyone, we know something about why the outcome is missing.
+Because baseline physical functioning is observed for everyone, we know 
+something about why the outcome is missing.
 
 ```{webr-r}
-dd[, p_missing := plogis(-1 - 2 * health)]
+dd[, p_missing := plogis(-1 - 2 * baseline_pf)]
+
 dd[, missing := rbinom(.N, 1, p_missing)]
+
 dd[, 
-  outcome_obs := fifelse(missing == 1, NA_real_, outcome)
+  followup_pf_obs := fifelse(
+    missing == 1, NA_real_, followup_pf
+  )
 ]
 
 dd[, .(
-  n_observed = sum(!is.na(outcome_obs)),
-  mean_health = mean(health[!is.na(outcome_obs)]),
-  mean_outcome = mean(outcome_obs, na.rm = TRUE)
+  n_observed = sum(!is.na(followup_pf_obs)),
+  mean_baseline = 
+    mean(baseline_pf[!is.na(followup_pf_obs)]),
+  mean_followup = 
+    mean(followup_pf_obs, na.rm = TRUE)
 )]
 ```
 
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = 
-  dd, 
+ggplot(
+  data = dd, 
   aes(
-    x = health, 
-    y = outcome, 
+    x = baseline_pf, 
+    y = followup_pf, 
     color = factor(missing)
   )
 ) +
   geom_hline(
-    yintercept = dd[missing == 0, mean(outcome)],
+    yintercept = 
+      dd[missing == 0, mean(followup_pf)],
     color = "#356d9e"
   ) + 
-geom_hline(
+  geom_hline(
     yintercept = 50, 
     color = "black",
     linetype = 2,
-    linewidth = .5)  +
-geom_point(size = 1) +
+    linewidth = .5
+  ) +
+  geom_point(size = 1) +
   scale_color_manual(
     values = c("#4587c1", "#d47e81"),
     labels = c("Observed", "Missing"),
     name = NULL
-  )+
-  xlab("baseline health status")
+  ) +
+  xlab("Baseline physical functioning") +
+  ylab("Six-month physical functioning")
 ```
 
 
 #### Re-sampling
 
-Because baseline health predicts the outcome, systematically losing participants with lower health scores may also change the mean outcome among those we observe.
+Because baseline physical functioning predicts six-month physical functioning, 
+systematically losing participants with lower baseline scores may also change 
+the mean outcome among those we observe.
 
 ```{webr-r}
 set.seed(1234)
@@ -950,18 +1103,25 @@ n_sims <- 100
 sim_means <- replicate(n_sims, {
   
   d_sim <- data.table(
-    health = rnorm(n)
+    baseline_pf = rnorm(n)
   )
   
-  d_sim[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]
+  d_sim[, followup_pf := 
+    50 + 5 * baseline_pf + rnorm(n, 0, 10)]
   
-  d_sim[, p_missing := plogis(-1 - 2 * health)]
+  d_sim[, p_missing := plogis(-1 - 2 * baseline_pf)]
   d_sim[, missing := rbinom(.N, 1, p_missing)]
-  d_sim[, 
-    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
   
-  est_complete <- d_sim[, mean(outcome)]
-  est_incomplete <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
+  d_sim[, 
+    followup_pf_obs := fifelse(
+      missing == 1, NA_real_, followup_pf
+    )
+  ]
+  
+  est_complete <- 
+    d_sim[, mean(followup_pf)]
+  est_incomplete <- 
+    d_sim[, mean(followup_pf_obs, na.rm = TRUE)]
   
   c(
     complete = est_complete,
@@ -989,95 +1149,103 @@ Under MAR, we have information that helps explain why some outcomes are missing.
 
 In our example:
 
-- baseline health is observed for **everyone**
-- baseline health predicts the outcome
-- baseline health also predicts whether the outcome is missing
+- baseline physical functioning is observed for **everyone**
+- baseline physical functioning predicts six-month physical functioning
+- baseline physical functioning also predicts whether the outcome is missing
 
-> ***Can we use baseline health to recover the population mean?***
+> ***Can we use baseline physical functioning to recover the population mean?***
 
-First, we estimate the relationship between baseline health and the outcome using participants whose outcomes were observed:
+First, we estimate the relationship between baseline and six-month physical 
+functioning using participants whose outcomes were observed:
 
 ```{webr-r}
-fit <- lm(outcome_obs ~ health, data = dd)
+fit <- lm(followup_pf_obs ~ baseline_pf, data = dd)
 
 coef(fit)
 ```
 
-We can then use this model to predict the outcome for *everyone* in our sample based on their observed baseline health:
+We can then use this model to predict the six-month outcome for *everyone* in 
+our sample based on their observed baseline physical functioning:
 
 ```{webr-r}
-dd[, outcome_pred := predict(fit, newdata = dd)]
+dd[, 
+   followup_pf_pred := 
+     predict(fit, newdata = dd)
+]
 
-dd[, mean(outcome_pred)]
+dd[, mean(followup_pf_pred)]
 ```
 
 > ***Instead of averaging only over the selected group with observed outcomes, we used information from the full sample to estimate the population mean.***
 
-This is one example of a **model-based approach** to handling missing data under MAR.
-
-
-### Multiple imputation
-
-Another common approach for handling missing data under MAR is **multiple imputation**.
-
-Multiple imputation uses the observed data to create several plausible completed datasets, rather than treating any single prediction for a missing value as if it were known.
-
-Each completed dataset is analyzed separately, and the results are then combined.
-
-Because the missing values differ across the completed datasets, the final analysis reflects uncertainty about the data we did not observe.
-
-> ***Multiple imputation does not recover the missing values — it represents plausible values and our uncertainty about them using the information we did observe.***
+This is one example of a **model-based approach** to handling missing data 
+under MAR.
 
 
 ### What if missingness depends on what we did not observe?
 
-Now suppose the probability that an outcome is missing depends on the value of the outcome itself.
+Now suppose the probability that a six-month physical functioning score is 
+missing depends on the value of the six-month score itself.
 
-Participants with lower outcome values are more likely to have a missing outcome.
+Participants with **lower six-month physical functioning** are more likely to 
+have a missing outcome.
 
 ```{webr-r}
-dd[, p_missing := plogis(3.5 - 0.1 * outcome)]
-dd[, missing := rbinom(.N, 1, p_missing)]
 dd[, 
-  outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+   p_missing := 
+     plogis(3.5 - 0.1 * followup_pf)]
+
+dd[, missing := rbinom(.N, 1, p_missing)]
+
+dd[, 
+  followup_pf_obs := fifelse(
+    missing == 1, NA_real_, followup_pf
+  )
+]
 
 dd[, .(
-  n_observed = sum(!is.na(outcome_obs)),
-  mean_health = mean(health[!is.na(outcome_obs)]),
-  mean_outcome = mean(outcome_obs, na.rm = TRUE)
+  n_observed = sum(!is.na(followup_pf_obs)),
+  mean_baseline = 
+    mean(baseline_pf[!is.na(followup_pf_obs)]),
+  mean_followup = 
+    mean(followup_pf_obs, na.rm = TRUE)
 )]
 ```
 
 ```{webr-r}
 #| classes: webr-plot
 
-ggplot(data = 
-  dd, 
+ggplot(
+  data = dd, 
   aes(
-    x = health, 
-    y = outcome, 
+    x = baseline_pf, 
+    y = followup_pf, 
     color = factor(missing)
   )
 ) +
   geom_hline(
-    yintercept = dd[missing == 0, mean(outcome)],
+    yintercept = 
+      dd[missing == 0, mean(followup_pf)],
     color = "#356d9e"
   ) + 
-geom_hline(
+  geom_hline(
     yintercept = 50, 
     color = "black",
     linetype = 2,
-    linewidth = .5)  +
-geom_point(size = 1) +
+    linewidth = .5
+  ) +
+  geom_point(size = 1) +
   scale_color_manual(
     values = c("#4587c1", "#d47e81"),
     labels = c("Observed", "Missing"),
     name = NULL
-  )+
-  xlab("baseline health status")
+  ) +
+  xlab("Baseline physical functioning") +
+  ylab("Six-month physical functioning")
 ```
 
-Here, participants with lower outcomes are systematically more likely to be missing, **inflating our estimate of the population mean**.
+Here, participants with lower six-month physical functioning are systematically 
+more likely to be missing, **inflating our estimate of the population mean**.
 
 But there is an important difference from our previous example:
 
@@ -1096,18 +1264,27 @@ n_sims <- 100
 sim_means <- replicate(n_sims, {
   
   d_sim <- data.table(
-    health = rnorm(n)
+    baseline_pf = rnorm(n)
   )
   
-  d_sim[, outcome := 50 + 5 * health + rnorm(n, 0, 10)]
+  d_sim[, followup_pf := 
+    50 + 5 * baseline_pf + rnorm(n, 0, 10)]
   
-  d_sim[, p_missing := plogis(3.5 - 0.1 * outcome)]
-  d_sim[, missing := rbinom(.N, 1, p_missing)]
   d_sim[, 
-    outcome_obs := fifelse(missing == 1, NA_real_, outcome)]
+    p_missing := plogis(3.5 - 0.1 * followup_pf)
+  ]
+  d_sim[, missing := rbinom(.N, 1, p_missing)]
   
-  est_complete <- d_sim[, mean(outcome)]
-  est_missing <- d_sim[, mean(outcome_obs, na.rm = TRUE)]
+  d_sim[, 
+    followup_pf_obs := fifelse(
+      missing == 1, NA_real_, followup_pf
+    )
+  ]
+  
+  est_complete <- d_sim[, mean(followup_pf)]
+  est_missing <- d_sim[, 
+    mean(followup_pf_obs, na.rm = TRUE)
+  ]
   
   c(
     complete = est_complete,
@@ -1129,14 +1306,19 @@ This type of missingness is called **Missing Not at Random (MNAR)**:
 
 Usually, **we cannot determine from the observed data whether missingness is MAR or MNAR**.
 
-For participants with missing outcomes, we do not know what those outcomes would have been. Therefore, we cannot directly determine whether missingness depends on those unobserved values.
+For participants with missing outcomes, we do not know what those outcomes 
+would have been. Therefore, we cannot directly determine whether missingness 
+depends on those unobserved values.
 
-However, a MAR assumption may be more reasonable when we have good observed information about:
+However, a MAR assumption may be more reasonable when we have good observed 
+information about:
 
 - factors that predict whether data are missing
 - factors that predict the missing outcome
 
-For example, if participants in poorer health are more likely to have missing outcomes, detailed measures of their health before the outcome is missing may help make an MAR assumption more plausible.
+For example, if participants with poorer physical functioning are more likely 
+to have missing outcomes, detailed measures of their physical functioning 
+before the outcome is missing may help make an MAR assumption more plausible.
 
 > ***We cannot prove that data are MAR, but collecting and using variables that help explain both the outcome and missingness can make the assumption more reasonable.***
 
@@ -1146,11 +1328,11 @@ For example, if participants in poorer health are more likely to have missing ou
 We can try the same model-based approach we used under MAR:
 
 ```{webr-r}
-fit <- lm(outcome_obs ~ health, data = dd)
+fit <- lm(followup_pf_obs ~ baseline_pf, data = dd)
 
-dd[, outcome_pred := predict(fit, newdata = dd)]
+dd[, followup_pf_pred := predict(fit, newdata = dd)]
 
-dd[, mean(outcome_pred)]
+dd[, mean(followup_pf_pred)]
 ```
 
 > Under MNAR, observed variables may help, but they cannot fully account for missingness that still depends on the unobserved value itself.
@@ -1158,13 +1340,15 @@ dd[, mean(outcome_pred)]
 
 ### What can we do about MNAR?
 
-Because we cannot know the missing outcomes, there is no purely data-driven solution to MNAR.
+Because we cannot know the missing outcomes, there is no purely data-driven 
+solution to MNAR.
 
 Instead, we can conduct **sensitivity analyses**:
 
 > ***Make different assumptions about the missing outcomes and ask whether our conclusions change.***
 
-More formal statistical methods for MNAR follow the same basic principle: they require assumptions about the data we did not observe.
+More formal statistical methods for MNAR follow the same basic principle: 
+they require assumptions about the data we did not observe.
 
 
 ### Missing data: putting it together
