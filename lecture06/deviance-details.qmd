@@ -1,0 +1,356 @@
+---
+title: "Where does deviance come from?"
+format:
+  html:
+    css: ../css/lecture.css
+engine: knitr
+filters:
+  - webr
+webr:
+  packages: ["data.table", "ggplot2", "broom"]
+---
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>
+
+## Starting with predicted probabilities
+
+A logistic regression model gives each individual a predicted probability of the outcome.
+
+Suppose the outcome is hypertension, where
+
+$$Y_i =
+\begin{cases}
+1 & \text{if person } i \text{ has hypertension}\\
+0 & \text{if person } i \text{ does not have hypertension}.
+\end{cases}$$
+
+Let $p_i$ be the probability of hypertension predicted by the model for person $i$.
+
+Consider four possibilities:
+
+| Observed outcome $Y_i$ | Predicted $p_i$ | Probability assigned to what actually happened |
+|:----------------------:|:----------------------:|:----------------------:|
+| 1 | 0.80 | 0.80 |
+| 1 | 0.20 | 0.20 |
+| 0 | 0.20 | 0.80 |
+| 0 | 0.80 | 0.20 |
+
+When someone **has hypertension**, the model fits that observation well if $p_i$ is large.
+
+When someone **does not have hypertension**, the model fits that observation well if $1-p_i$ is large.
+
+> **A model fits an observation well when it assigns high probability to the outcome that actually occurred.**
+
+This is the basic idea underlying likelihood and deviance.
+
+------------------------------------------------------------------------
+
+## From predicted probabilities to likelihood
+
+For a binary outcome, we can write the probability that the model assigned to what actually happened as
+
+$$p_i^{Y_i}(1-p_i)^{1-Y_i}.$$
+
+This compact expression handles both possible outcomes.
+
+If $Y_i=1$,
+
+$$p_i^1(1-p_i)^0=p_i.$$
+
+If $Y_i=0$,
+
+$$p_i^0(1-p_i)^1=1-p_i.$$
+
+So each individual's contribution to the likelihood is simply the probability the model assigned to that individual's observed outcome.
+
+For the entire sample, the likelihood combines these contributions:
+
+$$L = \prod_{i=1}^n p_i^{Y_i}(1-p_i)^{1-Y_i}.$$
+
+A model has a larger likelihood when it assigns high probabilities to the outcomes that were actually observed.
+
+------------------------------------------------------------------------
+
+## Why use the log likelihood?
+
+Likelihoods involve multiplying many probabilities, each between 0 and 1. It is more convenient to work with the **log likelihood**.
+
+Taking logarithms turns the product into a sum:
+
+$$\ell
+=
+\sum_{i=1}^n
+\left[
+Y_i\log(p_i)+(1-Y_i)\log(1-p_i)
+\right].$$
+
+The interpretation remains the same:
+
+> **Models that assign higher probabilities to the observed outcomes have larger log likelihoods.**
+
+For example,
+
+$$\log(0.80)=-0.223$$
+
+whereas
+
+$$\log(0.20)=-1.609.$$
+
+Assigning probability 0.20 to something that actually occurred therefore produces a much larger negative contribution to the log likelihood than assigning probability 0.80.
+
+This is where the idea of a **penalty for poor predictions** begins to appear.
+
+------------------------------------------------------------------------
+
+## What would the best possible fit look like?
+
+To define deviance, we compare our fitted model with a hypothetical benchmark called the **saturated model**.
+
+The saturated model has enough flexibility to reproduce the observed outcomes perfectly.
+
+For a binary outcome, it effectively assigns
+
+$$\hat p_i =
+\begin{cases}
+1 & \text{if }Y_i=1\\
+0 & \text{if }Y_i=0.
+\end{cases}$$
+
+So the saturated model assigns probability 1 to what actually happened for every individual.
+
+Its likelihood is therefore
+
+$$L_{\text{sat}}=1,$$
+
+and its log likelihood is
+
+$$\ell_{\text{sat}}=\log(1)=0.$$
+
+This does **not** make the saturated model a useful scientific model. It is simply a benchmark representing the best possible fit to the observed data.
+
+------------------------------------------------------------------------
+
+## Deviance measures how far our model falls short
+
+We can now define the deviance:
+
+$$D
+=
+2\left[
+\ell_{\text{sat}}
+-
+\ell_{\text{fitted}}
+\right].$$
+
+The saturated model represents the best possible fit. Deviance therefore measures how far the fitted model falls short of that benchmark.
+
+> **Smaller deviance indicates better fit.**
+
+For individual Bernoulli observations, $\ell_{\text{sat}}=0$, so
+
+$$D=-2\ell_{\text{fitted}}.$$
+
+This gives another way to understand the idea introduced in the lecture:
+
+> **Deviance penalizes a model when it assigns low probability to outcomes that actually occurred.**
+
+A model that repeatedly assigns low probabilities to the observed outcomes will have a more negative log likelihood and therefore a larger deviance.
+
+### Why multiply by 2?
+
+You might reasonably wonder why deviance is defined as
+
+$$D = 2[\ell_{\text{sat}}-\ell_{\text{fitted}}]$$
+
+rather than simply as the difference in log likelihoods.
+
+The factor of 2 is not needed for the basic interpretation. The quantity
+
+$$\ell_{\text{sat}}-\ell_{\text{fitted}}$$
+
+already measures how far the fitted model falls short of the saturated model.
+
+Near its maximum, however, the log likelihood has an approximately quadratic shape. As a result, **twice a difference in log likelihood behaves approximately like a squared standardized difference**. And squared standardized differences lead naturally to the chi-square distribution.
+
+This is why, when we compare two nested models, the quantity
+
+$$2[\ell_{\text{larger}}-\ell_{\text{smaller}}]$$
+
+has, under the null hypothesis and appropriate conditions, an approximately chi-square distribution.
+
+That is what allows a difference in deviance to become a hypothesis test.
+
+So the **difference in log likelihood tells us about improvement in fit**; multiplying by 2 puts that improvement on a scale that connects naturally to the chi-square distribution and the likelihood-ratio test.
+
+------------------------------------------------------------------------
+
+## Why compare deviances?
+
+Suppose we have two logistic regression models.
+
+The **null model** contains only an intercept:
+
+$$\text{logit}(p_i)=\beta_0.$$
+
+A second model includes predictors such as age and physical activity:
+
+$$\text{logit}(p_i)
+=
+\beta_0+\beta_1\text{age}_i+\beta_2\text{activity}_i.$$
+
+Their deviances are
+
+$$D_{\text{null}}
+=
+2[\ell_{\text{sat}}-\ell_{\text{null}}]$$
+
+and
+
+$$D_{\text{fitted}}
+=
+2[\ell_{\text{sat}}-\ell_{\text{fitted}}].$$
+
+Now subtract:
+
+\begin{aligned}
+D_{\text{null}}-D_{\text{fitted}}
+&=
+2[\ell_{\text{sat}}-\ell_{\text{null}}]
+-
+2[\ell_{\text{sat}}-\ell_{\text{fitted}}] \\
+&=
+2[\ell_{\text{fitted}}-\ell_{\text{null}}].
+\end{aligned}
+
+The saturated model disappears.
+
+So the **difference in deviance** is exactly twice the improvement in log likelihood produced by adding the predictors.
+
+------------------------------------------------------------------------
+
+## From improvement in fit to a hypothesis test
+
+Adding predictors will generally improve the fit to the observed sample, even when those predictors provide no real information about the outcome in the population.
+
+The important question is therefore not simply whether the deviance decreased.
+
+Instead, we ask:
+
+> **Is the improvement in fit larger than we would reasonably expect from sampling variation if the additional predictors actually provided no information?**
+
+For nested models, the difference in deviance
+
+$$D_{\text{null}}-D_{\text{fitted}}$$
+
+is the **likelihood-ratio statistic**.
+
+Under the null hypothesis, and under appropriate conditions, this statistic has approximately a chi-square distribution, with degrees of freedom equal to the number of additional parameters in the larger model.
+
+For example, adding age and physical activity adds two parameters, so we compare the observed improvement in deviance with a chi-square distribution with 2 degrees of freedom.
+
+This gives the likelihood-ratio test used in the main lecture.
+
+------------------------------------------------------------------------
+
+## Putting the pieces together
+
+The chain of ideas is:
+
+$$\text{predicted probabilities}
+\longrightarrow
+\text{likelihood}
+\longrightarrow
+\text{log likelihood}
+\longrightarrow
+\text{deviance}
+\longrightarrow
+\text{difference in deviance}
+\longrightarrow
+\text{likelihood-ratio test}.$$
+
+The starting point is quite simple:
+
+> **How much probability did the model assign to what actually happened?**
+
+Likelihood combines that information across the sample.
+
+Deviance measures how far the resulting fit falls short of the best possible fit to the observed data.
+
+And when we compare nested models, the difference in deviance tells us how much the additional predictors improved the fit.
+
+The likelihood-ratio test then asks whether that improvement is larger than we would reasonably expect if the additional predictors provided no information about the outcome.
+
+---
+
+## Can we see the chi-square distribution emerge?
+
+Suppose we generate many datasets from a probability model in which the null hypothesis is true (i.e., $age$ does not contribute to the probaiblity of the outcome $y$). For each dataset, we fit the two models and calculate the difference in deviance.
+
+The distribution of these differences will be approximately a $\chi^2$ distribution with 1 degree of freedom:
+
+```{webr-r}
+
+set.seed(123)
+
+n_sim <- 5000
+n <- 200
+
+lr_stat <- replicate(n_sim, {
+
+  age <- rnorm(n, 50, 10)
+
+  # Under H0, age provides no information about Y
+  y <- rbinom(n, 1, 0.30)
+
+  fit_null <- glm(y ~ 1, family = binomial)
+  fit_age  <- glm(y ~ age, family = binomial)
+
+  2 * (logLik(fit_age) - logLik(fit_null))
+
+})
+
+head(lr_stat)
+```
+
+```{webr-r}
+#| classes: webr-plot
+
+d_lr <- data.table(lr_stat = lr_stat)
+
+d_chisq <- data.table(
+  x = seq(0.01, max(lr_stat), length.out = 500)
+)
+
+d_chisq[, density := dchisq(x, df = 1)]
+
+ggplot(d_lr, aes(x = lr_stat)) +
+  geom_histogram(
+    aes(y = after_stat(density)),
+    bins = 40,
+    boundary = 0
+  ) +
+  geom_line(
+    data = d_chisq,
+    aes(x = x, y = density),
+    inherit.aes = FALSE,
+    linewidth = 1
+  ) +
+  labs(
+    x = "Likelihood-ratio statistic",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  coord_cartesian(xlim = c(0, 6),
+                  ylim = c(0, 1.5))
+```
+
+
+<div style="margin-bottom: 2em;">
+<button onclick="window.close();" style="font-size: 0.8em; padding: 6px 14px; cursor: pointer;">
+  ← Return to lecture
+</button>
+</div>

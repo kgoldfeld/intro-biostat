@@ -190,7 +190,7 @@ We already know how to model a conditional mean. Why not just use linear regress
 
 $$
 \large
-E(Y \mid \text{age}) = \hat{\beta}_0 + \hat{\beta}_1 \text{age}
+E(Y \mid \text{age}) = \beta_0 + \beta_1 \text{age}
 $$
 
 ```{webr-r}
@@ -1133,7 +1133,7 @@ This is a **likelihood-ratio test**.
 
 Here, the very small p-value suggests that including age and physical activity improves the model.
 
-<!-- NOTE: Sidebar here to explain deviance a bit -->
+[Additional details about deviance provided here.](deviance-details.html){target="_blank"}
 
 ## An example: CK and heart attack
 
