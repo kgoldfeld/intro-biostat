@@ -7,7 +7,7 @@ engine: knitr
 filters:
   - webr
 webr:
-  packages: ["data.table", "ggplot2", "patchwork", "broom"]
+  packages: ["data.table", "ggplot2", "patchwork", "broom", "pROC"]
 ---
 
 ## Initial setup
@@ -20,7 +20,8 @@ library(data.table)
 library(ggplot2)
 library(patchwork)
 library(broom)
-  
+library(pROC)
+
 theme_set(
   theme_bw(base_size = 14) +
   theme(
@@ -172,20 +173,19 @@ Notice that the prediction is a **probability**, even though the outcome itself 
 
 ## How well does our model predict?
 
-
-We have fit a model using data from 500 people.
-
-One way to evaluate the model would be to ask how well its predictions agree with the outcomes we actually observed.
+We have fit a model using data from 500 people. One way to evaluate the model would be to ask how well its predictions agree with the outcomes we actually observed.
 
 But there is a potential problem:
 
 > ***These are the same 500 people we used to build the model.***
 
-The model was specifically estimated to fit the data we observed.
+*There are really two questions we could ask:*
 
-*What we really want to know is:*
+> **How well does the model predict outcomes for the people used to fit it?**
 
-> ***How well will the model predict outcomes for new people?***
+and, more importantly,
+
+> **How well will the model predict outcomes for new people?**
 
 These are two different questions.
 
@@ -290,7 +290,7 @@ dd[, .(
 
 > ***Which model appears to predict better?***
 
-The more complicated model has a smaller prediction error.
+The extended model has a smaller prediction error.
 
 But remember:
 
@@ -337,15 +337,11 @@ dd_new[, .(
 
 > ***Did the model that predicted the training data better also predict the new data better?***
 
-No.
 
-In the original data, the extended model had **lower prediction error** than the simple model.
+- In the original data, the extended model had **lower prediction error** than the simple model.
+- When we applied both models to new people, the extended model had **higher prediction error**.
 
-But when we applied both models to new people, the extended model had **higher prediction error**.
-
-The extended model learned some patterns that were specific to the original sample.
-
-Those patterns helped it predict the data it had already seen, but they did not help it predict outcomes for new people.
+The extended model learned some patterns that were specific to the original sample. Those patterns helped it predict the data it had already seen, but they did not help it predict outcomes for new people.
 
 This is **overfitting**.
 
@@ -384,51 +380,50 @@ nrow(train_data)
 nrow(test_data)
 ```
 
-We fit the model using **only the training data**:
+- We would fit our prediction model using the 400 people in the training data.
+- We would then use that fitted model to generate predictions for the 100 people in the test data and evaluate those predictions.
+- The crucial point is that the test data play the role that our 500 newly generated people played in the simulation:
 
-```{webr-r}
-fit_train <- glm(
-  hypertension_5yr ~ age,
-  data = train_data,
-  family = binomial
-)
-```
+**They give us observations that were not used to fit the model.**
 
-Then we use the fitted model to predict outcomes in the **test data**:
-
-```{webr-r}
-test_data[, predicted_risk := predict(
-  fit_train,
-  newdata = test_data,
-  type = "response"
-)]
-```
-
-The test data were not used to estimate the model.
-
-They provide a way to ask:
-
-> ***How well does a model trained on one set of people predict outcomes for people it has not seen before?***
-
-This ability to perform well on new observations is called **generalization**.
+This allows us to estimate how well the model generalizes to new observations.
 
 
 ### What if the results depend on how we split the data?
 
 A single training/test split has its own randomness. Different observations could have ended up in the training and test sets.
 
-**Cross-validation** addresses this problem by repeatedly using different portions of the training data to fit and evaluate the model.
+Suppose we are deciding between two prediction models:
 
-This can help us compare models and make decisions during **model development** without relying on a single arbitrary split.
+$$
+\begin{aligned}
+\text{Model 1: }& \text{age}\\
+\text{Model 2: }& \text{age + BMI + physical activity}
+\end{aligned}
+$$
 
-Once model development is complete, we can evaluate the final model using **test data that played no role in building or selecting the model**.
+Which one will predict better for **new people**?
 
-> **The key idea is to separate the data used to learn from the data used for final evaluation.**
+**Cross-validation** lets us compare them without relying on a single arbitrary split.
 
+We divide the training data into several parts, or **folds**. For each model:
 
+- fit the model using all but one fold
+- evaluate its predictions on the fold that was left out
+- repeat until every fold has been left out once
+- **average the predictive performance across the folds**
+
+We can then compare the average performance of Model 1 and Model 2 and **choose the model specification**.
+
+> **Cross-validation helps us choose the model specification — we are not averaging the parameter estimates from the different fits.**
+
+Once we have selected a model, we fit it again using **all of the training data**.
+
+Finally, we use the **untouched test data** to evaluate how well this one final model predicts new observations.
+
+> **We do not use the test data to choose between models.**
 
 ## Are the predicted probabilities accurate?
-
 
 In Lecture 6, we evaluated logistic regression by comparing **predicted probabilities** with what we actually observed.
 
@@ -442,14 +437,30 @@ This is called **calibration**.
 
 **One important point**:
 
-Suppose a person has a predicted risk of 30% and does **not** develop hypertension.
+Suppose a person has a predicted risk of 70% and does **not** develop hypertension.
 
 That does not mean the prediction was wrong.
 
 A probability describes what we would expect to happen across many similar people, not what must happen to one individual.
 
-
 ### Let's evaluate calibration in the new sample of 500 people . . .
+
+We will start by **ordering the 500 people according to their predicted risk**.
+
+Then we divide them into five equally sized groups:
+
+- the 100 people with the **lowest predicted risks**
+- the next 100 people
+- the next 100 people
+- the next 100 people
+- the 100 people with the **highest predicted risks**
+
+> **These groups are determined by predicted risk — they are not formed randomly.**
+
+Within each group, we compare:
+
+- the **average predicted risk**
+- the **proportion who actually developed hypertension**
 
 ```{webr-r}
 dd_new[, risk_group := cut(
@@ -458,7 +469,14 @@ dd_new[, risk_group := cut(
     pred_simple,
     probs = seq(0, 1, by = 0.2)
   ),
-  include.lowest = TRUE
+  include.lowest = TRUE,
+  labels = c(
+    "Lowest risk",
+    "Low risk",
+    "Middle risk",
+    "High risk",
+    "Highest risk"
+  )
 )]
 
 calibration <- dd_new[,
@@ -483,7 +501,10 @@ ggplot(
     slope = 1, 
     linetype = 2
   ) +
-  geom_point(size = 3) +
+  geom_point(
+    size = 3,
+    aes(color = risk_group)
+  ) +
   coord_equal(
     xlim = c(0, 0.6), 
     ylim = c(0, 0.6)
@@ -491,7 +512,9 @@ ggplot(
   labs(
     x = "Average predicted risk",
     y = "Observed proportion with hypertension"
-  )
+  ) +
+  theme(legend.title = element_blank()) +
+  guides(color = guide_legend(reverse = TRUE))
 ```
 
 If the predicted and observed probabilities agreed perfectly, the points would fall along the diagonal line.
@@ -558,11 +581,14 @@ For each person, there are four possibilities:
 3.  We classify the person as low risk, and they do not develop hypertension.
 4.  We classify the person as low risk, but they develop hypertension.
 
+<div style="margin-top: 5em;"></div>
 
 |                          | Hypertension   | No hypertension |
 |--------------------------|----------------|-----------------|
 | **Classified high risk** | True positive  | False positive  |
 | **Classified low risk**  | False negative | True negative   |
+
+<div style="margin-top: 5rem;"></div>
 
 These terms describe the performance of the **classification rule** relative to the eventual outcome.
 
@@ -588,22 +614,16 @@ table(
 )
 ```
 
-<!-- This slide needs some more thought -->
+<div style="margin-top: 3em;"></div>
+<div style="font-size: 0.75em;">
 
-### Two kinds of classification errors are possible . . .
+|                          | Hypertension   | No hypertension |
+|--------------------------|----------------|-----------------|
+| **Classified high risk** | True positive  | False positive  |
+| **Classified low risk**  | False negative | True negative   |
 
-- **False positive:** someone is classified as high risk but does not develop hypertension.
-- **False negative:** someone is classified as low risk but does develop hypertension.
-
-> ***Are these two kinds of errors equally important?***
-
-If the consequence of being classified as high risk is additional blood pressure monitoring, a false positive may have relatively little cost.
-
-Failing to identify someone who will develop hypertension may be more consequential.
-
-In another setting, false positives might have substantial costs or harms.
-
-> **Choosing a classification threshold is not purely a statistical decision. It depends in part on the consequences of different kinds of errors.**
+</div>
+<div style="margin-top: 3em;"></div>
 
 
 ### How many people who develop hypertension do we identify?
@@ -622,9 +642,18 @@ $$\large
 dd_new[hypertension_5yr == 1, mean(classified_high_risk)]
 ```
 
-This is the **sensitivity** of the classification rule.
+> This is the **sensitivity** of the classification rule: the proportion of people *with the outcome* who are classified as positive.
 
-> **Sensitivity is the proportion of people with the outcome who are classified as positive.**
+<div style="margin-top: 3em;"></div>
+<div style="font-size: 0.75em;">
+
+|                          | Hypertension   | No hypertension |
+|--------------------------|----------------|-----------------|
+| **Classified high risk** | <span style="background-color: #ffff99; padding: 3px 6px;">**True positive**</span>  | False positive |
+| **Classified low risk**  | <span style="background-color: #ffff99; padding: 3px 6px;">**False negative**</span>  | True negative |
+
+</div>
+<div style="margin-top: 3em;"></div>
 
 
 ### How many people who do not develop hypertension are classified as low risk?
@@ -646,20 +675,70 @@ dd_new[
 ]
 ```
 
-This is the **specificity** of the classification rule.
+> This is the **specificity** of the classification rule: the proportion of people *without the outcome* who are classified as negative.**
 
-> **Specificity is the proportion of people without the outcome who are classified as negative.**
+<div style="margin-top: 3em;"></div>
+<div style="font-size: 0.75em;">
 
+|                          | Hypertension   | No hypertension |
+|--------------------------|----------------|-----------------|
+| **Classified high risk** | True positive  | <span style="background-color: #ffff99; padding: 3px 6px;">**False positive**</span>  |
+| **Classified low risk**  | False negative | <span style="background-color: #ffff99; padding: 3px 6px;">**True negative**</span> |
+
+</div>
+<div style="margin-top: 3em;"></div>
+
+### What about the people incorrectly classified as high risk?
+
+Specificity tells us the proportion of people **without hypertension** who are correctly classified as low risk.
+
+We can ask the complementary question:
+
+> ***Among people who do not develop hypertension, what proportion are incorrectly classified as high risk?***
+
+This is the **false positive rate**:
+
+$$\large
+\text{False positive rate}
+=
+\frac{\text{False positives}}
+{\text{True negatives}+\text{False positives}}
+$$
+
+Because everyone without hypertension is classified as either low risk or high risk:
+
+$$\large
+\text{False positive rate} = 1 - \text{Specificity}
+$$
+
+```{webr-r}
+dd_new[
+  hypertension_5yr == 0,
+  mean(classified_high_risk)
+]
+```
+
+> The **false positive rate** is the proportion of people *without the outcome* who are classified as positive.
+
+<div style="margin-top: 3em;"></div>
+<div style="font-size: 0.75em;">
+
+|                          | Hypertension   | No hypertension |
+|--------------------------|----------------|-----------------|
+| **Classified high risk** | True positive  | <span style="background-color: #ffff99; padding: 3px 6px;">**False positive**</span> |
+| **Classified low risk**  | False negative | <span style="background-color: #ffff99; padding: 3px 6px;">**True negative**</span> |
+
+</div>
 
 ### What if we start with the people classified as high risk?
 
-Sensitivity started with the people who ultimately **developed hypertension** and asked how many had been classified as high risk.
+Sensitivity asks:
 
-But we might want to ask the question in the other direction:
+> Among people who **develop hypertension**, how many were classified as high risk?
 
-> ***Among the people we classified as high risk, how many actually developed hypertension?***
+We can also ask the question in the other direction:
 
-Sensitivity conditions on the **outcome**. PPV conditions on the **classification**.
+> Among people **classified as high risk**, how many actually develop hypertension?
 
 This is the **positive predictive value (PPV)**:
 
@@ -667,7 +746,8 @@ $$\large
 \text{PPV}
 =
 \frac{\text{True positives}}
-{\text{True positives}+\text{False positives}}$$
+{\text{True positives}+\text{False positives}}
+$$
 
 ```{webr-r}
 dd_new[
@@ -676,38 +756,39 @@ dd_new[
 ]
 ```
 
-With our threshold of 0.30, about half of the people classified as high risk actually developed hypertension.
 
-<!-- Maybe an example in next slide? -->
+<div style="margin-top: 3em;"></div>
+<div style="font-size: 0.75em;">
 
-### PPV also depends on how common the outcome is
+|                          | Hypertension   | No hypertension |
+|--------------------------|----------------|-----------------|
+| **Classified high risk** | <span style="background-color: #ffff99; padding: 3px 6px;">**True positive**</span>  | <span style="background-color: #ffff99; padding: 3px 6px;">**False positive**</span> |
+| **Classified low risk**  | False negative | True negative |
 
-Suppose we used the same classification rule in a population where developing hypertension was **much less common**.
-
-Even if the sensitivity and specificity were unchanged, the PPV would be lower.
-
-Why?
-
-If relatively few people develop hypertension, there are many more opportunities for **false positives** among the people who do not develop hypertension.
-
-> **The probability of the outcome among people classified as positive depends not only on the performance of the classification rule, but also on how common the outcome is in the population.**
-
+</div>
 
 ### What happens if we change the threshold?
 
-Our sensitivity, specificity, and PPV were calculated using a threshold of 0.30.
+So far, we have used a classification threshold of 0.30, which was an arbitrary choice.
 
-If we lower the threshold, more people will be classified as high risk.
+If we **lower the threshold**, more people will be classified as high risk.
 
-- We will identify more of the people who develop hypertension.
-- But we will also classify more people who do not develop hypertension as high risk.
+This means:
 
-If we raise the threshold, fewer people will be classified as high risk.
+- we will identify more of the people who develop hypertension  
+  $\rightarrow$ **sensitivity increases**
+- we will also classify more people who do not develop hypertension as high risk  
+  $\rightarrow$ **false positive rate increases**
 
-- We will have fewer false positives.
-- But we will miss more people who develop hypertension.
+If we **raise the threshold**, the opposite happens.
 
-> ***There is a tradeoff between sensitivity and specificity. What does that tradeoff look like across all possible thresholds?***
+> **Choosing a classification threshold involves a tradeoff between identifying people who will develop the outcome and incorrectly classifying people who will not.**
+
+Which tradeoff is appropriate depends in part on the **consequences of the classification**.
+
+For example, if being classified as high risk simply leads to additional blood pressure monitoring, false positives may have relatively little cost.
+
+In another setting, false positives might have substantial costs or harms.
 
 
 ## From one threshold to many thresholds
@@ -748,8 +829,6 @@ For each threshold, focus on two quantities:
 - **Sensitivity:** among people who develop hypertension, what proportion did we classify as high risk?
 - **False positive rate:** among people who do **not** develop hypertension, what proportion did we nevertheless classify as high risk?
 
-<!-- We need to mention false positive rate earlier -->
-
 Recall that
 
 $$\large
@@ -757,34 +836,6 @@ $$\large
 $$
 
 > **Each threshold gives us a sensitivity and a false positive rate.**
-
-### What happens as we lower the threshold?
-
-Start with a relatively high threshold of **0.50**.
-
-Fewer people are classified as high risk.
-
-- The false positive rate is relatively low.
-- But sensitivity is also relatively low: we miss more people who develop hypertension.
-
-Now lower the threshold to **0.30**.
-
-More people are classified as high risk.
-
-- We identify more of the people who develop hypertension.
-- But we also falsely classify more people who do not develop hypertension as high risk.
-
-Lower the threshold further to **0.10**.
-
-Even more people are classified as high risk.
-
-- Sensitivity increases further.
-- The false positive rate also increases further.
-
-> **Lowering the threshold moves sensitivity and the false positive rate in the
-> same direction: both increase.**
-
----
 
 ## Representing a threshold with a point
 
@@ -865,9 +916,7 @@ Why?
 So the plot is showing exactly the tradeoff we saw when we changed the
 classification threshold.
 
----
-
-## Where would we like to be?
+#### Where would we like to be?
 
 Before adding any more thresholds, think about the two axes.
 
@@ -953,9 +1002,7 @@ This is called a **receiver operating characteristic (ROC) curve**.
 The curve is not introducing a new measure. It is simply collecting the same
 threshold calculations we have already been making into a single picture.
 
----
-
-## What does the ROC curve tell us?
+#### What does the ROC curve tell us?
 
 Remember what the axes mean:
 
@@ -1057,26 +1104,6 @@ dd_test[,
 ]
 ```
 
-### How separated are the predicted risks?
-
-```{webr-r}
-#| classes: webr-plot
-
-ggplot(
-  dd_test, 
-  aes(x = predicted_risk, fill = outcome)
-) +
-  geom_density(alpha = 0.35) +
-  labs(
-    x = "Predicted 5-year risk",
-    y = "Density",
-    fill = NULL
-  )
-```
-
-> ***What happens to the overlap between the two groups as the relationship between age and hypertension becomes stronger?***
-
-
 ### What happens to the ROC curve?
 
 ```{webr-r}
@@ -1141,23 +1168,19 @@ As age becomes more informative about future hypertension:
 
 ## Summarizing discrimination: the AUC
 
-
 The ROC curve shows how well the model distinguishes the two groups across **all possible classification thresholds**.
 
-But it can be useful to summarize that discrimination with a single number.
+We can summarize this discrimination with a single number: the **area under the ROC curve (AUC)**.
 
-This summary is called the **AUC**, which has a particularly useful interpretation:
+- **AUC = 0.50:** no discrimination
+- **AUC = 1.00:** perfect discrimination
+- **Higher AUC:** better discrimination
 
-> ***Suppose we randomly select one person who develops hypertension and one person who does not. What is the probability that the model assigns the higher predicted risk to the person who develops hypertension?***
+> **The AUC summarizes how well the model distinguishes people who develop the outcome from those who do not.**
 
-**That probability is the AUC.**
+Importantly, the AUC does **not** tell us which classification threshold to use.
 
-- An AUC of **0.50** means that the model has no ability to distinguish the two groups. Given one person from each group, the model is equally likely to assign the higher predicted risk to either person.
-
-- An AUC of **1.00** represents perfect discrimination: the person who develops hypertension always has the higher predicted risk.
-
-*It turns out that this probability is mathematically equivalent to the **area under the ROC curve** — hence the name **area under the curve (AUC)***.
-
+Choosing a threshold depends on the consequences of **false positives and false negatives**.
 
 ### Seeing the area under the curve
 
@@ -1192,32 +1215,20 @@ ggplot(
 
 ### What is the AUC for our model?
 
-We can estimate this probability directly.
-
-First, separate the predicted risks for the two groups:
+We can calculate the AUC directly from the observed outcomes and predicted risks using the `roc()` and `auc()` functions in the `pROC` package:
 
 ```{webr-r}
-risk_yes <- dd_new[hypertension_5yr == 1, pred_simple]
-risk_no  <- dd_new[hypertension_5yr == 0, pred_simple]
-```
-
-Now compare every person who develops hypertension with every person who does not:
-
-```{webr-r}
-comparisons <- CJ(
-  risk_yes = risk_yes,
-  risk_no = risk_no
+roc_result <- pROC::roc(
+  response = dd_new$hypertension_5yr,
+  predictor = dd_new$pred_simple
 )
 
-comparisons[, mean(
-  (risk_yes > risk_no) +
-    0.5 * (risk_yes == risk_no)
-)]
+pROC::auc(roc_result)
 ```
 
-This is the proportion of pairs in which the person who develops hypertension has the **higher predicted risk**.
+The AUC summarizes the model's ability to **discriminate** between people who develop hypertension and those who do not.
 
-> **The AUC measures how well the model ranks people who develop the outcome above people who do not.**
+> **Higher AUC indicates better discrimination; an AUC of 0.50 indicates no discrimination.**
 
 
 ### Discrimination is not calibration
@@ -1272,3 +1283,98 @@ This is the problem of **overfitting** that we saw earlier.
 That is why we evaluate prediction models using data that were **not used to develop them**.
 
 > **A more flexible prediction method is not necessarily a better prediction method.**
+
+## One last simulation: predictive performance varies too
+
+We have evaluated our prediction model using one new sample of 500 people.
+
+But that sample is just **one possible sample** from the population.
+
+What would happen if we evaluated the **same fitted model** using many different samples?
+
+Let's find out.
+
+```{webr-r}
+library(pROC)
+
+set.seed(91723)
+
+n_sims <- 500
+
+auc_results <- replicate(n_sims, {
+
+  # Generate a new test sample
+  dd_test <- DGP(500)
+
+  # Use the SAME fitted model to predict risk
+  dd_test[, predicted_risk :=
+    predict(
+      fit_simple,
+      newdata = dd_test,
+      type = "response"
+    )
+  ]
+
+  # Calculate AUC in this test sample
+  as.numeric(
+    auc(
+      roc(
+        dd_test$hypertension_5yr,
+        dd_test$predicted_risk,
+        quiet = TRUE
+      )
+    )
+  )
+})
+
+auc_results[1:10]
+```
+
+The model has not changed.
+
+The population has not changed.
+
+The only thing that changes is the **sample used to evaluate the model**.
+
+```{webr-r}
+#| classes: webr-plot
+
+ggplot(
+  data.table(auc = auc_results),
+  aes(x = auc)
+) +
+  geom_histogram(
+    bins = 25,
+    boundary = 0
+  ) +
+  geom_vline(
+    xintercept = mean(auc_results),
+    linetype = 2
+  ) +
+  labs(
+    x = "AUC",
+    y = "Number of samples"
+  )
+```
+
+Each sample gives us a slightly different estimate of the model's predictive performance.
+
+```{webr-r}
+mean(auc_results)
+sd(auc_results)
+```
+
+> **Even when the population and prediction model remain exactly the same, the performance we observe varies from sample to sample.**
+
+## One idea to take with you
+
+We have studied many different statistical methods in this course.
+
+But one idea has been with us from the beginning:
+
+> # **Samples vary.**
+
+Statistical methods help us understand what that variability means for the scientific questions we care about.
+
+<div style="margin-top: 10em;"></div>
+
