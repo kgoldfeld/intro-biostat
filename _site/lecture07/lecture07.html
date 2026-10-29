@@ -2572,6 +2572,27 @@ Y_i = 50 + 5X_i + \epsilon_i,
 </blockquote>
 <p>This is one example of a <strong>model-based approach</strong> to handling missing data under MAR.</p>
 </section>
+<section id="imputation" class="level3">
+<h3 class="anchored" data-anchor-id="imputation">Imputation</h3>
+<p>Another approach is to <strong>fill in the missing values</strong> using information from the observed data.</p>
+<p>This is called <strong>imputation</strong>.</p>
+<p>A simple approach might replace a missing value with:</p>
+<ul>
+<li>the mean of the observed values</li>
+<li>a value predicted from other observed characteristics</li>
+</ul>
+<p>But a single imputed value treats something we <strong>do not know</strong> as though we know it.</p>
+<blockquote class="blockquote">
+<p><strong>Multiple imputation recognizes that the missing value is uncertain.</strong></p>
+</blockquote>
+<p>Instead of filling in one value, we generate several plausible values, creating several completed datasets.</p>
+<p>We analyze each dataset and combine the results, allowing the final uncertainty to reflect both:</p>
+<ul>
+<li><strong>sampling variability</strong></li>
+<li><strong>uncertainty about the missing values</strong></li>
+</ul>
+<p>The validity of imputation still depends on assumptions about <strong>why the data are missing</strong>.</p>
+</section>
 <section id="what-if-missingness-depends-on-what-we-did-not-observe" class="level3">
 <h3 class="anchored" data-anchor-id="what-if-missingness-depends-on-what-we-did-not-observe">What if missingness depends on what we did not observe?</h3>
 <p>Now suppose the probability that a six-month physical functioning score is missing depends on the value of the six-month score itself.</p>

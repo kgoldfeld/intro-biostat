@@ -1181,6 +1181,30 @@ dd[, mean(followup_pf_pred)]
 This is one example of a **model-based approach** to handling missing data 
 under MAR.
 
+### Imputation
+
+Another approach is to **fill in the missing values** using information from the observed data.
+
+This is called **imputation**.
+
+A simple approach might replace a missing value with:
+
+- the mean of the observed values
+- a value predicted from other observed characteristics
+
+But a single imputed value treats something we **do not know** as though we know it.
+
+> **Multiple imputation recognizes that the missing value is uncertain.**
+
+Instead of filling in one value, we generate several plausible values, creating several completed datasets.
+
+We analyze each dataset and combine the results, allowing the final uncertainty to reflect both:
+
+- **sampling variability**
+- **uncertainty about the missing values**
+
+The validity of imputation still depends on assumptions about **why the data are missing**.
+
 
 ### What if missingness depends on what we did not observe?
 
