@@ -95,7 +95,7 @@ Rather than focusing primarily on the relationship between age and hypertension,
 
 
 
-## From a model to a prediction
+## From data to a model to a prediction
 
 
 Let's simulate data from a longitudinal study.
@@ -124,7 +124,7 @@ dd <- DGP(500)
 dd[, .(age, hypertension_5yr)][1:10]
 ```
 
-### Fitting a model
+#### Fitting a model
 
 ```{webr-r}
 fit <- glm(
@@ -132,9 +132,10 @@ fit <- glm(
   data = dd,
   family = binomial
 )
-
-tidy(fit)
 ```
+
+
+#### Generating predictions
 
 ```{webr-r}
 dd[, predicted_risk := predict(fit, type = "response")]
@@ -227,7 +228,7 @@ dd[, .(x1, x9, x13, x20)]
 
 Imagine that we don't know which variables are actually useful predictors.
 
-We could fit a simple model using only age:
+We could fit the simple model using only age:
 
 ```{webr-r}
 fit_simple <- glm(
@@ -237,10 +238,10 @@ fit_simple <- glm(
 )
 ```
 
-Or we could fit a much more complicated model using age and all 20 additional variables:
+Or we could fit the extended, more complicated model using age and all 20 additional variables:
 
 ```{webr-r}
-fit_complex <- glm(
+fit_extended <- glm(
   hypertension_5yr ~ .,
   data = dd[, 
     c("hypertension_5yr", "age", noise_vars), 
@@ -279,11 +280,11 @@ dd[,
   pred_simple := predict(fit_simple, type = "response")]
 
 dd[,
-  pred_complex := predict(fit_complex, type = "response")]
+  pred_extended := predict(fit_extended, type = "response")]
 
 dd[, .(
   simple = mean((hypertension_5yr - pred_simple)^2),
-  complex = mean((hypertension_5yr - pred_complex)^2)
+  extended = mean((hypertension_5yr - pred_extended)^2)
 )]
 ```
 
@@ -322,15 +323,15 @@ dd_new[, pred_simple := predict(
   type = "response"
 )]
 
-dd_new[, pred_complex := predict(
-  fit_complex,
+dd_new[, pred_extended := predict(
+  fit_extended,
   newdata = dd_new,
   type = "response"
 )]
 
 dd_new[, .(
   simple = mean((hypertension_5yr - pred_simple)^2),
-  complex = mean((hypertension_5yr - pred_complex)^2)
+  extended = mean((hypertension_5yr - pred_extended)^2)
 )]
 ```
 
@@ -338,11 +339,11 @@ dd_new[, .(
 
 No.
 
-In the original data, the complex model had **lower prediction error** than the simple model.
+In the original data, the extended model had **lower prediction error** than the simple model.
 
-But when we applied both models to new people, the complex model had **higher prediction error**.
+But when we applied both models to new people, the extended model had **higher prediction error**.
 
-The complex model learned some patterns that were specific to the original sample.
+The extended model learned some patterns that were specific to the original sample.
 
 Those patterns helped it predict the data it had already seen, but they did not help it predict outcomes for new people.
 
@@ -557,9 +558,20 @@ For each person, there are four possibilities:
 3.  We classify the person as low risk, and they do not develop hypertension.
 4.  We classify the person as low risk, but they develop hypertension.
 
+
+|                          | Hypertension   | No hypertension |
+|--------------------------|----------------|-----------------|
+| **Classified high risk** | True positive  | False positive  |
+| **Classified low risk**  | False negative | True negative   |
+
+These terms describe the performance of the **classification rule** relative to the eventual outcome.
+
+They do not mean that someone's predicted probability was "right" or "wrong."
+
 When we compare the classification with the eventual outcome, these are called **true positives, false positives, true negatives, and false negatives**.
 
-We can summarize them in a table:
+
+### Generating the classification/misclassification table
 
 ```{webr-r}
 table(
@@ -576,15 +588,7 @@ table(
 )
 ```
 
-|                          | Hypertension   | No hypertension |
-|--------------------------|----------------|-----------------|
-| **Classified high risk** | True positive  | False positive  |
-| **Classified low risk**  | False negative | True negative   |
-
-These terms describe the performance of the **classification rule** relative to the eventual outcome.
-
-They do not mean that someone's predicted probability was "right" or "wrong."
-
+<!-- This slide needs some more thought -->
 
 ### Two kinds of classification errors are possible . . .
 
@@ -674,6 +678,7 @@ dd_new[
 
 With our threshold of 0.30, about half of the people classified as high risk actually developed hypertension.
 
+<!-- Maybe an example in next slide? -->
 
 ### PPV also depends on how common the outcome is
 
@@ -705,84 +710,188 @@ If we raise the threshold, fewer people will be classified as high risk.
 > ***There is a tradeoff between sensitivity and specificity. What does that tradeoff look like across all possible thresholds?***
 
 
+## From one threshold to many thresholds
 
-## Evaluating all possible thresholds
+We saw that changing the classification threshold changes who is classified as
+high risk.
 
-
-We saw that changing the classification threshold changes both sensitivity and specificity.
-
-To understand this tradeoff, let's look at the predicted risks separately for people who ultimately develop hypertension and those who do not.
+Let's look at three possible thresholds and see exactly what happens.
 
 ```{webr-r}
-#| classes: webr-plot
+threshold_summary <- function(threshold) {
 
-dd_new[, outcome := factor(
-  hypertension_5yr,
-  levels = c(0, 1),
-  labels = c("No hypertension", "Hypertension")
-)]
+  classified <- as.integer(dd_new$pred_simple >= threshold)
 
-risk_density <- function(threshold) {
-  
-  ggplot(
-    dd_new, 
-    aes(x = pred_simple, fill = outcome)
-  ) +
-    geom_density(alpha = 0.20) +
-    geom_density(
-      aes(y = 
-        after_stat(ifelse(x >= threshold, density, 0))
-      ),
-      alpha = 0.55
-    ) +
-    geom_vline(
-      xintercept = threshold, 
-      linetype = 2
-    ) +
-    labs(
-      x = "Predicted 5-year risk",
-      y = "Density",
-      fill = NULL
+  data.table(
+    threshold = threshold,
+    sensitivity = mean(
+      classified[dd_new$hypertension_5yr == 1]
+    ),
+    specificity = mean(
+      classified[dd_new$hypertension_5yr == 0] == 0
+    ),
+    false_positive_rate = mean(
+      classified[dd_new$hypertension_5yr == 0]
     )
+  )
 }
 
-risk_density(0.30)
+threshold_results <- rbindlist(
+  lapply(c(0.50, 0.30, 0.10), threshold_summary)
+)
+
+threshold_results
 ```
 
-The distributions overlap substantially, but people who develop hypertension tend to have **higher predicted risks**.
+For each threshold, focus on two quantities:
 
-At our threshold of 0.30:
+- **Sensitivity:** among people who develop hypertension, what proportion did we classify as high risk?
+- **False positive rate:** among people who do **not** develop hypertension, what proportion did we nevertheless classify as high risk?
 
-- among people who develop hypertension, the proportion above the threshold is the **sensitivity**
-- among people who do not develop hypertension, the proportion above the threshold is the **false positive rate** $(1-\text{specificity})$
+<!-- We need to mention false positive rate earlier -->
 
-> **The same threshold gives us two proportions — one from each group.**
+Recall that
 
+$$\large
+\text{False positive rate} = 1-\text{specificity}.
+$$
 
-### What happens when we move the threshold?
+> **Each threshold gives us a sensitivity and a false positive rate.**
+
+### What happens as we lower the threshold?
+
+Start with a relatively high threshold of **0.50**.
+
+Fewer people are classified as high risk.
+
+- The false positive rate is relatively low.
+- But sensitivity is also relatively low: we miss more people who develop hypertension.
+
+Now lower the threshold to **0.30**.
+
+More people are classified as high risk.
+
+- We identify more of the people who develop hypertension.
+- But we also falsely classify more people who do not develop hypertension as high risk.
+
+Lower the threshold further to **0.10**.
+
+Even more people are classified as high risk.
+
+- Sensitivity increases further.
+- The false positive rate also increases further.
+
+> **Lowering the threshold moves sensitivity and the false positive rate in the
+> same direction: both increase.**
+
+---
+
+## Representing a threshold with a point
+
+We can represent what happens at a particular threshold using a point.
+
+Put the **false positive rate** on the horizontal axis and **sensitivity** on
+the vertical axis.
+
+Let's start with the threshold of 0.30.
 
 ```{webr-r}
 #| classes: webr-plot
 
-risk_density(0.50)   # try 0.50, then 0.10
+three_thresholds <- copy(threshold_results)
+
+ggplot(
+  three_thresholds[threshold == 0.30],
+  aes(x = false_positive_rate, y = sensitivity)
+) +
+  geom_point(size = 5) +
+  coord_equal(
+    xlim = c(0, 1),
+    ylim = c(0, 1),
+    expand = FALSE
+  ) +
+  labs(
+    x = "False positive rate",
+    y = "Sensitivity"
+  )
 ```
 
-As we **raise the threshold**, fewer people in both groups are classified as high risk:
+That point summarizes what happened when we used **0.30** as our threshold.
 
-> *Sensitivity decreases & the false positive rate decreases*
+Its horizontal position tells us how many people without hypertension were
+incorrectly classified as high risk.
 
-As we **lower the threshold**, more people in both groups are classified as high risk:
+Its vertical position tells us how many people who developed hypertension were
+correctly classified as high risk.
 
-> *Sensitivity increases & the false positive rate increases*
+> **One threshold → one pair of numbers → one point.**
 
-So moving the threshold gives us different combinations of **sensitivity and false positive rate**.
+### Now change the threshold
 
-> ***What if we considered all possible thresholds?***
+Let's add the thresholds of 0.50 and 0.10.
 
+```{webr-r}
+#| classes: webr-plot
 
-### Considering all possible thresholds
+ggplot(
+  three_thresholds,
+  aes(x = false_positive_rate, y = sensitivity)
+) +
+  geom_point(size = 5) +
+  geom_text(
+    aes(label = threshold),
+    nudge_y = 0.05
+  ) +
+  coord_equal(
+    xlim = c(0, 1),
+    ylim = c(0, 1),
+    expand = FALSE
+  ) +
+  labs(
+    x = "False positive rate",
+    y = "Sensitivity"
+  )
+```
 
-Rather than choosing a single threshold, we can calculate the **sensitivity** and **false positive rate** across many possible thresholds.
+Notice what happens as we **lower** the threshold:
+
+> **The points move up and to the right.**
+
+Why?
+
+- **Up:** sensitivity increases.
+- **Right:** the false positive rate increases.
+
+So the plot is showing exactly the tradeoff we saw when we changed the
+classification threshold.
+
+---
+
+## Where would we like to be?
+
+Before adding any more thresholds, think about the two axes.
+
+For a useful classifier, we would like:
+
+- **high sensitivity** → move **up**
+- **low false positive rate** → move **left**
+
+So where would the ideal point be?
+
+> ***The upper-left corner.***
+
+A point near the upper-left would mean that we identify most people who
+develop hypertension while falsely classifying relatively few people who do
+not.
+
+---
+
+## What if we consider every possible threshold?
+
+There is nothing special about 0.50, 0.30, or 0.10.
+
+We could repeat exactly the same calculation for every possible classification
+threshold.
 
 ```{webr-r}
 thresholds <- c(
@@ -792,9 +901,9 @@ thresholds <- c(
 )
 
 roc <- rbindlist(lapply(thresholds, function(threshold) {
-  
+
   classified <- as.integer(dd_new$pred_simple >= threshold)
-  
+
   data.table(
     threshold = threshold,
     sensitivity = mean(
@@ -807,87 +916,95 @@ roc <- rbindlist(lapply(thresholds, function(threshold) {
 }))
 ```
 
-Let's look at a few of the thresholds:
+Each threshold gives us another point:
 
-```{webr-r}
-roc[c(50, 142, 400)]
-```
+$$\large
+(\text{false positive rate},\ \text{sensitivity})
+$$
 
-For each threshold, we now have **two proportions**:
-
-- the false positive rate among people who do **not** develop hypertension
-- the sensitivity among people who **do** develop hypertension
-
-We can plot one against the other:
+If we plot all of those points and connect them, we get a curve.
 
 ```{webr-r}
 #| classes: webr-plot
 
 roc_plot <- ggplot(
-  roc, 
+  roc,
   aes(x = false_positive_rate, y = sensitivity)
 ) +
   geom_step() +
   coord_equal(
-    xlim = c(0, 1), 
-    ylim = c(0, 1), 
+    xlim = c(0, 1),
+    ylim = c(0, 1),
     expand = FALSE
   ) +
   labs(
-    x = "False positive rate (1 - specificity)",
+    x = "False positive rate",
     y = "Sensitivity"
   )
 
 roc_plot
 ```
 
-Each point along the curve represents a different **classification threshold**.
-
-> **The curve traces what happens in the two groups as we move the classification threshold from very high to very low.**
-
 This is called a **receiver operating characteristic (ROC) curve**.
 
-*The name comes from its development during World War II to evaluate how well radar operators could distinguish enemy aircraft from noise.*
+> **An ROC curve shows the combinations of sensitivity and false positive rate
+> produced as we move through all possible classification thresholds.**
 
+The curve is not introducing a new measure. It is simply collecting the same
+threshold calculations we have already been making into a single picture.
 
-### What would a good ROC curve look like?
+---
 
-Ideally, we would like a threshold that gives us:
+## What does the ROC curve tell us?
 
-- **high sensitivity:** a large proportion of people who develop hypertension are classified as high risk
-- **low false positive rate:** a small proportion of people who do not develop hypertension are classified as high risk
+Remember what the axes mean:
 
-So better discrimination moves the ROC curve toward the **upper-left corner**.
+- moving **up** means identifying a larger proportion of people who develop
+  hypertension
+- moving **right** means falsely classifying a larger proportion of people who
+  do not develop hypertension
 
-> ***What would happen if the model had no ability at all to distinguish the two groups?***
+So a model that can achieve high sensitivity without producing many false
+positives will have a curve that moves toward the **upper-left corner**.
 
-If the predicted risks contained no information about who would develop hypertension, changing the threshold would affect both groups in the same way.
+> **Better discrimination means getting farther toward the upper-left.**
 
-For example, if a threshold classified 30% of people who do not develop hypertension as high risk, it would also classify about 30% of people who do develop hypertension as high risk.
+### What would happen with no discrimination?
 
-In other words:
+Suppose the predicted risks contained no information about who would develop
+hypertension.
+
+Then lowering the threshold would tend to classify people from both groups as
+high risk at about the same rate.
+
+For example, if 30% of people who do not develop hypertension were classified
+as high risk, we would also expect about 30% of people who do develop
+hypertension to be classified as high risk.
+
+That means
 
 $$\large
-\text{Sensitivity} \approx \text{False positive rate}$$
+\text{Sensitivity} \approx \text{False positive rate}.
+$$
 
-across all thresholds.
+Those points would lie along the diagonal.
 
 ```{webr-r}
 #| classes: webr-plot
 
 roc_plot +
   geom_abline(
-    intercept = 0, 
-    slope = 1, 
+    intercept = 0,
+    slope = 1,
     linetype = 2
   )
 ```
 
 The diagonal therefore represents **no discrimination**.
 
-> **The farther the ROC curve bows toward the upper-left corner, the better the model distinguishes people who develop the outcome from those who do not.**
-
-
+> **The farther the ROC curve moves above the diagonal and toward the
+> upper-left corner, the better the model distinguishes people who develop
+> hypertension from those who do not.**
 
 ## What determines discrimination?
 
