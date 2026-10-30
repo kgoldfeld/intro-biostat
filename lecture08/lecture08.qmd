@@ -1204,7 +1204,7 @@ What would happen if we evaluated the **same fitted model** using many different
 ```{webr-r}
 set.seed(91723)
 
-n_sims <- 500
+n_sims <- 2500
 
 auc_results <- replicate(n_sims, {
 
