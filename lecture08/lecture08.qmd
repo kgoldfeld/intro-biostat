@@ -52,7 +52,7 @@ We asked:
 
 > ***How does the probability of hypertension change with age?***
 
-We used logistic regression to model that relationship:
+Logistic regression was used to model that relationship:
 
 $$\large
 \operatorname{logit}\left[P(Y=1\mid\text{age})\right]
@@ -66,9 +66,7 @@ For example, we could use the model to estimate how the odds or probability of h
 
 ### A different question
 
-Now suppose we conduct a longitudinal study.
-
-At baseline, we record each person's age. We then follow everyone for **5 years** and determine whether they develop hypertension.
+Now suppose we conduct a **longitudinal study**. At baseline, we record each person's age. We then follow everyone for **5 years** and determine whether they develop hypertension.
 
 For each person, define
 
@@ -92,16 +90,27 @@ But now suppose our question is:
 
 The model may look the same, but our **goal has changed**.
 
-Rather than focusing primarily on the relationship between age and hypertension, we want to know how well information available **today** can predict an outcome that will occur in the **future**.
+Rather than focusing primarily on the *relationship* between age and hypertension, we want to know how well information available **today** can *predict* an outcome that will occur in the **future**.
 
+### Different questions and different goals
 
+The same variables — and sometimes even the same statistical model — can be used to address **different scientific questions**.
+
+<div style="margin-top: 3rem;"></div>
+
+| **Objective** | **Fundamental question** | **What does it help us do?** |
+|---|---|---|
+| **Description / association** | How are variables related in a population? | Understand populations, identify patterns and disparities, generate hypotheses |
+| **Prediction** | What is likely to happen to a new individual? | Prognosis, risk stratification, screening, resource allocation |
+| **Causal inference / intervention** | What would happen if we changed something? | Choose treatments, policies, programs, or interventions |
+
+<div style="margin-top: 3rem;"></div>
 
 ## From data to a model to a prediction
 
+Let's simulate data from a longitudinal study. For each person, we observe their **age at baseline** and whether they develop **hypertension during the next 5 years**.
 
-Let's simulate data from a longitudinal study.
-
-For each person, we observe their age at baseline and whether they develop hypertension during the next 5 years.
+#### Generating the data
 
 ```{webr-r}
 set.seed(12345)
@@ -119,13 +128,11 @@ DGP <- function(n, beta_age = 0.075) {
 }
 
 dd <- DGP(500)
+
+dd[, .(age, hypertension_5yr)]
 ```
 
-```{webr-r}
-dd[, .(age, hypertension_5yr)][1:10]
-```
-
-#### Fitting a model
+#### Fitting a model and generating predictions
 
 ```{webr-r}
 fit <- glm(
@@ -133,16 +140,13 @@ fit <- glm(
   data = dd,
   family = binomial
 )
-```
 
-
-#### Generating predictions
-
-```{webr-r}
 dd[, predicted_risk := predict(fit, type = "response")]
 
-dd[, .(age, hypertension_5yr, predicted_risk)][1:10]
+dd[, .(age, hypertension_5yr, predicted_risk)]
 ```
+
+#### Visualizing data
 
 ```{webr-r}
 #| classes: webr-plot
@@ -161,9 +165,7 @@ ggplot(
   geom_line()
 ```
 
-The model gives us an estimated probability for each person.
-
-For example, a predicted risk of 0.30 means that the model estimates a **30% probability of developing hypertension within 5 years** for a person of that age.
+The model gives us an estimated probability for each person. For example, a predicted risk of 0.30 means that the model estimates a **30% probability of developing hypertension within 5 years** for a person of that age.
 
 Notice that the prediction is a **probability**, even though the outcome itself is binary.
 
@@ -173,45 +175,45 @@ Notice that the prediction is a **probability**, even though the outcome itself 
 
 ## How well does our model predict?
 
-We have fit a model using data from 500 people. One way to evaluate the model would be to ask how well its predictions agree with the outcomes we actually observed.
+We have fit a model using data from 500 people.
 
-But there is a potential problem:
+We could evaluate its predictions by comparing them with the outcomes we actually observed for those same 500 people.
 
-> ***These are the same 500 people we used to build the model.***
+But remember our goal:
 
-*There are really two questions we could ask:*
+> **We want to predict outcomes for new people.**
+
+The 500 people used to fit the model are **not new people** — the model has already seen their data.
+
+So there are two different questions:
 
 > **How well does the model predict outcomes for the people used to fit it?**
-
-and, more importantly,
-
+>
 > **How well will the model predict outcomes for new people?**
 
-These are two different questions.
+For prediction, it is the **second question** that matters.
 
 
 ### Learning from one sample
 
 Suppose our 500 people are a sample from a much larger population.
 
-We use their baseline information and subsequent outcomes to **train** our prediction model.
+- We use their baseline information and subsequent outcomes to **train** our prediction model.
 
-The fitted model has learned patterns from this particular sample.
+- The fitted model has learned patterns from this particular sample.
 
-Some of those patterns reflect real relationships in the population.
+- Some of those patterns reflect real relationships in the population.
 
-But some may simply reflect **random variation in this particular sample**.
+- But some may simply reflect **random variation in this particular sample**.
 
-> ***If our model learns random features of the training data, will those features help us predict outcomes in new people?***
+> **Patterns that reflect random variation in the training data may not help us predict outcomes in new people.**
 
 
 ### Learning signal — or learning noise?
 
 Because we are simulating the data, we know that **age is the only predictor of future hypertension**.
 
-Now suppose we also measured 20 other baseline characteristics.
-
-We will generate these so that they have **no relationship whatsoever** with future hypertension.
+Now suppose we generate 20 other baseline characteristics so that they have **no relationship whatsoever** with future hypertension.
 
 ```{webr-r}
 set.seed(2718)
@@ -260,9 +262,7 @@ But in a sample of 500 people, some of them will be associated with hypertension
 
 ### Which model predicts the observed data better?
 
-For each person, we can compare the predicted probability with what actually happened.
-
-If someone developed hypertension, their outcome is 1. If they did not, their outcome is 0.
+For each person, we can compare the predicted probability with what actually happened. If someone develops hypertension, their outcome is 1. If they do not, their outcome is 0.
 
 One simple measure of prediction error is
 
@@ -288,13 +288,9 @@ dd[, .(
 )]
 ```
 
-> ***Which model appears to predict better?***
+> **The extended model has a smaller prediction error.**
 
-The extended model has a smaller prediction error.
-
-But remember:
-
-**We evaluated the models using the same data that were used to fit them.**
+But remember: **we evaluated the models using the same data that were used to fit them.**
 
 
 ### What happens with new people?
@@ -335,26 +331,20 @@ dd_new[, .(
 )]
 ```
 
-> ***Did the model that predicted the training data better also predict the new data better?***
 
+> In the original data, the extended model had **lower prediction error** than the simple model.
+>
+> When we applied both models to new people, the extended model had **higher prediction error**.
 
-- In the original data, the extended model had **lower prediction error** than the simple model.
-- When we applied both models to new people, the extended model had **higher prediction error**.
-
-The extended model learned some patterns that were specific to the original sample. Those patterns helped it predict the data it had already seen, but they did not help it predict outcomes for new people.
-
-This is **overfitting**.
+The extended model learned some patterns that were specific to the original sample. Those patterns helped it predict the data it had already seen, but they did not help it predict outcomes for new people. This is **overfitting**.
 
 > **A model can fit the observed data well because it has learned both real signal and random noise.**
-
 
 
 ## Training and test data
 
 
-In our simulation, we could simply generate another sample of 500 people to see how well the models performed on new data.
-
-In a real study, we usually cannot do that.
+In our simulation, we could simply generate another sample of 500 people to see how well the models performed on new data. *In a real study, we usually cannot do that.*
 
 Instead, one approach is to divide the data we have into two parts:
 
@@ -393,7 +383,7 @@ This allows us to estimate how well the model generalizes to new observations.
 
 A single training/test split has its own randomness. Different observations could have ended up in the training and test sets.
 
-Suppose we are deciding between two prediction models:
+Suppose we are deciding between two prediction models and we want to know which one will predict better for **new people**.
 
 $$
 \begin{aligned}
@@ -401,8 +391,6 @@ $$
 \text{Model 2: }& \text{age + BMI + physical activity}
 \end{aligned}
 $$
-
-Which one will predict better for **new people**?
 
 **Cross-validation** lets us compare them without relying on a single arbitrary split.
 
@@ -435,7 +423,8 @@ For prediction, we can ask the same question — but now we want to know whether
 
 This is called **calibration**.
 
-**One important point**:
+
+#### One important point
 
 Suppose a person has a predicted risk of 70% and does **not** develop hypertension.
 
@@ -532,9 +521,7 @@ If a model is poorly calibrated in new data, its predicted probabilities may not
 ## From predicted probabilities to decisions
 
 
-So far, our model has produced **predicted probabilities**.
-
-But sometimes we want to use those probabilities **to make a decision**.
+So far, our model has produced **predicted probabilities**. But sometimes we want to use those probabilities **to make a decision**.
 
 Suppose we want to identify people at sufficiently high risk of developing hypertension that they should receive **additional monitoring**.
 
@@ -574,12 +561,7 @@ Now every person has two pieces of information:
 
 ### What can happen when we use this decision rule?
 
-For each person, there are four possibilities:
-
-1.  We classify the person as high risk, and they develop hypertension.
-2.  We classify the person as high risk, but they do not develop hypertension.
-3.  We classify the person as low risk, and they do not develop hypertension.
-4.  We classify the person as low risk, but they develop hypertension.
+For each person, we compare their **classification** with what eventually happens.
 
 <div style="margin-top: 5em;"></div>
 
@@ -594,13 +576,11 @@ These terms describe the performance of the **classification rule** relative to 
 
 They do not mean that someone's predicted probability was "right" or "wrong."
 
-When we compare the classification with the eventual outcome, these are called **true positives, false positives, true negatives, and false negatives**.
-
 
 ### Generating the classification/misclassification table
 
 ```{webr-r}
-table(
+class_tab <- table(
   Classified = factor(
     dd_new$classified_high_risk,
     levels = c(1, 0),
@@ -612,6 +592,8 @@ table(
     labels = c("Hypertension", "No hypertension")
   )
 )
+
+class_tab
 ```
 
 <div style="margin-top: 3em;"></div>
@@ -628,7 +610,7 @@ table(
 
 ### How many people who develop hypertension do we identify?
 
-Suppose we focus first on the people who actually developed hypertension.
+Suppose we focus first on the people **who actually developed hypertension**.
 
 Among these people, what proportion were classified as high risk?
 
@@ -639,10 +621,11 @@ $$\large
 {\text{True positives}+\text{False negatives}}$$
 
 ```{webr-r}
-dd_new[hypertension_5yr == 1, mean(classified_high_risk)]
+class_tab["High risk", "Hypertension"] /
+  sum(class_tab[, "Hypertension"])
 ```
 
-> This is the **sensitivity** of the classification rule: the proportion of people *with the outcome* who are classified as positive.
+> This is the **sensitivity** of the classification rule: the proportion of people who **developed hypertension** who had been classified as **high risk**.
 
 <div style="margin-top: 3em;"></div>
 <div style="font-size: 0.75em;">
@@ -669,13 +652,11 @@ $$\large
 {\text{True negatives}+\text{False positives}}$$
 
 ```{webr-r}
-dd_new[
-  hypertension_5yr == 0, 
-  mean(classified_high_risk == 0)
-]
+class_tab["Low risk", "No hypertension"] /
+  sum(class_tab[, "No hypertension"])
 ```
 
-> This is the **specificity** of the classification rule: the proportion of people *without the outcome* who are classified as negative.**
+> This is the **specificity** of the classification rule: the proportion of people who did **not develop hypertension** who had been classified as **low risk**.
 
 <div style="margin-top: 3em;"></div>
 <div style="font-size: 0.75em;">
@@ -712,13 +693,11 @@ $$\large
 $$
 
 ```{webr-r}
-dd_new[
-  hypertension_5yr == 0,
-  mean(classified_high_risk)
-]
+class_tab["High risk", "No hypertension"] /
+  sum(class_tab[, "No hypertension"])
 ```
 
-> The **false positive rate** is the proportion of people *without the outcome* who are classified as positive.
+> The **false positive rate** is the proportion of people who did **not develop hypertension** who had been classified as **high risk**.
 
 <div style="margin-top: 3em;"></div>
 <div style="font-size: 0.75em;">
@@ -750,10 +729,8 @@ $$\large
 $$
 
 ```{webr-r}
-dd_new[
-  classified_high_risk == 1, 
-  mean(hypertension_5yr)
-]
+class_tab["High risk", "Hypertension"] /
+  sum(class_tab["High risk",])
 ```
 
 
@@ -796,7 +773,11 @@ In another setting, false positives might have substantial costs or harms.
 We saw that changing the classification threshold changes who is classified as
 high risk.
 
-Let's look at three possible thresholds and see exactly what happens.
+Let's look at three possible thresholds and see exactly what happens. For each threshold, focus on two quantities:
+
+- **Sensitivity:** among people who develop hypertension, what proportion did we classify as high risk?
+- **False positive rate:** among people who do **not** develop hypertension, what proportion did we nevertheless classify as high risk?
+
 
 ```{webr-r}
 threshold_summary <- function(threshold) {
@@ -807,9 +788,6 @@ threshold_summary <- function(threshold) {
     threshold = threshold,
     sensitivity = mean(
       classified[dd_new$hypertension_5yr == 1]
-    ),
-    specificity = mean(
-      classified[dd_new$hypertension_5yr == 0] == 0
     ),
     false_positive_rate = mean(
       classified[dd_new$hypertension_5yr == 0]
@@ -824,35 +802,20 @@ threshold_results <- rbindlist(
 threshold_results
 ```
 
-For each threshold, focus on two quantities:
-
-- **Sensitivity:** among people who develop hypertension, what proportion did we classify as high risk?
-- **False positive rate:** among people who do **not** develop hypertension, what proportion did we nevertheless classify as high risk?
-
-Recall that
-
-$$\large
-\text{False positive rate} = 1-\text{specificity}.
-$$
-
-> **Each threshold gives us a sensitivity and a false positive rate.**
-
 ## Representing a threshold with a point
 
-We can represent what happens at a particular threshold using a point.
+We can represent each threshold with a point:
 
-Put the **false positive rate** on the horizontal axis and **sensitivity** on
-the vertical axis.
+- **False positive rate** on the horizontal axis
+- **Sensitivity** on the vertical axis
 
 Let's start with the threshold of 0.30.
 
 ```{webr-r}
 #| classes: webr-plot
 
-three_thresholds <- copy(threshold_results)
-
 ggplot(
-  three_thresholds[threshold == 0.30],
+  threshold_results[threshold == 0.30],
   aes(x = false_positive_rate, y = sensitivity)
 ) +
   geom_point(size = 5) +
@@ -867,16 +830,6 @@ ggplot(
   )
 ```
 
-That point summarizes what happened when we used **0.30** as our threshold.
-
-Its horizontal position tells us how many people without hypertension were
-incorrectly classified as high risk.
-
-Its vertical position tells us how many people who developed hypertension were
-correctly classified as high risk.
-
-> **One threshold → one pair of numbers → one point.**
-
 ### Now change the threshold
 
 Let's add the thresholds of 0.50 and 0.10.
@@ -885,7 +838,7 @@ Let's add the thresholds of 0.50 and 0.10.
 #| classes: webr-plot
 
 ggplot(
-  three_thresholds,
+  threshold_results,
   aes(x = false_positive_rate, y = sensitivity)
 ) +
   geom_point(size = 5) +
@@ -908,13 +861,10 @@ Notice what happens as we **lower** the threshold:
 
 > **The points move up and to the right.**
 
-Why?
-
 - **Up:** sensitivity increases.
 - **Right:** the false positive rate increases.
 
-So the plot is showing exactly the tradeoff we saw when we changed the
-classification threshold.
+This is the tradeoff created by changing the classification threshold.
 
 #### Where would we like to be?
 
@@ -940,9 +890,11 @@ not.
 There is nothing special about 0.50, 0.30, or 0.10.
 
 We could repeat exactly the same calculation for every possible classification
-threshold.
+threshold. Each threshold gives us another $(\text{false positive rate},\ \text{sensitivity})$ combination. If we plot all of those points and connect them, we get a curve.
 
 ```{webr-r}
+#| classes: webr-plot
+
 thresholds <- c(
   Inf,
   sort(unique(dd_new$pred_simple), decreasing = TRUE),
@@ -963,18 +915,6 @@ roc <- rbindlist(lapply(thresholds, function(threshold) {
     )
   )
 }))
-```
-
-Each threshold gives us another point:
-
-$$\large
-(\text{false positive rate},\ \text{sensitivity})
-$$
-
-If we plot all of those points and connect them, we get a curve.
-
-```{webr-r}
-#| classes: webr-plot
 
 roc_plot <- ggplot(
   roc,
@@ -997,24 +937,7 @@ roc_plot
 This is called a **receiver operating characteristic (ROC) curve**.
 
 > **An ROC curve shows the combinations of sensitivity and false positive rate
-> produced as we move through all possible classification thresholds.**
-
-The curve is not introducing a new measure. It is simply collecting the same
-threshold calculations we have already been making into a single picture.
-
-#### What does the ROC curve tell us?
-
-Remember what the axes mean:
-
-- moving **up** means identifying a larger proportion of people who develop
-  hypertension
-- moving **right** means falsely classifying a larger proportion of people who
-  do not develop hypertension
-
-So a model that can achieve high sensitivity without producing many false
-positives will have a curve that moves toward the **upper-left corner**.
-
-> **Better discrimination means getting farther toward the upper-left.**
+> produced by different classification thresholds.**
 
 ### What would happen with no discrimination?
 
@@ -1075,6 +998,8 @@ $$\large
 What happens if age is **less informative** — or **more informative** — about future hypertension?
 
 ```{webr-r}
+#| classes: webr-plot
+
 set.seed(12345)
 
 beta_age <- 0.0  # try 0, 0.05, 0.15
@@ -1090,24 +1015,11 @@ fit <- glm(
 set.seed(82761)
 
 dd_test <- DGP(500, beta_age)
+
 dd_test[, 
   predicted_risk := 
     predict(fit, newdata = dd_test, type = "response")
 ]
-
-dd_test[,
-  outcome := factor(
-    hypertension_5yr, 
-    levels = c(0, 1), 
-    labels = c("No hypertension", "Hypertension")
-  )
-]
-```
-
-### What happens to the ROC curve?
-
-```{webr-r}
-#| classes: webr-plot
 
 thresholds <- c(
   Inf,
@@ -1151,20 +1063,17 @@ ggplot(
     expand = FALSE
   ) +
   labs(
-    x = "False positive rate (1 - specificity)",
+    x = "False positive rate",
     y = "Sensitivity"
   )
 ```
 
 As age becomes more informative about future hypertension:
 
-- the predicted-risk distributions become more separated
 - the ROC curve moves farther toward the **upper-left corner**
 - discrimination improves
 
 > **Discrimination reflects how well the model separates people who experience the outcome from those who do not.**
-
-
 
 ## Summarizing discrimination: the AUC
 
@@ -1207,7 +1116,7 @@ ggplot(
     expand = FALSE
   ) +
   labs(
-    x = "False positive rate (1 - specificity)",
+    x = "False positive rate",
     y = "Sensitivity"
   )
 ```
@@ -1292,11 +1201,7 @@ But that sample is just **one possible sample** from the population.
 
 What would happen if we evaluated the **same fitted model** using many different samples?
 
-Let's find out.
-
 ```{webr-r}
-library(pROC)
-
 set.seed(91723)
 
 n_sims <- 500
@@ -1330,11 +1235,9 @@ auc_results <- replicate(n_sims, {
 auc_results[1:10]
 ```
 
-The model has not changed.
+We have not changed the model or the population. The only thing that changes is the **sample used to evaluate the model**.
 
-The population has not changed.
-
-The only thing that changes is the **sample used to evaluate the model**.
+Here is the **sampling distribution** of the estimated AUC:
 
 ```{webr-r}
 #| classes: webr-plot
@@ -1345,7 +1248,9 @@ ggplot(
 ) +
   geom_histogram(
     bins = 25,
-    boundary = 0
+    boundary = 0,
+    fill = "grey75",
+    color = "grey98"
   ) +
   geom_vline(
     xintercept = mean(auc_results),
@@ -1357,14 +1262,15 @@ ggplot(
   )
 ```
 
-Each sample gives us a slightly different estimate of the model's predictive performance.
+> **Even when the population and prediction model remain exactly the same, the performance we observe varies from sample to sample.**
+
+We can use this **sampling distribution** to estimate the mean and standard error of the AUC estimate:
 
 ```{webr-r}
 mean(auc_results)
 sd(auc_results)
 ```
 
-> **Even when the population and prediction model remain exactly the same, the performance we observe varies from sample to sample.**
 
 ## One idea to take with you
 
@@ -1372,9 +1278,9 @@ We have studied many different statistical methods in this course.
 
 But one idea has been with us from the beginning:
 
-> # **Samples vary.**
+> #### **Samples vary.**
 
 Statistical methods help us understand what that variability means for the scientific questions we care about.
 
-<div style="margin-top: 10em;"></div>
+<div style="margin-top: 30em;"></div>
 

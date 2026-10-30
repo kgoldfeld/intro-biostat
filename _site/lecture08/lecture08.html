@@ -369,7 +369,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\nlibrary(broom)\nlibrary(pROC)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(12345)\n\nDGP <- function(n, beta_age = 0.075) {\n  \n  d <- data.table(\n    age = runif(n, 20, 80)\n  )\n\n  d[, p := plogis(-1.75 + beta_age * (age - 50))]\n  d[, hypertension_5yr := rbinom(.N, size = 1, prob = p)]\n\n  return(d)\n}\n\ndd <- DGP(500)","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, .(age, hypertension_5yr)][1:10]","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- glm(\n  hypertension_5yr ~ age,\n  data = dd,\n  family = binomial\n)","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, predicted_risk := predict(fit, type = \"response\")]\n\ndd[, .(age, hypertension_5yr, predicted_risk)][1:10]","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  data = dd, \n  aes(x = age, y = predicted_risk)\n) +\n  geom_point(\n    aes(\n      x = age, \n      y = hypertension_5yr\n    ), \n    size = 0.7\n  ) +\n  geom_line()","id":6,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(2718)\n\nnoise_vars <- paste0(\"x\", 1:20)\n\ndd[, (noise_vars) := lapply(\n  1:20,\n  function(j) rnorm(.N)\n)]\n\ndd[, .(x1, x9, x13, x20)]","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_simple <- glm(\n  hypertension_5yr ~ age,\n  data = dd,\n  family = binomial\n)","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_extended <- glm(\n  hypertension_5yr ~ .,\n  data = dd[, \n    c(\"hypertension_5yr\", \"age\", noise_vars), \n    with = FALSE\n  ],\n  family = binomial\n)","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, \n  pred_simple := predict(fit_simple, type = \"response\")]\n\ndd[,\n  pred_extended := predict(fit_extended, type = \"response\")]\n\ndd[, .(\n  simple = mean((hypertension_5yr - pred_simple)^2),\n  extended = mean((hypertension_5yr - pred_extended)^2)\n)]","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(8172)\n\ndd_new <- DGP(500)\n\ndd_new[, (noise_vars) := lapply(\n  1:20,\n  function(j) rnorm(.N)\n)]","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[, pred_simple := predict(\n  fit_simple,\n  newdata = dd_new,\n  type = \"response\"\n)]\n\ndd_new[, pred_extended := predict(\n  fit_extended,\n  newdata = dd_new,\n  type = \"response\"\n)]\n\ndd_new[, .(\n  simple = mean((hypertension_5yr - pred_simple)^2),\n  extended = mean((hypertension_5yr - pred_extended)^2)\n)]","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(2026)\n\ntrain_id <- sample(\n  1:nrow(dd),\n  size = 0.80 * nrow(dd)\n)\n\ntrain_data <- dd[train_id]\ntest_data <- dd[-train_id]","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"nrow(train_data)\nnrow(test_data)","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[, risk_group := cut(\n  pred_simple,\n  breaks = quantile(\n    pred_simple,\n    probs = seq(0, 1, by = 0.2)\n  ),\n  include.lowest = TRUE,\n  labels = c(\n    \"Lowest risk\",\n    \"Low risk\",\n    \"Middle risk\",\n    \"High risk\",\n    \"Highest risk\"\n  )\n)]\n\ncalibration <- dd_new[,\n  .(predicted = mean(pred_simple),\n    observed = mean(hypertension_5yr)\n  ),\n  keyby = risk_group\n]\n\ncalibration","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  calibration, \n  aes(x = predicted, y = observed)\n) +\n  geom_abline(\n    intercept = 0, \n    slope = 1, \n    linetype = 2\n  ) +\n  geom_point(\n    size = 3,\n    aes(color = risk_group)\n  ) +\n  coord_equal(\n    xlim = c(0, 0.6), \n    ylim = c(0, 0.6)\n  ) +\n  labs(\n    x = \"Average predicted risk\",\n    y = \"Observed proportion with hypertension\"\n  ) +\n  theme(legend.title = element_blank()) +\n  guides(color = guide_legend(reverse = TRUE))","id":16,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[, \n  classified_high_risk := as.integer(pred_simple >= 0.30)]\n\ndd_new[1:10, \n  .(predicted_risk = pred_simple, \n    hypertension_5yr, \n    classified_high_risk\n  )\n]\n\n# also look at 0.20, 0.40","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"table(\n  Classified = factor(\n    dd_new$classified_high_risk,\n    levels = c(1, 0),\n    labels = c(\"High risk\", \"Low risk\")\n  ),\n  Observed = factor(\n    dd_new$hypertension_5yr,\n    levels = c(1, 0),\n    labels = c(\"Hypertension\", \"No hypertension\")\n  )\n)","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[hypertension_5yr == 1, mean(classified_high_risk)]","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[\n  hypertension_5yr == 0, \n  mean(classified_high_risk == 0)\n]","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[\n  hypertension_5yr == 0,\n  mean(classified_high_risk)\n]","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[\n  classified_high_risk == 1, \n  mean(hypertension_5yr)\n]","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"threshold_summary <- function(threshold) {\n\n  classified <- as.integer(dd_new$pred_simple >= threshold)\n\n  data.table(\n    threshold = threshold,\n    sensitivity = mean(\n      classified[dd_new$hypertension_5yr == 1]\n    ),\n    specificity = mean(\n      classified[dd_new$hypertension_5yr == 0] == 0\n    ),\n    false_positive_rate = mean(\n      classified[dd_new$hypertension_5yr == 0]\n    )\n  )\n}\n\nthreshold_results <- rbindlist(\n  lapply(c(0.50, 0.30, 0.10), threshold_summary)\n)\n\nthreshold_results","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"three_thresholds <- copy(threshold_results)\n\nggplot(\n  three_thresholds[threshold == 0.30],\n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_point(size = 5) +\n  coord_equal(\n    xlim = c(0, 1),\n    ylim = c(0, 1),\n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate\",\n    y = \"Sensitivity\"\n  )","id":24,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  three_thresholds,\n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_point(size = 5) +\n  geom_text(\n    aes(label = threshold),\n    nudge_y = 0.05\n  ) +\n  coord_equal(\n    xlim = c(0, 1),\n    ylim = c(0, 1),\n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate\",\n    y = \"Sensitivity\"\n  )","id":25,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"thresholds <- c(\n  Inf,\n  sort(unique(dd_new$pred_simple), decreasing = TRUE),\n  -Inf\n)\n\nroc <- rbindlist(lapply(thresholds, function(threshold) {\n\n  classified <- as.integer(dd_new$pred_simple >= threshold)\n\n  data.table(\n    threshold = threshold,\n    sensitivity = mean(\n      classified[dd_new$hypertension_5yr == 1]\n    ),\n    false_positive_rate = mean(\n      classified[dd_new$hypertension_5yr == 0]\n    )\n  )\n}))","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"roc_plot <- ggplot(\n  roc,\n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_step() +\n  coord_equal(\n    xlim = c(0, 1),\n    ylim = c(0, 1),\n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate\",\n    y = \"Sensitivity\"\n  )\n\nroc_plot","id":27,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"roc_plot +\n  geom_abline(\n    intercept = 0,\n    slope = 1,\n    linetype = 2\n  )","id":28,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(12345)\n\nbeta_age <- 0.0  # try 0, 0.05, 0.15\n\ndd <- DGP(500, beta_age)\n\nfit <- glm(\n  hypertension_5yr ~ age, \n  data = dd, \n  family = binomial\n)\n\nset.seed(82761)\n\ndd_test <- DGP(500, beta_age)\ndd_test[, \n  predicted_risk := \n    predict(fit, newdata = dd_test, type = \"response\")\n]\n\ndd_test[,\n  outcome := factor(\n    hypertension_5yr, \n    levels = c(0, 1), \n    labels = c(\"No hypertension\", \"Hypertension\")\n  )\n]","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"thresholds <- c(\n  Inf,\n  sort(\n    unique(dd_test$predicted_risk), \n    decreasing = TRUE\n  ),\n  -Inf\n)\n\nroc_test <- rbindlist(lapply(\n  thresholds, function(threshold) {\n    classified <- as.integer(\n      dd_test$predicted_risk >= threshold\n    )\n    \n    data.table(\n      sensitivity = mean(\n        classified[dd_test$hypertension_5yr == 1]\n      ),\n      false_positive_rate = mean(\n        classified[dd_test$hypertension_5yr == 0]\n      )\n    )\n  }\n))\n\nggplot(\n  roc_test, \n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_step() +\n  geom_abline(\n    intercept = 0, \n    slope = 1, \n    linetype = 2\n  ) +\n  coord_equal(\n    xlim = c(0, 1),\n    ylim = c(0, 1),\n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate (1 - specificity)\",\n    y = \"Sensitivity\"\n  )","id":30,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  roc, \n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_ribbon(\n    aes(ymin = 0, ymax = sensitivity), \n    alpha = 0.25\n  ) +\n  geom_step() +\n  geom_abline(\n    intercept = 0, \n    slope = 1, \n    linetype = 2\n  ) +\n  coord_equal(\n    xlim = c(0, 1), \n    ylim = c(0, 1), \n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate (1 - specificity)\",\n    y = \"Sensitivity\"\n  )","id":31,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"roc_result <- pROC::roc(\n  response = dd_new$hypertension_5yr,\n  predictor = dd_new$pred_simple\n)\n\npROC::auc(roc_result)","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"library(pROC)\n\nset.seed(91723)\n\nn_sims <- 500\n\nauc_results <- replicate(n_sims, {\n\n  # Generate a new test sample\n  dd_test <- DGP(500)\n\n  # Use the SAME fitted model to predict risk\n  dd_test[, predicted_risk :=\n    predict(\n      fit_simple,\n      newdata = dd_test,\n      type = \"response\"\n    )\n  ]\n\n  # Calculate AUC in this test sample\n  as.numeric(\n    auc(\n      roc(\n        dd_test$hypertension_5yr,\n        dd_test$predicted_risk,\n        quiet = TRUE\n      )\n    )\n  )\n})\n\nauc_results[1:10]","id":33,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  data.table(auc = auc_results),\n  aes(x = auc)\n) +\n  geom_histogram(\n    bins = 25,\n    boundary = 0\n  ) +\n  geom_vline(\n    xintercept = mean(auc_results),\n    linetype = 2\n  ) +\n  labs(\n    x = \"AUC\",\n    y = \"Number of samples\"\n  )","id":34,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(auc_results)\nsd(auc_results)","id":35,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"library(data.table)\nlibrary(ggplot2)\nlibrary(patchwork)\nlibrary(broom)\nlibrary(pROC)\n\ntheme_set(\n  theme_bw(base_size = 14) +\n  theme(\n    panel.grid = element_blank(),\n    plot.title = element_text(face = \"bold\", size = 12),\n    axis.title = element_text(size = 12)\n  )\n)","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"echo":"false","editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(12345)\n\nDGP <- function(n, beta_age = 0.075) {\n  \n  d <- data.table(\n    age = runif(n, 20, 80)\n  )\n\n  d[, p := plogis(-1.75 + beta_age * (age - 50))]\n  d[, hypertension_5yr := rbinom(.N, size = 1, prob = p)]\n\n  return(d)\n}\n\ndd <- DGP(500)\n\ndd[, .(age, hypertension_5yr)]","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit <- glm(\n  hypertension_5yr ~ age,\n  data = dd,\n  family = binomial\n)\n\ndd[, predicted_risk := predict(fit, type = \"response\")]\n\ndd[, .(age, hypertension_5yr, predicted_risk)]","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  data = dd, \n  aes(x = age, y = predicted_risk)\n) +\n  geom_point(\n    aes(\n      x = age, \n      y = hypertension_5yr\n    ), \n    size = 0.7\n  ) +\n  geom_line()","id":4,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(2718)\n\nnoise_vars <- paste0(\"x\", 1:20)\n\ndd[, (noise_vars) := lapply(\n  1:20,\n  function(j) rnorm(.N)\n)]\n\ndd[, .(x1, x9, x13, x20)]","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_simple <- glm(\n  hypertension_5yr ~ age,\n  data = dd,\n  family = binomial\n)","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"fit_extended <- glm(\n  hypertension_5yr ~ .,\n  data = dd[, \n    c(\"hypertension_5yr\", \"age\", noise_vars), \n    with = FALSE\n  ],\n  family = binomial\n)","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd[, \n  pred_simple := predict(fit_simple, type = \"response\")]\n\ndd[,\n  pred_extended := predict(fit_extended, type = \"response\")]\n\ndd[, .(\n  simple = mean((hypertension_5yr - pred_simple)^2),\n  extended = mean((hypertension_5yr - pred_extended)^2)\n)]","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(8172)\n\ndd_new <- DGP(500)\n\ndd_new[, (noise_vars) := lapply(\n  1:20,\n  function(j) rnorm(.N)\n)]","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[, pred_simple := predict(\n  fit_simple,\n  newdata = dd_new,\n  type = \"response\"\n)]\n\ndd_new[, pred_extended := predict(\n  fit_extended,\n  newdata = dd_new,\n  type = \"response\"\n)]\n\ndd_new[, .(\n  simple = mean((hypertension_5yr - pred_simple)^2),\n  extended = mean((hypertension_5yr - pred_extended)^2)\n)]","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(2026)\n\ntrain_id <- sample(\n  1:nrow(dd),\n  size = 0.80 * nrow(dd)\n)\n\ntrain_data <- dd[train_id]\ntest_data <- dd[-train_id]","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"nrow(train_data)\nnrow(test_data)","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[, risk_group := cut(\n  pred_simple,\n  breaks = quantile(\n    pred_simple,\n    probs = seq(0, 1, by = 0.2)\n  ),\n  include.lowest = TRUE,\n  labels = c(\n    \"Lowest risk\",\n    \"Low risk\",\n    \"Middle risk\",\n    \"High risk\",\n    \"Highest risk\"\n  )\n)]\n\ncalibration <- dd_new[,\n  .(predicted = mean(pred_simple),\n    observed = mean(hypertension_5yr)\n  ),\n  keyby = risk_group\n]\n\ncalibration","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  calibration, \n  aes(x = predicted, y = observed)\n) +\n  geom_abline(\n    intercept = 0, \n    slope = 1, \n    linetype = 2\n  ) +\n  geom_point(\n    size = 3,\n    aes(color = risk_group)\n  ) +\n  coord_equal(\n    xlim = c(0, 0.6), \n    ylim = c(0, 0.6)\n  ) +\n  labs(\n    x = \"Average predicted risk\",\n    y = \"Observed proportion with hypertension\"\n  ) +\n  theme(legend.title = element_blank()) +\n  guides(color = guide_legend(reverse = TRUE))","id":14,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"dd_new[, \n  classified_high_risk := as.integer(pred_simple >= 0.30)]\n\ndd_new[1:10, \n  .(predicted_risk = pred_simple, \n    hypertension_5yr, \n    classified_high_risk\n  )\n]\n\n# also look at 0.20, 0.40","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"class_tab <- table(\n  Classified = factor(\n    dd_new$classified_high_risk,\n    levels = c(1, 0),\n    labels = c(\"High risk\", \"Low risk\")\n  ),\n  Observed = factor(\n    dd_new$hypertension_5yr,\n    levels = c(1, 0),\n    labels = c(\"Hypertension\", \"No hypertension\")\n  )\n)\n\nclass_tab","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"class_tab[\"High risk\", \"Hypertension\"] /\n  sum(class_tab[, \"Hypertension\"])","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"class_tab[\"Low risk\", \"No hypertension\"] /\n  sum(class_tab[, \"No hypertension\"])","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"class_tab[\"High risk\", \"No hypertension\"] /\n  sum(class_tab[, \"No hypertension\"])","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"class_tab[\"High risk\", \"Hypertension\"] /\n  sum(class_tab[\"High risk\",])","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"threshold_summary <- function(threshold) {\n\n  classified <- as.integer(dd_new$pred_simple >= threshold)\n\n  data.table(\n    threshold = threshold,\n    sensitivity = mean(\n      classified[dd_new$hypertension_5yr == 1]\n    ),\n    false_positive_rate = mean(\n      classified[dd_new$hypertension_5yr == 0]\n    )\n  )\n}\n\nthreshold_results <- rbindlist(\n  lapply(c(0.50, 0.30, 0.10), threshold_summary)\n)\n\nthreshold_results","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  threshold_results[threshold == 0.30],\n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_point(size = 5) +\n  coord_equal(\n    xlim = c(0, 1),\n    ylim = c(0, 1),\n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate\",\n    y = \"Sensitivity\"\n  )","id":22,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  threshold_results,\n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_point(size = 5) +\n  geom_text(\n    aes(label = threshold),\n    nudge_y = 0.05\n  ) +\n  coord_equal(\n    xlim = c(0, 1),\n    ylim = c(0, 1),\n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate\",\n    y = \"Sensitivity\"\n  )","id":23,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"thresholds <- c(\n  Inf,\n  sort(unique(dd_new$pred_simple), decreasing = TRUE),\n  -Inf\n)\n\nroc <- rbindlist(lapply(thresholds, function(threshold) {\n\n  classified <- as.integer(dd_new$pred_simple >= threshold)\n\n  data.table(\n    threshold = threshold,\n    sensitivity = mean(\n      classified[dd_new$hypertension_5yr == 1]\n    ),\n    false_positive_rate = mean(\n      classified[dd_new$hypertension_5yr == 0]\n    )\n  )\n}))\n\nroc_plot <- ggplot(\n  roc,\n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_step() +\n  coord_equal(\n    xlim = c(0, 1),\n    ylim = c(0, 1),\n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate\",\n    y = \"Sensitivity\"\n  )\n\nroc_plot","id":24,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"roc_plot +\n  geom_abline(\n    intercept = 0,\n    slope = 1,\n    linetype = 2\n  )","id":25,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(12345)\n\nbeta_age <- 0.0  # try 0, 0.05, 0.15\n\ndd <- DGP(500, beta_age)\n\nfit <- glm(\n  hypertension_5yr ~ age, \n  data = dd, \n  family = binomial\n)\n\nset.seed(82761)\n\ndd_test <- DGP(500, beta_age)\n\ndd_test[, \n  predicted_risk := \n    predict(fit, newdata = dd_test, type = \"response\")\n]\n\nthresholds <- c(\n  Inf,\n  sort(\n    unique(dd_test$predicted_risk), \n    decreasing = TRUE\n  ),\n  -Inf\n)\n\nroc_test <- rbindlist(lapply(\n  thresholds, function(threshold) {\n    classified <- as.integer(\n      dd_test$predicted_risk >= threshold\n    )\n    \n    data.table(\n      sensitivity = mean(\n        classified[dd_test$hypertension_5yr == 1]\n      ),\n      false_positive_rate = mean(\n        classified[dd_test$hypertension_5yr == 0]\n      )\n    )\n  }\n))\n\nggplot(\n  roc_test, \n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_step() +\n  geom_abline(\n    intercept = 0, \n    slope = 1, \n    linetype = 2\n  ) +\n  coord_equal(\n    xlim = c(0, 1),\n    ylim = c(0, 1),\n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate\",\n    y = \"Sensitivity\"\n  )","id":26,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  roc, \n  aes(x = false_positive_rate, y = sensitivity)\n) +\n  geom_ribbon(\n    aes(ymin = 0, ymax = sensitivity), \n    alpha = 0.25\n  ) +\n  geom_step() +\n  geom_abline(\n    intercept = 0, \n    slope = 1, \n    linetype = 2\n  ) +\n  coord_equal(\n    xlim = c(0, 1), \n    ylim = c(0, 1), \n    expand = FALSE\n  ) +\n  labs(\n    x = \"False positive rate\",\n    y = \"Sensitivity\"\n  )","id":27,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"roc_result <- pROC::roc(\n  response = dd_new$hypertension_5yr,\n  predictor = dd_new$pred_simple\n)\n\npROC::auc(roc_result)","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(91723)\n\nn_sims <- 500\n\nauc_results <- replicate(n_sims, {\n\n  # Generate a new test sample\n  dd_test <- DGP(500)\n\n  # Use the SAME fitted model to predict risk\n  dd_test[, predicted_risk :=\n    predict(\n      fit_simple,\n      newdata = dd_test,\n      type = \"response\"\n    )\n  ]\n\n  # Calculate AUC in this test sample\n  as.numeric(\n    auc(\n      roc(\n        dd_test$hypertension_5yr,\n        dd_test$predicted_risk,\n        quiet = TRUE\n      )\n    )\n  )\n})\n\nauc_results[1:10]","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"ggplot(\n  data.table(auc = auc_results),\n  aes(x = auc)\n) +\n  geom_histogram(\n    bins = 25,\n    boundary = 0,\n    fill = \"grey75\",\n    color = \"grey98\"\n  ) +\n  geom_vline(\n    xintercept = mean(auc_results),\n    linetype = 2\n  ) +\n  labs(\n    x = \"AUC\",\n    y = \"Number of samples\"\n  )","id":30,"options":{"autorun":"false","classes":"webr-plot","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"mean(auc_results)\nsd(auc_results)","id":31,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1994,7 +1994,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <blockquote class="blockquote">
 <p><strong><em>How does the probability of hypertension change with age?</em></strong></p>
 </blockquote>
-<p>We used logistic regression to model that relationship:</p>
+<p>Logistic regression was used to model that relationship:</p>
 <p><span class="math display">\[\large
 \operatorname{logit}\left[P(Y=1\mid\text{age})\right]
 =
@@ -2003,8 +2003,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <p>For example, we could use the model to estimate how the odds or probability of hypertension differ with age.</p>
 <section id="a-different-question" class="level3">
 <h3 class="anchored" data-anchor-id="a-different-question">A different question</h3>
-<p>Now suppose we conduct a longitudinal study.</p>
-<p>At baseline, we record each person’s age. We then follow everyone for <strong>5 years</strong> and determine whether they develop hypertension.</p>
+<p>Now suppose we conduct a <strong>longitudinal study</strong>. At baseline, we record each person’s age. We then follow everyone for <strong>5 years</strong> and determine whether they develop hypertension.</p>
 <p>For each person, define</p>
 <p><span class="math display">\[\large
 Y =
@@ -2022,30 +2021,68 @@ Y =
 <p><strong><em>Can we use what we know about a person today to predict whether they will develop hypertension during the next 5 years?</em></strong></p>
 </blockquote>
 <p>The model may look the same, but our <strong>goal has changed</strong>.</p>
-<p>Rather than focusing primarily on the relationship between age and hypertension, we want to know how well information available <strong>today</strong> can predict an outcome that will occur in the <strong>future</strong>.</p>
+<p>Rather than focusing primarily on the <em>relationship</em> between age and hypertension, we want to know how well information available <strong>today</strong> can <em>predict</em> an outcome that will occur in the <strong>future</strong>.</p>
+</section>
+<section id="different-questions-and-different-goals" class="level3">
+<h3 class="anchored" data-anchor-id="different-questions-and-different-goals">Different questions and different goals</h3>
+<p>The same variables — and sometimes even the same statistical model — can be used to address <strong>different scientific questions</strong>.</p>
+<div style="margin-top: 3rem;">
+
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Objective</strong></th>
+<th><strong>Fundamental question</strong></th>
+<th><strong>What does it help us do?</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Description / association</strong></td>
+<td>How are variables related in a population?</td>
+<td>Understand populations, identify patterns and disparities, generate hypotheses</td>
+</tr>
+<tr class="even">
+<td><strong>Prediction</strong></td>
+<td>What is likely to happen to a new individual?</td>
+<td>Prognosis, risk stratification, screening, resource allocation</td>
+</tr>
+<tr class="odd">
+<td><strong>Causal inference / intervention</strong></td>
+<td>What would happen if we changed something?</td>
+<td>Choose treatments, policies, programs, or interventions</td>
+</tr>
+</tbody>
+</table>
+<div style="margin-top: 3rem;">
+
+</div>
 </section>
 </section>
 <section id="from-data-to-a-model-to-a-prediction" class="level2">
 <h2 class="anchored" data-anchor-id="from-data-to-a-model-to-a-prediction">From data to a model to a prediction</h2>
-<p>Let’s simulate data from a longitudinal study.</p>
-<p>For each person, we observe their age at baseline and whether they develop hypertension during the next 5 years.</p>
+<p>Let’s simulate data from a longitudinal study. For each person, we observe their <strong>age at baseline</strong> and whether they develop <strong>hypertension during the next 5 years</strong>.</p>
+<section id="generating-the-data" class="level4">
+<h4 class="anchored" data-anchor-id="generating-the-data">Generating the data</h4>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="fitting-a-model-and-generating-predictions" class="level4">
+<h4 class="anchored" data-anchor-id="fitting-a-model-and-generating-predictions">Fitting a model and generating predictions</h4>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<section id="fitting-a-model" class="level4">
-<h4 class="anchored" data-anchor-id="fitting-a-model">Fitting a model</h4>
+</section>
+<section id="visualizing-data" class="level4">
+<h4 class="anchored" data-anchor-id="visualizing-data">Visualizing data</h4>
 <div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-</section>
-<section id="generating-predictions" class="level4">
-<h4 class="anchored" data-anchor-id="generating-predictions">Generating predictions</h4>
-<div id="qwebr-insertion-location-5"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-6"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The model gives us an estimated probability for each person.</p>
-<p>For example, a predicted risk of 0.30 means that the model estimates a <strong>30% probability of developing hypertension within 5 years</strong> for a person of that age.</p>
+<p>The model gives us an estimated probability for each person. For example, a predicted risk of 0.30 means that the model estimates a <strong>30% probability of developing hypertension within 5 years</strong> for a person of that age.</p>
 <p>Notice that the prediction is a <strong>probability</strong>, even though the outcome itself is binary.</p>
 <blockquote class="blockquote">
 <p><strong><em>But how do we know whether these predicted probabilities are any good?</em></strong></p>
@@ -2054,44 +2091,44 @@ Y =
 </section>
 <section id="how-well-does-our-model-predict" class="level2">
 <h2 class="anchored" data-anchor-id="how-well-does-our-model-predict">How well does our model predict?</h2>
-<p>We have fit a model using data from 500 people. One way to evaluate the model would be to ask how well its predictions agree with the outcomes we actually observed.</p>
-<p>But there is a potential problem:</p>
+<p>We have fit a model using data from 500 people.</p>
+<p>We could evaluate its predictions by comparing them with the outcomes we actually observed for those same 500 people.</p>
+<p>But remember our goal:</p>
 <blockquote class="blockquote">
-<p><strong><em>These are the same 500 people we used to build the model.</em></strong></p>
+<p><strong>We want to predict outcomes for new people.</strong></p>
 </blockquote>
-<p><em>There are really two questions we could ask:</em></p>
+<p>The 500 people used to fit the model are <strong>not new people</strong> — the model has already seen their data.</p>
+<p>So there are two different questions:</p>
 <blockquote class="blockquote">
 <p><strong>How well does the model predict outcomes for the people used to fit it?</strong></p>
-</blockquote>
-<p>and, more importantly,</p>
-<blockquote class="blockquote">
 <p><strong>How well will the model predict outcomes for new people?</strong></p>
 </blockquote>
-<p>These are two different questions.</p>
+<p>For prediction, it is the <strong>second question</strong> that matters.</p>
 <section id="learning-from-one-sample" class="level3">
 <h3 class="anchored" data-anchor-id="learning-from-one-sample">Learning from one sample</h3>
 <p>Suppose our 500 people are a sample from a much larger population.</p>
-<p>We use their baseline information and subsequent outcomes to <strong>train</strong> our prediction model.</p>
-<p>The fitted model has learned patterns from this particular sample.</p>
-<p>Some of those patterns reflect real relationships in the population.</p>
-<p>But some may simply reflect <strong>random variation in this particular sample</strong>.</p>
+<ul>
+<li><p>We use their baseline information and subsequent outcomes to <strong>train</strong> our prediction model.</p></li>
+<li><p>The fitted model has learned patterns from this particular sample.</p></li>
+<li><p>Some of those patterns reflect real relationships in the population.</p></li>
+<li><p>But some may simply reflect <strong>random variation in this particular sample</strong>.</p></li>
+</ul>
 <blockquote class="blockquote">
-<p><strong><em>If our model learns random features of the training data, will those features help us predict outcomes in new people?</em></strong></p>
+<p><strong>Patterns that reflect random variation in the training data may not help us predict outcomes in new people.</strong></p>
 </blockquote>
 </section>
 <section id="learning-signal-or-learning-noise" class="level3">
 <h3 class="anchored" data-anchor-id="learning-signal-or-learning-noise">Learning signal — or learning noise?</h3>
 <p>Because we are simulating the data, we know that <strong>age is the only predictor of future hypertension</strong>.</p>
-<p>Now suppose we also measured 20 other baseline characteristics.</p>
-<p>We will generate these so that they have <strong>no relationship whatsoever</strong> with future hypertension.</p>
-<div id="qwebr-insertion-location-7"></div>
+<p>Now suppose we generate 20 other baseline characteristics so that they have <strong>no relationship whatsoever</strong> with future hypertension.</p>
+<div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Imagine that we don’t know which variables are actually useful predictors.</p>
 <p>We could fit the simple model using only age:</p>
-<div id="qwebr-insertion-location-8"></div>
+<div id="qwebr-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Or we could fit the extended, more complicated model using age and all 20 additional variables:</p>
-<div id="qwebr-insertion-location-9"></div>
+<div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>We know something the analyst would not know:</p>
 <blockquote class="blockquote">
@@ -2101,8 +2138,7 @@ Y =
 </section>
 <section id="which-model-predicts-the-observed-data-better" class="level3">
 <h3 class="anchored" data-anchor-id="which-model-predicts-the-observed-data-better">Which model predicts the observed data better?</h3>
-<p>For each person, we can compare the predicted probability with what actually happened.</p>
-<p>If someone developed hypertension, their outcome is 1. If they did not, their outcome is 0.</p>
+<p>For each person, we can compare the predicted probability with what actually happened. If someone develops hypertension, their outcome is 1. If they do not, their outcome is 0.</p>
 <p>One simple measure of prediction error is</p>
 <p><span class="math display">\[\large
 \text{Prediction error}
@@ -2111,33 +2147,27 @@ Y =
 \sum_{i=1}^{n}
 (Y_i-\hat p_i)^2\]</span></p>
 <p>Smaller values indicate predictions that are closer to the observed outcomes.</p>
-<div id="qwebr-insertion-location-10"></div>
+<div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p><strong><em>Which model appears to predict better?</em></strong></p>
+<p><strong>The extended model has a smaller prediction error.</strong></p>
 </blockquote>
-<p>The extended model has a smaller prediction error.</p>
-<p>But remember:</p>
-<p><strong>We evaluated the models using the same data that were used to fit them.</strong></p>
+<p>But remember: <strong>we evaluated the models using the same data that were used to fit them.</strong></p>
 </section>
 <section id="what-happens-with-new-people" class="level3">
 <h3 class="anchored" data-anchor-id="what-happens-with-new-people">What happens with new people?</h3>
 <p>Now let’s generate 500 <strong>new people from exactly the same population</strong>.</p>
-<div id="qwebr-insertion-location-11"></div>
+<div id="qwebr-insertion-location-9"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>These people were not used to estimate either model.</p>
 <p>Let’s use the two fitted models to predict their outcomes:</p>
-<div id="qwebr-insertion-location-12"></div>
+<div id="qwebr-insertion-location-10"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p><strong><em>Did the model that predicted the training data better also predict the new data better?</em></strong></p>
+<p>In the original data, the extended model had <strong>lower prediction error</strong> than the simple model.</p>
+<p>When we applied both models to new people, the extended model had <strong>higher prediction error</strong>.</p>
 </blockquote>
-<ul>
-<li>In the original data, the extended model had <strong>lower prediction error</strong> than the simple model.</li>
-<li>When we applied both models to new people, the extended model had <strong>higher prediction error</strong>.</li>
-</ul>
-<p>The extended model learned some patterns that were specific to the original sample. Those patterns helped it predict the data it had already seen, but they did not help it predict outcomes for new people.</p>
-<p>This is <strong>overfitting</strong>.</p>
+<p>The extended model learned some patterns that were specific to the original sample. Those patterns helped it predict the data it had already seen, but they did not help it predict outcomes for new people. This is <strong>overfitting</strong>.</p>
 <blockquote class="blockquote">
 <p><strong>A model can fit the observed data well because it has learned both real signal and random noise.</strong></p>
 </blockquote>
@@ -2145,17 +2175,16 @@ Y =
 </section>
 <section id="training-and-test-data" class="level2">
 <h2 class="anchored" data-anchor-id="training-and-test-data">Training and test data</h2>
-<p>In our simulation, we could simply generate another sample of 500 people to see how well the models performed on new data.</p>
-<p>In a real study, we usually cannot do that.</p>
+<p>In our simulation, we could simply generate another sample of 500 people to see how well the models performed on new data. <em>In a real study, we usually cannot do that.</em></p>
 <p>Instead, one approach is to divide the data we have into two parts:</p>
 <ul>
 <li><strong>Training data:</strong> used to fit the model</li>
 <li><strong>Test data:</strong> set aside and used to evaluate how well the fitted model predicts outcomes for observations it has not seen</li>
 </ul>
 <p>For example, we might randomly use 80% of our observations for training and reserve 20% for testing.</p>
-<div id="qwebr-insertion-location-13"></div>
+<div id="qwebr-insertion-location-11"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-14"></div>
+<div id="qwebr-insertion-location-12"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <ul>
 <li>We would fit our prediction model using the 400 people in the training data.</li>
@@ -2167,14 +2196,13 @@ Y =
 <section id="what-if-the-results-depend-on-how-we-split-the-data" class="level3">
 <h3 class="anchored" data-anchor-id="what-if-the-results-depend-on-how-we-split-the-data">What if the results depend on how we split the data?</h3>
 <p>A single training/test split has its own randomness. Different observations could have ended up in the training and test sets.</p>
-<p>Suppose we are deciding between two prediction models:</p>
+<p>Suppose we are deciding between two prediction models and we want to know which one will predict better for <strong>new people</strong>.</p>
 <p><span class="math display">\[
 \begin{aligned}
 \text{Model 1: }&amp; \text{age}\\
 \text{Model 2: }&amp; \text{age + BMI + physical activity}
 \end{aligned}
 \]</span></p>
-<p>Which one will predict better for <strong>new people</strong>?</p>
 <p><strong>Cross-validation</strong> lets us compare them without relying on a single arbitrary split.</p>
 <p>We divide the training data into several parts, or <strong>folds</strong>. For each model:</p>
 <ul>
@@ -2203,10 +2231,12 @@ Y =
 <p><strong><em>If the model predicts a 30% risk of developing hypertension, do about 30% of similar people actually develop hypertension?</em></strong></p>
 </blockquote>
 <p>This is called <strong>calibration</strong>.</p>
-<p><strong>One important point</strong>:</p>
+<section id="one-important-point" class="level4">
+<h4 class="anchored" data-anchor-id="one-important-point">One important point</h4>
 <p>Suppose a person has a predicted risk of 70% and does <strong>not</strong> develop hypertension.</p>
 <p>That does not mean the prediction was wrong.</p>
 <p>A probability describes what we would expect to happen across many similar people, not what must happen to one individual.</p>
+</section>
 <section id="lets-evaluate-calibration-in-the-new-sample-of-500-people-.-.-." class="level3">
 <h3 class="anchored" data-anchor-id="lets-evaluate-calibration-in-the-new-sample-of-500-people-.-.-.">Let’s evaluate calibration in the new sample of 500 people . . .</h3>
 <p>We will start by <strong>ordering the 500 people according to their predicted risk</strong>.</p>
@@ -2226,9 +2256,9 @@ Y =
 <li>the <strong>average predicted risk</strong></li>
 <li>the <strong>proportion who actually developed hypertension</strong></li>
 </ul>
-<div id="qwebr-insertion-location-15"></div>
+<div id="qwebr-insertion-location-13"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div id="qwebr-insertion-location-16"></div>
+<div id="qwebr-insertion-location-14"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>If the predicted and observed probabilities agreed perfectly, the points would fall along the diagonal line.</p>
 <p>We do not expect perfect agreement because the observed proportions are themselves subject to <strong>sampling variability</strong>.</p>
@@ -2243,8 +2273,7 @@ Y =
 </section>
 <section id="from-predicted-probabilities-to-decisions" class="level2">
 <h2 class="anchored" data-anchor-id="from-predicted-probabilities-to-decisions">From predicted probabilities to decisions</h2>
-<p>So far, our model has produced <strong>predicted probabilities</strong>.</p>
-<p>But sometimes we want to use those probabilities <strong>to make a decision</strong>.</p>
+<p>So far, our model has produced <strong>predicted probabilities</strong>. But sometimes we want to use those probabilities <strong>to make a decision</strong>.</p>
 <p>Suppose we want to identify people at sufficiently high risk of developing hypertension that they should receive <strong>additional monitoring</strong>.</p>
 <blockquote class="blockquote">
 <p><strong><em>How high does someone’s predicted risk need to be before we classify them as “high risk”?</em></strong></p>
@@ -2258,7 +2287,7 @@ Y =
 1 &amp; \text{if predicted risk} \geq 0.30\\
 0 &amp; \text{if predicted risk} &lt; 0.30
 \end{cases}\]</span></p>
-<div id="qwebr-insertion-location-17"></div>
+<div id="qwebr-insertion-location-15"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Now every person has two pieces of information:</p>
 <ul>
@@ -2267,13 +2296,7 @@ Y =
 </ul>
 <section id="what-can-happen-when-we-use-this-decision-rule" class="level3">
 <h3 class="anchored" data-anchor-id="what-can-happen-when-we-use-this-decision-rule">What can happen when we use this decision rule?</h3>
-<p>For each person, there are four possibilities:</p>
-<ol type="1">
-<li>We classify the person as high risk, and they develop hypertension.</li>
-<li>We classify the person as high risk, but they do not develop hypertension.</li>
-<li>We classify the person as low risk, and they do not develop hypertension.</li>
-<li>We classify the person as low risk, but they develop hypertension.</li>
-</ol>
+<p>For each person, we compare their <strong>classification</strong> with what eventually happens.</p>
 <div style="margin-top: 5em;">
 
 </div>
@@ -2303,11 +2326,10 @@ Y =
 </div>
 <p>These terms describe the performance of the <strong>classification rule</strong> relative to the eventual outcome.</p>
 <p>They do not mean that someone’s predicted probability was “right” or “wrong.”</p>
-<p>When we compare the classification with the eventual outcome, these are called <strong>true positives, false positives, true negatives, and false negatives</strong>.</p>
 </section>
 <section id="generating-the-classificationmisclassification-table" class="level3">
 <h3 class="anchored" data-anchor-id="generating-the-classificationmisclassification-table">Generating the classification/misclassification table</h3>
-<div id="qwebr-insertion-location-18"></div>
+<div id="qwebr-insertion-location-16"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div style="margin-top: 3em;">
 
@@ -2341,17 +2363,17 @@ Y =
 </section>
 <section id="how-many-people-who-develop-hypertension-do-we-identify" class="level3">
 <h3 class="anchored" data-anchor-id="how-many-people-who-develop-hypertension-do-we-identify">How many people who develop hypertension do we identify?</h3>
-<p>Suppose we focus first on the people who actually developed hypertension.</p>
+<p>Suppose we focus first on the people <strong>who actually developed hypertension</strong>.</p>
 <p>Among these people, what proportion were classified as high risk?</p>
 <p><span class="math display">\[\large
 \text{Sensitivity}
 =
 \frac{\text{True positives}}
 {\text{True positives}+\text{False negatives}}\]</span></p>
-<div id="qwebr-insertion-location-19"></div>
+<div id="qwebr-insertion-location-17"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p>This is the <strong>sensitivity</strong> of the classification rule: the proportion of people <em>with the outcome</em> who are classified as positive.</p>
+<p>This is the <strong>sensitivity</strong> of the classification rule: the proportion of people who <strong>developed hypertension</strong> who had been classified as <strong>high risk</strong>.</p>
 </blockquote>
 <div style="margin-top: 3em;">
 
@@ -2397,10 +2419,10 @@ Y =
 =
 \frac{\text{True negatives}}
 {\text{True negatives}+\text{False positives}}\]</span></p>
-<div id="qwebr-insertion-location-20"></div>
+<div id="qwebr-insertion-location-18"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p>This is the <strong>specificity</strong> of the classification rule: the proportion of people <em>without the outcome</em> who are classified as negative.**</p>
+<p>This is the <strong>specificity</strong> of the classification rule: the proportion of people who did <strong>not develop hypertension</strong> who had been classified as <strong>low risk</strong>.</p>
 </blockquote>
 <div style="margin-top: 3em;">
 
@@ -2455,10 +2477,10 @@ Y =
 <p><span class="math display">\[\large
 \text{False positive rate} = 1 - \text{Specificity}
 \]</span></p>
-<div id="qwebr-insertion-location-21"></div>
+<div id="qwebr-insertion-location-19"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
-<p>The <strong>false positive rate</strong> is the proportion of people <em>without the outcome</em> who are classified as positive.</p>
+<p>The <strong>false positive rate</strong> is the proportion of people who did <strong>not develop hypertension</strong> who had been classified as <strong>high risk</strong>.</p>
 </blockquote>
 <div style="margin-top: 3em;">
 
@@ -2509,7 +2531,7 @@ Y =
 \frac{\text{True positives}}
 {\text{True positives}+\text{False positives}}
 \]</span></p>
-<div id="qwebr-insertion-location-22"></div>
+<div id="qwebr-insertion-location-20"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div style="margin-top: 3em;">
 
@@ -2566,50 +2588,38 @@ Y =
 <section id="from-one-threshold-to-many-thresholds" class="level2">
 <h2 class="anchored" data-anchor-id="from-one-threshold-to-many-thresholds">From one threshold to many thresholds</h2>
 <p>We saw that changing the classification threshold changes who is classified as high risk.</p>
-<p>Let’s look at three possible thresholds and see exactly what happens.</p>
-<div id="qwebr-insertion-location-23"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>For each threshold, focus on two quantities:</p>
+<p>Let’s look at three possible thresholds and see exactly what happens. For each threshold, focus on two quantities:</p>
 <ul>
 <li><strong>Sensitivity:</strong> among people who develop hypertension, what proportion did we classify as high risk?</li>
 <li><strong>False positive rate:</strong> among people who do <strong>not</strong> develop hypertension, what proportion did we nevertheless classify as high risk?</li>
 </ul>
-<p>Recall that</p>
-<p><span class="math display">\[\large
-\text{False positive rate} = 1-\text{specificity}.
-\]</span></p>
-<blockquote class="blockquote">
-<p><strong>Each threshold gives us a sensitivity and a false positive rate.</strong></p>
-</blockquote>
+<div id="qwebr-insertion-location-21"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="representing-a-threshold-with-a-point" class="level2">
 <h2 class="anchored" data-anchor-id="representing-a-threshold-with-a-point">Representing a threshold with a point</h2>
-<p>We can represent what happens at a particular threshold using a point.</p>
-<p>Put the <strong>false positive rate</strong> on the horizontal axis and <strong>sensitivity</strong> on the vertical axis.</p>
+<p>We can represent each threshold with a point:</p>
+<ul>
+<li><strong>False positive rate</strong> on the horizontal axis</li>
+<li><strong>Sensitivity</strong> on the vertical axis</li>
+</ul>
 <p>Let’s start with the threshold of 0.30.</p>
-<div id="qwebr-insertion-location-24"></div>
+<div id="qwebr-insertion-location-22"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>That point summarizes what happened when we used <strong>0.30</strong> as our threshold.</p>
-<p>Its horizontal position tells us how many people without hypertension were incorrectly classified as high risk.</p>
-<p>Its vertical position tells us how many people who developed hypertension were correctly classified as high risk.</p>
-<blockquote class="blockquote">
-<p><strong>One threshold → one pair of numbers → one point.</strong></p>
-</blockquote>
 <section id="now-change-the-threshold" class="level3">
 <h3 class="anchored" data-anchor-id="now-change-the-threshold">Now change the threshold</h3>
 <p>Let’s add the thresholds of 0.50 and 0.10.</p>
-<div id="qwebr-insertion-location-25"></div>
+<div id="qwebr-insertion-location-23"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>Notice what happens as we <strong>lower</strong> the threshold:</p>
 <blockquote class="blockquote">
 <p><strong>The points move up and to the right.</strong></p>
 </blockquote>
-<p>Why?</p>
 <ul>
 <li><strong>Up:</strong> sensitivity increases.</li>
 <li><strong>Right:</strong> the false positive rate increases.</li>
 </ul>
-<p>So the plot is showing exactly the tradeoff we saw when we changed the classification threshold.</p>
+<p>This is the tradeoff created by changing the classification threshold.</p>
 <section id="where-would-we-like-to-be" class="level4">
 <h4 class="anchored" data-anchor-id="where-would-we-like-to-be">Where would we like to be?</h4>
 <p>Before adding any more thresholds, think about the two axes.</p>
@@ -2630,33 +2640,13 @@ Y =
 <section id="what-if-we-consider-every-possible-threshold" class="level2">
 <h2 class="anchored" data-anchor-id="what-if-we-consider-every-possible-threshold">What if we consider every possible threshold?</h2>
 <p>There is nothing special about 0.50, 0.30, or 0.10.</p>
-<p>We could repeat exactly the same calculation for every possible classification threshold.</p>
-<div id="qwebr-insertion-location-26"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Each threshold gives us another point:</p>
-<p><span class="math display">\[\large
-(\text{false positive rate},\ \text{sensitivity})
-\]</span></p>
-<p>If we plot all of those points and connect them, we get a curve.</p>
-<div id="qwebr-insertion-location-27"></div>
+<p>We could repeat exactly the same calculation for every possible classification threshold. Each threshold gives us another <span class="math inline">\((\text{false positive rate},\ \text{sensitivity})\)</span> combination. If we plot all of those points and connect them, we get a curve.</p>
+<div id="qwebr-insertion-location-24"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>This is called a <strong>receiver operating characteristic (ROC) curve</strong>.</p>
 <blockquote class="blockquote">
-<p><strong>An ROC curve shows the combinations of sensitivity and false positive rate produced as we move through all possible classification thresholds.</strong></p>
+<p><strong>An ROC curve shows the combinations of sensitivity and false positive rate produced by different classification thresholds.</strong></p>
 </blockquote>
-<p>The curve is not introducing a new measure. It is simply collecting the same threshold calculations we have already been making into a single picture.</p>
-<section id="what-does-the-roc-curve-tell-us" class="level4">
-<h4 class="anchored" data-anchor-id="what-does-the-roc-curve-tell-us">What does the ROC curve tell us?</h4>
-<p>Remember what the axes mean:</p>
-<ul>
-<li>moving <strong>up</strong> means identifying a larger proportion of people who develop hypertension</li>
-<li>moving <strong>right</strong> means falsely classifying a larger proportion of people who do not develop hypertension</li>
-</ul>
-<p>So a model that can achieve high sensitivity without producing many false positives will have a curve that moves toward the <strong>upper-left corner</strong>.</p>
-<blockquote class="blockquote">
-<p><strong>Better discrimination means getting farther toward the upper-left.</strong></p>
-</blockquote>
-</section>
 <section id="what-would-happen-with-no-discrimination" class="level3">
 <h3 class="anchored" data-anchor-id="what-would-happen-with-no-discrimination">What would happen with no discrimination?</h3>
 <p>Suppose the predicted risks contained no information about who would develop hypertension.</p>
@@ -2667,7 +2657,7 @@ Y =
 \text{Sensitivity} \approx \text{False positive rate}.
 \]</span></p>
 <p>Those points would lie along the diagonal.</p>
-<div id="qwebr-insertion-location-28"></div>
+<div id="qwebr-insertion-location-25"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The diagonal therefore represents <strong>no discrimination</strong>.</p>
 <blockquote class="blockquote">
@@ -2688,22 +2678,16 @@ Y =
 <p><span class="math display">\[\large
 \beta_{\text{age}}=0.075.\]</span></p>
 <p>What happens if age is <strong>less informative</strong> — or <strong>more informative</strong> — about future hypertension?</p>
-<div id="qwebr-insertion-location-29"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<section id="what-happens-to-the-roc-curve" class="level3">
-<h3 class="anchored" data-anchor-id="what-happens-to-the-roc-curve">What happens to the ROC curve?</h3>
-<div id="qwebr-insertion-location-30"></div>
+<div id="qwebr-insertion-location-26"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>As age becomes more informative about future hypertension:</p>
 <ul>
-<li>the predicted-risk distributions become more separated</li>
 <li>the ROC curve moves farther toward the <strong>upper-left corner</strong></li>
 <li>discrimination improves</li>
 </ul>
 <blockquote class="blockquote">
 <p><strong>Discrimination reflects how well the model separates people who experience the outcome from those who do not.</strong></p>
 </blockquote>
-</section>
 </section>
 <section id="summarizing-discrimination-the-auc" class="level2">
 <h2 class="anchored" data-anchor-id="summarizing-discrimination-the-auc">Summarizing discrimination: the AUC</h2>
@@ -2721,13 +2705,13 @@ Y =
 <p>Choosing a threshold depends on the consequences of <strong>false positives and false negatives</strong>.</p>
 <section id="seeing-the-area-under-the-curve" class="level3">
 <h3 class="anchored" data-anchor-id="seeing-the-area-under-the-curve">Seeing the area under the curve</h3>
-<div id="qwebr-insertion-location-31"></div>
+<div id="qwebr-insertion-location-27"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="what-is-the-auc-for-our-model" class="level3">
 <h3 class="anchored" data-anchor-id="what-is-the-auc-for-our-model">What is the AUC for our model?</h3>
 <p>We can calculate the AUC directly from the observed outcomes and predicted risks using the <code>roc()</code> and <code>auc()</code> functions in the <code>pROC</code> package:</p>
-<div id="qwebr-insertion-location-32"></div>
+<div id="qwebr-insertion-location-28"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p>The AUC summarizes the model’s ability to <strong>discriminate</strong> between people who develop hypertension and those who do not.</p>
 <blockquote class="blockquote">
@@ -2783,30 +2767,28 @@ Y =
 <p>We have evaluated our prediction model using one new sample of 500 people.</p>
 <p>But that sample is just <strong>one possible sample</strong> from the population.</p>
 <p>What would happen if we evaluated the <strong>same fitted model</strong> using many different samples?</p>
-<p>Let’s find out.</p>
-<div id="qwebr-insertion-location-33"></div>
+<div id="qwebr-insertion-location-29"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>The model has not changed.</p>
-<p>The population has not changed.</p>
-<p>The only thing that changes is the <strong>sample used to evaluate the model</strong>.</p>
-<div id="qwebr-insertion-location-34"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Each sample gives us a slightly different estimate of the model’s predictive performance.</p>
-<div id="qwebr-insertion-location-35"></div>
+<p>We have not changed the model or the population. The only thing that changes is the <strong>sample used to evaluate the model</strong>.</p>
+<p>Here is the <strong>sampling distribution</strong> of the estimated AUC:</p>
+<div id="qwebr-insertion-location-30"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <blockquote class="blockquote">
 <p><strong>Even when the population and prediction model remain exactly the same, the performance we observe varies from sample to sample.</strong></p>
 </blockquote>
+<p>We can use this <strong>sampling distribution</strong> to estimate the mean and standard error of the AUC estimate:</p>
+<div id="qwebr-insertion-location-31"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="one-idea-to-take-with-you" class="level2">
 <h2 class="anchored" data-anchor-id="one-idea-to-take-with-you">One idea to take with you</h2>
 <p>We have studied many different statistical methods in this course.</p>
 <p>But one idea has been with us from the beginning:</p>
 <blockquote class="blockquote">
-<h1 id="samples-vary."><strong>Samples vary.</strong></h1>
+<h4 id="samples-vary." class="anchored"><strong>Samples vary.</strong></h4>
 </blockquote>
 <p>Statistical methods help us understand what that variability means for the scientific questions we care about.</p>
-<div style="margin-top: 10em;">
+<div style="margin-top: 30em;">
 
 </div>
 
