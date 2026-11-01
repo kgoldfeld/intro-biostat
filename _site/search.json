@@ -1180,6 +1180,13 @@
     "href": "lecture08/lecture08.html#one-idea-to-take-with-you",
     "title": "Lecture 8: Prediction and Classification",
     "section": "One idea to take with you",
-    "text": "One idea to take with you\nWe have studied many different statistical methods in this course.\nBut one idea has been with us from the beginning:\n\nSamples vary.\n\nStatistical methods help us understand what that variability means for the scientific questions we care about."
+    "text": "One idea to take with you\nWe have studied many different statistical methods in this course. But one idea has been with us from the beginning:\n\nSamples vary.\n\nIn your own research, the structure may be more complicated than the examples we have considered.\nYou may have animals, samples, cells, repeated measurements, or experimental batches — often nested within one another.\nSo one of the most important questions you can ask is:\n\nWhat is actually varying — and what is the experimental unit?\n\n\nHaving many measurements does not necessarily mean having many independent observations.\nStatistical methods help us understand what that variability means for the scientific questions we care about."
+  },
+  {
+    "objectID": "lecture08/lecture08.html#some-ideas-to-take-with-you",
+    "href": "lecture08/lecture08.html#some-ideas-to-take-with-you",
+    "title": "Lecture 8: Prediction and Classification",
+    "section": "Some ideas to take with you",
+    "text": "Some ideas to take with you\nWe have studied many different statistical methods in this course. But one idea has been with us from the beginning:\n\nSamples vary.\n\n\nIn your own research, the structure may be more complicated than the examples we have considered.\nYou may have animals, samples, cells, repeated measurements, or experimental batches — often with one level nested within another.\nHaving many measurements does not necessarily mean having many independent observations.\n\n\nAlways ask: What is actually varying — and what is the experimental unit?"
   }
 ]

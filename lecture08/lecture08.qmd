@@ -1272,15 +1272,20 @@ sd(auc_results)
 ```
 
 
-## One idea to take with you
+## Some ideas to take with you
 
-We have studied many different statistical methods in this course.
+We have studied many different statistical methods in this course. But one idea 
+has been with us from the beginning:
 
-But one idea has been with us from the beginning:
+> #### Samples vary.
 
-> #### **Samples vary.**
+- In your own research, the structure may be more complicated than the examples
+we have considered.
+- You may have animals, samples, cells, repeated measurements, or experimental batches — often with one level nested within another.
+- Having many measurements does not necessarily mean having many independent
+observations.
 
-Statistical methods help us understand what that variability means for the scientific questions we care about.
+> #### Always ask: What is actually varying — and what is the experimental unit?
 
 <div style="margin-top: 30em;"></div>
 
